@@ -12,6 +12,6 @@ services:
   learnboard-server:
     build: ./learnboard-server
     ports:
-      - 5000:5000
+      - 8000:8000
     volumes:
       - ./learnboard-server:/app

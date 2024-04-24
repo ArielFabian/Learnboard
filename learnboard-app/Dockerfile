@@ -5,19 +5,18 @@ FROM node:20.9.0
 WORKDIR /app
 
 # Copiar los archivos del paquete.json y paquete-lock.json
-COPY package*.json ./
+COPY public/ /app/public
+COPY src/ /app/src
+COPY package.json /app
 
 # Instalar las dependencias del proyecto
 RUN npm install
 
-# Copiar el resto de los archivos del proyecto
-COPY . .
-
 # Construir la aplicación
 RUN npm run build
 
+# Comando para iniciar la aplicación
+RUN npm run start
 # Exponer el puerto en el que se ejecutará la aplicación
 EXPOSE 3000
 
-# Comando para iniciar la aplicación
-CMD [ "npm", "run", "start" ]
