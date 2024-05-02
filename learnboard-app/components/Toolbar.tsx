@@ -1,4 +1,7 @@
 import React from "react";
+import Container from "./Container";
+import Toolbox from "./toolbox";
+
 
 export default function Toolbar() {
   return (
@@ -130,4 +133,5 @@ export default function Toolbar() {
       </aside>
     </div>
   );
+
 }
