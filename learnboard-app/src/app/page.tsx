@@ -1,8 +1,15 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { render } from "react-dom";
+import SignaturePad from "react-signature-canvas";
+import SignatureCanvas from "react-signature-canvas";
+import Canvas from "../../components/canvas";
 
 export default function Home() {
   return (
+    
     <div className="flex bg-gray-100 text-gray-900">
       <aside className="flex h-screen w-20 flex-col items-center border-r border-gray-200 bg-white">
       <nav className="flex flex-1 flex-col gap-y-4 pt-8">
@@ -182,9 +189,15 @@ export default function Home() {
         </div>
 
       </aside>
-      
+
+      <div className="Canvas">
+            <Canvas />
+        </div>
+
     </div>
 
+  
     
   );
+
 }
