@@ -30,8 +30,11 @@ exports.getAllColabSpaces = (req, res) => {
             let colabSpaces = [];
             data.forEach((doc) => {
                 // Push each colab-space document to the array
-                doc.data().id = doc.id;
-                colabSpaces.push(doc.data());
+                result = {
+                    id: doc.id,
+                    data: doc.data()
+                }
+                colabSpaces.push(result);
             });
             // Return the array of colab-spaces
             res.json(colabSpaces);
