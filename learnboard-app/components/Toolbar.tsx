@@ -45,7 +45,6 @@ export default function Toolbar() {
             Borrador <span className="text-gray-400">(Y)</span>
           </div>
         </div>
-        {/* <Eraser width={0} height={0}/> */}
       </button>
 
 

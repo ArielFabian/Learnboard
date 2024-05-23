@@ -85,7 +85,7 @@ const ShapePanel: React.FC<ShapePanelProps> = (props) => {
     return (
         <div className={className ? `shapepanel ${className}` : "shapepanel"}>
             <div className="shape-container">
-                <div className="shape-content">
+                {/* <div className="shape-content">
                     <ShapeTypeContext.Consumer>
                         {
                             ({type, setType}) => shapes.map((shape) => (
@@ -99,8 +99,8 @@ const ShapePanel: React.FC<ShapePanelProps> = (props) => {
                             ))
                         }
                     </ShapeTypeContext.Consumer>
-                </div>
-                <div className="shape-style">
+                </div> */}
+                {/* <div className="shape-style">
                     <FormControl variant="outlined" disabled={toolTypeContex.type === ToolType.SHAPE ? false : true}>
                         <InputLabel>Contorno</InputLabel>
                         <Select
@@ -112,7 +112,7 @@ const ShapePanel: React.FC<ShapePanelProps> = (props) => {
                             <MenuItem value={ShapeOutlineType.DOTTED}>Guion</MenuItem>
                         </Select>
                     </FormControl>
-                </div>
+                </div> */}
             </div>
             <div className="title">Formas</div>
         </div>

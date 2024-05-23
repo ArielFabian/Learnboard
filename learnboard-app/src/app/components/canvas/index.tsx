@@ -88,8 +88,8 @@ const Canvas: FC<CanvasProps> = (props) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         if (canvas) {
-            canvas.height = canvas.clientHeight;
-            canvas.width = canvas.clientWidth;
+            canvas.height = 1000;
+            canvas.width = 1000;
 
             Tool.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 

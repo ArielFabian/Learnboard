@@ -113,7 +113,7 @@ const ColorPanel: React.FC<ColorPanelProps> = (props) => {
     return (
         <div className={className ? `colorpanel ${className}` : "colorpanel"}>
             <div className="content">
-                <div className="color-result">
+                {/* <div className="color-result">
                     <div onClick={() => colorContext.setActiveColor(ColorType.MAIN)} className={activeColorType === ColorType.MAIN ? `main-color ${activeColorTypeCls}` : "main-color"}>
                         <div className="color-box1" style={{backgroundColor: colorContext.mainColor}} />
                         <div>Color 1</div>
@@ -129,13 +129,14 @@ const ColorPanel: React.FC<ColorPanelProps> = (props) => {
                             <div onClick={() => colorContext.setColor(color.value)} key={color.value} className="color-template-item" style={{backgroundColor: color.value}} />
                         ))
                     }
-                </div>
+                </div> */}
                 <div className="color-picker">
                     <ColorPicker value={pickerColor} hideTextfield onChange={(color) => setPickerColor(color)} />
-                    <div className="color-picker-title">Editar Color</div>
+                    <div className="color-picker-title"></div>
                 </div>
             </div>
-            <div className="title">Colores</div>
+{/*             
+            <div className="title">Color</div> */}
         </div>
     );
 };

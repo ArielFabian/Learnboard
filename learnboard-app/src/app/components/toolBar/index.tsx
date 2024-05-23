@@ -12,14 +12,14 @@ const Toolbar = (): JSX.Element => {
         <div className="toolbar">
             <ToolPanel className="toolbar-item" />
             <Divider className="divider" orientation="vertical" flexItem />
-            <ShapePanel className="toolbar-item" />
+            {/* <ShapePanel className="toolbar-item" />
             <Divider className="divider" orientation="vertical" flexItem />
             <ThickSelector className="toolbar-item" />
             <Divider className="divider" orientation="vertical" flexItem />
             <ColorPanel className="toolbar-item" />
             <Divider className="divider" orientation="vertical" flexItem />
             <OtherOperator />
-            <Divider className="divider" orientation="vertical" flexItem />
+            <Divider className="divider" orientation="vertical" flexItem /> */}
         </div>
     );
 };
