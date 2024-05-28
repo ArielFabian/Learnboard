@@ -17,8 +17,8 @@ html, body, #root {
 }
 
 .canvas {
-  height: calc(100% - 190px);
-  margin: 10px;
+  height: auto;
+  width: auto;
   box-shadow: 2px 2px 10px rgb(236, 235, 235), -2px -2px 10px rgb(236, 235, 235),
       -2px 2px 10px rgb(236, 235, 235), 2px -2px 10px rgb(236, 235, 235);
 }
@@ -256,7 +256,7 @@ html, body, #root {
   }
 }
 .toolbar {
-  height: 150px;
+  height: auto;
   background-color: #f5f6f7;
   padding: 10px;
   display: flex;

@@ -88,12 +88,13 @@ const Canvas: FC<CanvasProps> = (props) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         if (canvas) {
-            canvas.height = 1000;
-            canvas.width = 1000;
+            canvas.height = canvas.clientHeight;
+            canvas.width = canvas.clientWidth;
+
+            canvas.style.height = '100vh';  // 100% of the viewport height
+canvas.style.width = '100vw';  // 100% of the viewport width
 
             Tool.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-
-            // 初始化，将画布绘制成白色底，否则提取颜色会变成黑色
             const ctx = canvas.getContext("2d");
             if (ctx) {
                 ctx.fillStyle = "white";
@@ -101,8 +102,6 @@ const Canvas: FC<CanvasProps> = (props) => {
 
                 snapshot.add(ctx.getImageData(0, 0, canvas.width, canvas.height));
             }
-
-            // 注册清空画布事件
             const dispatcher = dispatcherContext.dispatcher;
             const callback = () => {
                 const ctx = canvas.getContext("2d");
@@ -113,7 +112,6 @@ const Canvas: FC<CanvasProps> = (props) => {
             };
             dispatcher.on(CLEAR_EVENT, callback);
 
-            // 注册画布前进事件
             const forward = () => {
                 const ctx = canvas.getContext("2d");
                 if (ctx) {
@@ -126,7 +124,6 @@ const Canvas: FC<CanvasProps> = (props) => {
             };
             dispatcher.on(REDO_EVENT, forward);
 
-            // 注册画布后退事件
             const back = () => {
                 const ctx = canvas.getContext("2d");
                 if (ctx) {
@@ -171,7 +168,6 @@ const Canvas: FC<CanvasProps> = (props) => {
         if (tool) {
             tool.onMouseUp(event);
 
-            // 存储canvas剪影
             snapshot.add(Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height));
         }
     };
@@ -193,7 +189,6 @@ const Canvas: FC<CanvasProps> = (props) => {
             tool.onTouchEnd(event);
         }
 
-        // 存储canvas剪影
         snapshot.add(Tool.ctx.getImageData(0, 0, Tool.ctx.canvas.width, Tool.ctx.canvas.height));
     };
 

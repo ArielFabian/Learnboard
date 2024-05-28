@@ -38,18 +38,18 @@ function App(): JSX.Element {
                                 setColor,
                                 setActiveColor: setActiveColorType
                             }}>
-                                <div className="app">
-                                    <Toolbar />
-                                    <Canvas
-                                        toolType={toolType}
-                                        shapeType={shapeType}
-                                        shapeOutlineType={shapeOutlineType}
-                                        mainColor={mainColor}
-                                        subColor={subColor}
-                                        lineWidthType={lineWidthType}
-                                        setColor={setColor}
-                                    />
-                                </div>
+                                <div className="app" style={{ display: 'flex' }}>
+    <Toolbar />
+    <Canvas
+        toolType={toolType}
+        shapeType={shapeType}
+        shapeOutlineType={shapeOutlineType}
+        mainColor={mainColor}
+        subColor={subColor}
+        lineWidthType={lineWidthType}
+        setColor={setColor}
+    />
+</div>
                             </ColorContext.Provider>
                         </DispatcherContext.Provider>
                     </LineWidthContext.Provider>

@@ -2,12 +2,10 @@ import Tool, {getMousePos, getTouchPos, Point} from "./tool";
 import Color from "color";
 
 /**
- * 高效率的填充算法
- * 参考地址: http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
+http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
  */
 const efficentFloodFill = (ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: [number, number, number]) => {
-    // 保证 startX 和 startY 是正整数
-    // 经测试，在触屏设备中 startX 和 startY 可能是小数，造成填充功能无法正确填充
+    
     startX = Math.round(startX);
     startY = Math.round(startY);
     const pixelStack: [number, number][] = [[Math.round(startX), Math.round(startY)]];
