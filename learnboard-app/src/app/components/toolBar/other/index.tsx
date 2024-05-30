@@ -33,7 +33,7 @@ const OtherOperator = () => {
                     <RedoIcon onClick={redo} />
                 </span>
             </div>
-            <span className="title">Otros</span>
+            <span className="title"></span>
         </div>
     );
 };

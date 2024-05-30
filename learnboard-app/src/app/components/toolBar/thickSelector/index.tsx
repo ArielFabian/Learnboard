@@ -77,7 +77,7 @@ const ThickSelector: React.FC<ThickSelectorProps> = (props) => {
                     ))
                 }
             </Popover>
-            <div className="title">Tamaño</div>
+            <div className="title"></div>
         </div>
     );
 };
