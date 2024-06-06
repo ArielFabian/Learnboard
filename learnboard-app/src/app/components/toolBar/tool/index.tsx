@@ -4,13 +4,14 @@ import FormatColorFillTwoTone from "@material-ui/icons/FormatColorFillTwoTone";
 import ColorizeTwoToneIcon from "@material-ui/icons/ColorizeTwoTone";
 // import SearchTwoToneIcon from "@material-ui/icons/SearchTwoTone";
 // import TextFieldsIcon from "@material-ui/icons/TextFields";
-import {ToolType} from "../../../util/toolType";
+import {ShapeToolType, ToolType} from "../../../util/toolType";
 import {ToolTypeContext} from "../../../context";
 import Canvas from "../../canvas";
 import ColorPanel from "../colorPanel";
 import { Popover } from "@material-ui/core";
 import ThickSelector from "../thickSelector";
 import OtherOperator from "../other";
+import ShapePanel from "../shape";
 
 // import "./index.less";
 
@@ -70,6 +71,7 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
     <span title="Otros">
     <OtherOperator />
     </span> 
+
 
       {/* <button className="group relative rounded-xl bg-gray-100 p-2 text-blue-600 hover:bg-gray-50">
       <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
@@ -144,6 +146,9 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
        
       </nav>
 
+      <span title="Otros">
+    <ShapePanel />
+    </span> 
 
       <div className="flex flex-col items-center gap-y-4 py-10">
         <button className="group relative rounded-xl p-2 text-gray-400 hover:bg-gray-100">
