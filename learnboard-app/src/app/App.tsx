@@ -6,6 +6,7 @@ import {ToolTypeContext, ShapeTypeContext, ShapeOutlineContext, LineWidthContext
 import {useState} from "react";
 import {ColorType, LineWidthType, ShapeOutlineType, ShapeToolType, ToolType} from "./util/toolType";
 import Dispatcher from "./util/dispatcher";
+import Compiler from "./components/compiler/compiler";
 
 function App(): JSX.Element {
     const [toolType, setToolType] = useState<ToolType>(ToolType.PEN);
@@ -39,8 +40,9 @@ function App(): JSX.Element {
                                 setActiveColor: setActiveColorType
                             }}>
                                 <div className="app" style={{ display: 'flex' }}>
-    <Toolbar />
-    <Canvas
+                                <Compiler/>
+    {/* <Toolbar /> */}
+    {/* <Canvas
         toolType={toolType}
         shapeType={shapeType}
         shapeOutlineType={shapeOutlineType}
@@ -48,7 +50,8 @@ function App(): JSX.Element {
         subColor={subColor}
         lineWidthType={lineWidthType}
         setColor={setColor}
-    />
+    /> */}
+  
 </div>
                             </ColorContext.Provider>
                         </DispatcherContext.Provider>

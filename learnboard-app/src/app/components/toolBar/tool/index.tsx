@@ -12,6 +12,7 @@ import { Popover } from "@material-ui/core";
 import ThickSelector from "../thickSelector";
 import OtherOperator from "../other";
 import ShapePanel from "../shape";
+import Compiler from "../../compiler/compiler";
 
 // import "./index.less";
 
@@ -64,6 +65,7 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
     <ColorPanel className="toolbar-item" />
     </span>
 
+
     <span title="ThickSelector">
     <ThickSelector className="toolbar-item" />
     </span> 
@@ -71,6 +73,7 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
     <span title="Otros">
     <OtherOperator />
     </span> 
+ 
 
 
       {/* <button className="group relative rounded-xl bg-gray-100 p-2 text-blue-600 hover:bg-gray-50">
@@ -158,7 +161,7 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
               <div className="absolute inset-0 -left-1 flex items-center">
                 <div className="h-2 w-2 rotate-45 bg-white"></div>
               </div>
-              Compilador <span className="text-gray-400">(Y)</span>
+          
             </div>
           </div>
         </button>
@@ -182,6 +185,10 @@ const ToolPanel: React.FC<ToolPanelProps> = (props) => {
 
     </aside>
 
+          {/* Compilador madreado xddxdxdxd*/ }
+    {/* <span title="Otros">
+    <Compiler />
+    </span> */}
 
     <div className="Ca">
           {/* <Canvas/> */}
