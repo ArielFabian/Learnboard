@@ -3,7 +3,11 @@ import CodeEditor from './components/CodeEditor';
 import LanguageSelector from './components/LanguageSelector';
 import OutputDisplay from './components/OutputDisplay';
 
-const compiler: React.FC = () => {
+interface CompilerProps {
+    setIsCompilerActive: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Compiler: React.FC<CompilerProps> = ({ setIsCompilerActive }) => {
   const [languages, setLanguages] = useState<{ id: number; name: string }[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<number | null>(null);
   const [code, setCode] = useState<string>('');
@@ -37,8 +41,8 @@ const compiler: React.FC = () => {
     const submissionOptions = {
       method: 'POST',
       headers: {
-        'x-rapidapi-key': '',
-        'x-rapidapi-host': '',
+        'x-rapidapi-key': '3991985dd2msh94e632ba672b516p14fc8cjsn6b7eb410d4d7',
+        'x-rapidapi-host': 'judge0-extra-ce.p.rapidapi.com',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -57,8 +61,8 @@ const compiler: React.FC = () => {
       const resultOptions = {
         method: 'GET',
         headers: {
-          'x-rapidapi-key': '',
-          'x-rapidapi-host': ''
+          'x-rapidapi-key': '3991985dd2msh94e632ba672b516p14fc8cjsn6b7eb410d4d7',
+          'x-rapidapi-host': 'judge0-extra-ce.p.rapidapi.com'
         }
       };
 
@@ -87,8 +91,14 @@ const compiler: React.FC = () => {
         Run
       </button>
       <OutputDisplay output={output} />
+      <button
+        onClick={() => setIsCompilerActive(false)}
+        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4"
+      >
+        Go Back
+      </button>
     </div>
   );
 };
 
-export default compiler;
+export default Compiler;

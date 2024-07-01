@@ -7,10 +7,14 @@ import ThickSelector from "./thickSelector";
 import ColorPanel from "./colorPanel";
 import OtherOperator from "./other";
 
-const Toolbar = (): JSX.Element => {
+interface ToolbarProps {
+    setIsCompilerActive: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Toolbar: React.FC<ToolbarProps> = ({ setIsCompilerActive }): JSX.Element => {
     return (
         <div className="toolbar">
-            <ToolPanel className="toolbar-item" />
+            <ToolPanel className="toolbar-item" setIsCompilerActive={setIsCompilerActive}/>
             <Divider className="divider" orientation="vertical" flexItem />
             {/* <ShapePanel className="toolbar-item" />
             <Divider className="divider" orientation="vertical" flexItem />

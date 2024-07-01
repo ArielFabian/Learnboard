@@ -17,6 +17,7 @@ function App(): JSX.Element {
     const [mainColor, setMainColor] = useState<string>("black");
     const [subColor, setSubColor] = useState<string>("white");
     const [dispatcher] = useState(new Dispatcher());
+    const [isCompilerActive, setIsCompilerActive] = useState<boolean>(false);
 
     const setColor = (value: string) => {
         if (activeColorType === ColorType.MAIN) {
@@ -40,18 +41,21 @@ function App(): JSX.Element {
                                 setActiveColor: setActiveColorType
                             }}>
                                 <div className="app" style={{ display: 'flex' }}>
-                                <Compiler/>
-    {/* <Toolbar /> */}
-    {/* <Canvas
-        toolType={toolType}
-        shapeType={shapeType}
-        shapeOutlineType={shapeOutlineType}
-        mainColor={mainColor}
-        subColor={subColor}
-        lineWidthType={lineWidthType}
-        setColor={setColor}
-    /> */}
-  
+                                {!isCompilerActive && (
+                                        <>
+                                            <Toolbar setIsCompilerActive={setIsCompilerActive} />
+                                            <Canvas
+                                                toolType={toolType}
+                                                shapeType={shapeType}
+                                                shapeOutlineType={shapeOutlineType}
+                                                mainColor={mainColor}
+                                                subColor={subColor}
+                                                lineWidthType={lineWidthType}
+                                                setColor={setColor}
+                                            />
+                                        </>
+                                    )}
+                                    {isCompilerActive && <Compiler setIsCompilerActive={setIsCompilerActive} />}
 </div>
                             </ColorContext.Provider>
                         </DispatcherContext.Provider>
