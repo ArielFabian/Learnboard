@@ -1,12 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import Toolbar from "./components/toolBar";
 import Canvas from "./components/canvas";
-import {ToolTypeContext, ShapeTypeContext, ShapeOutlineContext, LineWidthContext, ColorContext, DispatcherContext} from "./context";
-// import "./app.less";
-import {useState} from "react";
-import {ColorType, LineWidthType, ShapeOutlineType, ShapeToolType, ToolType} from "./util/toolType";
-import Dispatcher from "./util/dispatcher";
 import Compiler from "./components/compiler/compiler";
+import {
+    ToolTypeContext,
+    ShapeTypeContext,
+    ShapeOutlineContext,
+    LineWidthContext,
+    ColorContext,
+    DispatcherContext
+} from "./context";
+import {
+    ColorType,
+    LineWidthType,
+    ShapeOutlineType,
+    ShapeToolType,
+    ToolType
+} from "./util/toolType";
+import Dispatcher from "./util/dispatcher";
 
 function App(): JSX.Element {
     const [toolType, setToolType] = useState<ToolType>(ToolType.PEN);
@@ -28,11 +39,17 @@ function App(): JSX.Element {
     };
 
     return (
-        <ToolTypeContext.Provider value={{type: toolType, setType: setToolType}}>
-            <ShapeTypeContext.Provider value={{type: shapeType, setType: (type: ShapeToolType) => {setToolType(ToolType.SHAPE); setShapeType(type);}}}>
-                <ShapeOutlineContext.Provider value={{type: shapeOutlineType, setType: setShapeOutlineType}}>
-                    <LineWidthContext.Provider value={{type: lineWidthType, setType: setLineWidthType}}>
-                        <DispatcherContext.Provider value={{dispatcher}}>
+        <ToolTypeContext.Provider value={{ type: toolType, setType: setToolType }}>
+            <ShapeTypeContext.Provider value={{
+                type: shapeType,
+                setType: (type: ShapeToolType) => {
+                    setToolType(ToolType.SHAPE);
+                    setShapeType(type);
+                }
+            }}>
+                <ShapeOutlineContext.Provider value={{ type: shapeOutlineType, setType: setShapeOutlineType }}>
+                    <LineWidthContext.Provider value={{ type: lineWidthType, setType: setLineWidthType }}>
+                        <DispatcherContext.Provider value={{ dispatcher }}>
                             <ColorContext.Provider value={{
                                 mainColor,
                                 subColor,
@@ -41,22 +58,22 @@ function App(): JSX.Element {
                                 setActiveColor: setActiveColorType
                             }}>
                                 <div className="app" style={{ display: 'flex' }}>
-                                {!isCompilerActive && (
-                                        <>
-                                            <Toolbar setIsCompilerActive={setIsCompilerActive} />
-                                            <Canvas
-                                                toolType={toolType}
-                                                shapeType={shapeType}
-                                                shapeOutlineType={shapeOutlineType}
-                                                mainColor={mainColor}
-                                                subColor={subColor}
-                                                lineWidthType={lineWidthType}
-                                                setColor={setColor}
-                                            />
-                                        </>
-                                    )}
-                                    {isCompilerActive && <Compiler setIsCompilerActive={setIsCompilerActive} />}
-</div>
+                                    <div style={{ display: isCompilerActive ? 'none' : 'flex' }}>
+                                        <Toolbar setIsCompilerActive={setIsCompilerActive} />
+                                        <Canvas
+                                            toolType={toolType}
+                                            shapeType={shapeType}
+                                            shapeOutlineType={shapeOutlineType}
+                                            mainColor={mainColor}
+                                            subColor={subColor}
+                                            lineWidthType={lineWidthType}
+                                            setColor={setColor}
+                                        />
+                                    </div>
+                                    <div style={{ display: isCompilerActive ? 'flex' : 'none' }}>
+                                        <Compiler setIsCompilerActive={setIsCompilerActive} />
+                                    </div>
+                                </div>
                             </ColorContext.Provider>
                         </DispatcherContext.Provider>
                     </LineWidthContext.Provider>
