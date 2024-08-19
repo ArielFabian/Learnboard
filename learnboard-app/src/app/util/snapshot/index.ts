@@ -1,6 +1,4 @@
-/**
- * 使用两个栈实现canvas前进后退动作
- */
+
 class Snapshot {
     private imageData1: ImageData[] = [];
     private imageData2: ImageData[] = [];

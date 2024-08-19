@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-/**
- * 自定义事件系统
- */
 type CalllbackType = (...args: any[]) => any;
 class DispatcherEvent {
     public eventName: string;

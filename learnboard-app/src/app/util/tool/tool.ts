@@ -75,17 +75,11 @@ export const updateImageData = (origin: ImageData, data: ImageData, fillData: [n
 }
 
 export default class Tool {
-    /**
-     * 线宽
-     */
+
     public static lineWidthFactor = 1;
-    /**
-     * 主色
-     */
+
     public static mainColor = "black";
-    /**
-     * 副色
-     */
+ 
     public static subColor = "white";
 
     public static ctx: CanvasRenderingContext2D;

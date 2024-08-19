@@ -2,7 +2,7 @@ import {ShapeToolType} from "../toolType";
 import Tool, {Point, getMousePos, getTouchPos, hexToRgb, updateImageData} from "./tool";
 
 /**
- * 根据形状类型，获取要绘制的形状的顶点(圆形，返回圆心)
+ * 
  * @param type shape type
  * @param sx x coord of start
  * @param sy y coord of start

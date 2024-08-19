@@ -3,9 +3,7 @@ import Tool, {getPixelColorOnCanvas, getMousePos, getTouchPos} from "./tool";
 class ColorExtract extends Tool {
     private setColor: (color: string) => void;
 
-    /**
-     * @param setColor 设置提取后的颜色
-     */
+
     public constructor(setColor: (color: string) => void) {
         super();
         this.setColor = setColor;
