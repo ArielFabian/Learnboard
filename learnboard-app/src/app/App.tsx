@@ -18,6 +18,10 @@ import {
     ToolType
 } from "./util/toolType";
 import Dispatcher from "./util/dispatcher";
+import Header from './components/dashboard/Header';
+import MainContent from './components/dashboard/MainContent';
+import Feature from './components/dashboard/Feature';
+import './components/dashboard/App.css';
 
 function App(): JSX.Element {
     const [toolType, setToolType] = useState<ToolType>(ToolType.PEN);
@@ -57,21 +61,28 @@ function App(): JSX.Element {
                                 setColor,
                                 setActiveColor: setActiveColorType
                             }}>
-                                <div className="app" style={{ display: 'flex' }}>
-                                    <div style={{ display: isCompilerActive ? 'none' : 'flex' }}>
-                                        <Toolbar setIsCompilerActive={setIsCompilerActive} />
-                                        <Canvas
-                                            toolType={toolType}
-                                            shapeType={shapeType}
-                                            shapeOutlineType={shapeOutlineType}
-                                            mainColor={mainColor}
-                                            subColor={subColor}
-                                            lineWidthType={lineWidthType}
-                                            setColor={setColor}
-                                        />
-                                    </div>
-                                    <div style={{ display: isCompilerActive ? 'flex' : 'none' }}>
-                                        <Compiler setIsCompilerActive={setIsCompilerActive} />
+                                <div className="app">
+                                    <Header />
+                                    <MainContent />
+                                    <section className="features">
+
+                                    </section>
+                                    <div className="drawing-app" style={{ display: 'flex' }}>
+                                        <div style={{ display: isCompilerActive ? 'none' : 'flex' }}>
+                                            <Toolbar setIsCompilerActive={setIsCompilerActive} />
+                                            <Canvas
+                                                toolType={toolType}
+                                                shapeType={shapeType}
+                                                shapeOutlineType={shapeOutlineType}
+                                                mainColor={mainColor}
+                                                subColor={subColor}
+                                                lineWidthType={lineWidthType}
+                                                setColor={setColor}
+                                            />
+                                        </div>
+                                        <div style={{ display: isCompilerActive ? 'flex' : 'none' }}>
+                                            <Compiler setIsCompilerActive={setIsCompilerActive} />
+                                        </div>
                                     </div>
                                 </div>
                             </ColorContext.Provider>

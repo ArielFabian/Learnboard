@@ -1,0 +1,64 @@
+/* Header.css */
+header {
+  background-color: #000000; /* Fondo negro */
+  color: #ffffff; /* Texto blanco */
+}
+
+nav a {
+  color: #ffffff; /* Texto blanco en los enlaces */
+  background-color: #3b3b3b; /* Fondo negro en los enlaces */
+  padding: 10px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Animaciones */
+}
+
+nav a:hover {
+  background-color: #333333; /* Fondo gris oscuro al pasar el cursor */
+  transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
+}
+
+#accountButton {
+  background-color: #3b3b3b; /* Fondo negro en el botón Cuenta */
+  color: #ffffff; /* Texto blanco */
+  border-radius: 5px;
+  padding: 10px 15px;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Animaciones */
+}
+
+#accountButton:hover {
+  background-color: #333333; /* Fondo gris oscuro al pasar el cursor */
+  transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
+}
+
+#accountMenu {
+  background-color: #ffffff; /* Fondo blanco del menú desplegable */
+  color: #ffffff; /* Texto negro */
+  border: 1px solid #000000; /* Borde negro */
+  border-radius: 5px;
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Animación de aparición */
+  opacity: 0;
+  transform: translateY(-10px); /* Animación de desplazamiento inicial */
+  animation: fadeIn 0.3s forwards; /* Aplicar la animación al mostrar el menú */
+}
+
+#accountMenu a {
+  color: #838383; /* Texto negro en los enlaces del menú */
+  padding: 10px 15px;
+  transition: background-color 0.3s ease; /* Animación de color de fondo */
+}
+
+#accountMenu a:hover {
+  background-color: #ffffe8; /* Fondo beige al pasar el cursor */
+}
+
+/* Animación de aparición del menú desplegable */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px); /* Empieza ligeramente desplazado hacia arriba */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* Termina en su posición original */
+  }
+}

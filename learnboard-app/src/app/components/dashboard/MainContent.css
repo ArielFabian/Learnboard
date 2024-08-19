@@ -1,0 +1,66 @@
+/* main-content.css */
+body {
+  background-color: #f5f5dc; /* Fondo beige */
+  color: #000000; /* Texto negro */
+}
+
+.main-content {
+  font-family: 'Arial', sans-serif;
+}
+
+.cookie-banner,
+.hero {
+  background-color: #ffffff; /* Fondo blanco */
+  color: #000000; /* Texto negro */
+  border: 1px solid #000000; /* Borde negro */
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+h2, h1 {
+  color: #000000; /* Títulos en negro */
+}
+
+p {
+  color: #000000; /* Párrafos en negro */
+}
+
+.btn-primary,
+.btn-success {
+  background-color: #000000; /* Fondo negro */
+  color: #ffffff; /* Texto blanco */
+  border-color: #000000; /* Borde negro */
+  transition: transform 0.3s ease, background-color 0.3s ease; /* Animaciones */
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+  background-color: #333333; /* Oscurecer fondo al pasar el cursor */
+  transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
+}
+
+.btn-outline-secondary {
+  border-color: #000000; /* Borde negro */
+  color: #000000; /* Texto negro */
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Animaciones */
+}
+
+.btn-outline-secondary:hover {
+  background-color: #000000; /* Fondo negro al pasar el cursor */
+  color: #ffffff; /* Texto blanco al pasar el cursor */
+  transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
+}
+
+.img-fluid {
+  max-width: 50px; /* Tamaño de las imágenes */
+}
+
+.supported-platforms {
+  margin-top: 20px;
+}
+
+h2 {
+  margin-top: 20px;
+  font-size: 1.5rem;
+}

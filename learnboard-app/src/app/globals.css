@@ -277,3 +277,80 @@ html, body, #root {
       margin: 0 5px;
   }
 }
+
+/*Dashboard*/
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .logo {
+    width: 50px;
+  }
+  
+  nav ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+  }
+  
+  nav ul li {
+    cursor: pointer;
+  }
+
+  .main-content {
+    text-align: center;
+  }
+  
+  .cookie-banner {
+    background-color: #f0f0f0;
+    padding: 20px;
+  }
+  
+  .info-button {
+    background-color: blue;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .hero {
+    padding: 50px 0;
+  }
+  
+  .cta-button {
+    background-color: red;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .supported-browsers img {
+    margin: 10px;
+    width: 30px;
+  }
+
+  .feature {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .feature-icon {
+    width: 50px;
+    margin-bottom: 10px;
+  }
+
+  .App {
+    font-family: Arial, sans-serif;
+  }
+  
+  .features {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
