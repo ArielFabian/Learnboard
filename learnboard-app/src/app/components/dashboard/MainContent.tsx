@@ -1,32 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './MainContent.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Typewriter from 'typewriter-effect';
 
 const MainContent: React.FC = () => {
-  const [displayedText, setDisplayedText] = useState('');
-  const fullText = 'Apprende de forma colaborativa'; // Texto a mostrar
-  const animationSpeed = 250; // Velocidad de escritura en milisegundos
-  const pauseBeforeRestart = 100; // Pausa antes de reiniciar la animación en milisegundos
-
-  useEffect(() => {
-    let currentIndex = 0;
-
-    const intervalId = setInterval(() => {
-      setDisplayedText((prev) => prev + fullText[currentIndex]);
-      currentIndex++;
-
-      if (currentIndex === fullText.length) {
-        clearInterval(intervalId);
-        setTimeout(() => {
-          setDisplayedText('');
-          currentIndex = 0;
-        }, pauseBeforeRestart);
-      }
-    }, animationSpeed);
-
-    return () => clearInterval(intervalId); // Limpiar el intervalo al desmontar
-  }, [fullText]);
-
   return (
     <main className="container mt-5">
       <section className="bg-light p-5 rounded mb-4 text-center">
@@ -35,21 +12,33 @@ const MainContent: React.FC = () => {
         <button className="btn btn-primary">Más Información</button>
       </section>
       <section className="text-center">
-        <h1 className="display-4">{displayedText}</h1>
-        <p>Usa LearnBoard para shalalalalalalalala</p>
+        <Typewriter
+          options={{
+            strings: [
+              "TODAS LAS PIEZAS SE ESTAN UNIENDO",
+              "POR QUE TU ERES PEÑA NIETO",
+              "¿Donde esta la gotera señora?",
+              "Boka chan ga oshiete kureta ironna mita meni narera puninan ndatte dore dore"
+            ],
+            autoStart: true,
+            loop: true,
+            delay: 50,
+            deleteSpeed: 30,
+          }}
+        />
         <button className="btn btn-success btn-lg">Consigue LearnBoard ahora</button>
         <div className="d-flex justify-content-center mt-4">
-          <button className="btn btn-outline-secondary mx-2">
+          <button className="btn btn-outline-secondary mx-2" onClick={() => window.open ('https://meet.google.com/landing')}>
             <img src="./assets/meet.webp" alt="Meet" className="img-fluid" />
           </button>
-          <button className="btn btn-outline-secondary mx-2">
+          <button className="btn btn-outline-secondary mx-2" onClick={() => window.open('https://zoom.us/es/join?')}>
             <img src="./assets/zoom.png" alt="Zoom" className="img-fluid" />
           </button>
-          <button className="btn btn-outline-secondary mx-2">
+          <button className="btn btn-outline-secondary mx-2" onClick={() => window.open('https://www.microsoft.com/es-mx/microsoft-teams/join-a-meeting')}>
             <img src="./assets/teams.png" alt="Teams" className="img-fluid" />
           </button>
-        </div>
-        <h2 className="mt-4">Ingresa a la plataforma de tu elección para vincular tu cuenta e iniciar la llamada</h2>
+        </div>  
+        <h2 className="mt-4">Da click para unirte a una llamada en la plataforma de tu eleccion y probar nuestra herramienta :D</h2>
       </section>
     </main>
   );

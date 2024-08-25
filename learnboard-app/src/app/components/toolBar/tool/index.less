@@ -1,28 +1,45 @@
 .toolpanel {
     width: 80px;
-    display: inline-block;
-    flex-direction: column;
+    display: flex; /* Cambiado a flex para mejor control de los elementos */
+    flex-direction: column; /* Alinear los elementos en columna */
+    align-items: center; /* Alinear los elementos al centro horizontalmente */
     position: relative;
+    gap: 10px; /* Espaciado entre los elementos para mayor separación */
+
     .tool-item {
         cursor: pointer;
         border: 1px solid transparent;
+        width: 60px; /* Ajusta el ancho de los ítems para una mejor alineación */
+        height: 60px; /* Ajusta la altura de los ítems */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border 0.3s ease; /* Transición suave para el borde */
 
         &:hover {
             border: 1px solid #64a5e7;
         }
     }
+
     .selected-tool {
         background-color: #bcdbfa;
+        border-radius: 5px; /* Bordes redondeados para el ítem seleccionado */
     }
-    .top,.down {
+
+    .top, .down {
         display: flex;
-        justify-content: space-between;
-        margin-bottom: 5px;
+        flex-direction: column; /* Alinear los elementos verticalmente */
+        justify-content: center; /* Asegurar que el contenido esté centrado */
+        align-items: center; /* Centrar los elementos horizontalmente */
+        gap: 10px; /* Espaciado entre ítems para mayor claridad */
     }
+
     .title {
         width: 100%;
         text-align: center;
         position: absolute;
         bottom: 0px;
+        padding: 5px 0; /* Añadir un poco de espacio interno al título */
+        font-size: 0.9rem; /* Tamaño de fuente ligeramente reducido */
     }
 }
