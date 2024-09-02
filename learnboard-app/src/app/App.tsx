@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import Toolbar from "./components/toolBar";
-import Canvas from "./components/canvas";
-import Compiler from "./components/compiler/compiler";
 import {
     ToolTypeContext,
     ShapeTypeContext,
@@ -18,11 +15,9 @@ import {
     ToolType
 } from "./util/toolType";
 import Dispatcher from "./util/dispatcher";
-import Header from './components/dashboard/Header';
-import MainContent from './components/dashboard/MainContent';
-import Feature from './components/dashboard/Feature';
+import Dashboard from "./Dashboard";
 import './components/dashboard/App.css';
-import Landing from "./components/compiler/components/Landing";
+import WhiteBoard from "./Whiteboard";
 
 function App(): JSX.Element {
     const [toolType, setToolType] = useState<ToolType>(ToolType.PEN);
@@ -63,31 +58,13 @@ function App(): JSX.Element {
                                 setActiveColor: setActiveColorType
                             }}>
                                 <div className="app">
-                                    <Header />
-                                    <MainContent />
-                                    <section className="features">
-                                        <Feature title="Explicacion mas dinamicas" description="¡Vuelve tus clases mas dinamicas!" icons="./assets/explicar.png" />
-                                        <Feature title="Herramientas Intuitivas" description="Con el uso de herramientas intuitivas las clases en linea seran mas facil de explicar" icons="./assets/herramientas.png" />
-                                        <Feature title="Conexion con otras plataformas" description="Utiliza nuestra herramienta en la plataforma de tu eleccion de las que tenemos disponibles" icons="./assets/conexion.png" />
-                                        <Feature title="Metodos de entrada" description="Podras utilizar tu computadora o celular en nuestra herramienta" icons="/assets/met_ent.webp" />
-                                    </section>
-                                    <div className="drawing-app" style={{ display: 'flex' }}>
-                                        <div style={{ display: isCompilerActive ? 'none' : 'flex' }}>
-                                            <Toolbar setIsCompilerActive={setIsCompilerActive} />
-                                            <Canvas
-                                                toolType={toolType}
-                                                shapeType={shapeType}
-                                                shapeOutlineType={shapeOutlineType}
-                                                mainColor={mainColor}
-                                                subColor={subColor}
-                                                lineWidthType={lineWidthType}
-                                                setColor={setColor}
-                                            />
-                                        </div>
-                                        <div style={{ display: isCompilerActive ? 'flex' : 'none' }}>
-                                            <Landing setIsCompilerActive={setIsCompilerActive} />
-                                        </div>
-                                    </div>
+                                    {/* Renderizar el componente Dashboard */}
+                                    <Dashboard />
+                                    {/* Renderizar el componente WhiteBoard */}
+                                    <WhiteBoard 
+                                        isCompilerActive={isCompilerActive} 
+                                        setIsCompilerActive={setIsCompilerActive} 
+                                    />
                                 </div>
                             </ColorContext.Provider>
                         </DispatcherContext.Provider>

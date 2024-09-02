@@ -13,7 +13,7 @@ nav a {
 }
 
 nav a:hover {
-  background-color: #333333; /* Fondo gris oscuro al pasar el cursor */
+  background-color: #000000; /* Fondo gris oscuro al pasar el cursor */
   transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
 }
 
@@ -26,7 +26,7 @@ nav a:hover {
 }
 
 #accountButton:hover {
-  background-color: #333333; /* Fondo gris oscuro al pasar el cursor */
+  background-color: #000000; /* Fondo gris oscuro al pasar el cursor */
   transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
 }
 
@@ -42,13 +42,13 @@ nav a:hover {
 }
 
 #accountMenu a {
-  color: #838383; /* Texto negro en los enlaces del menú */
+  color: #ffffff; /* Texto negro en los enlaces del menú */
   padding: 10px 15px;
   transition: background-color 0.3s ease; /* Animación de color de fondo */
 }
 
 #accountMenu a:hover {
-  background-color: #ffffe8; /* Fondo beige al pasar el cursor */
+  background-color: #000000; /* Fondo beige al pasar el cursor */
 }
 
 /* Animación de aparición del menú desplegable */

@@ -1,6 +1,11 @@
 /* MainContent.css */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
+body, .main-content, .section, .btn-primary, .btn-success, .btn-outline-secondary, .Typewriter, h2, p {
+  font-family: 'Montserrat', sans-serif; /* Asegura que todos estos elementos usen la fuente Montserrat */
+}
+
+
 .main-content {
   display: flex;
   flex-wrap: wrap;
@@ -51,12 +56,14 @@
   margin-bottom: 0;
 }
 
-.typewriter-text {
-  font-size: 1.2rem;
+.Typewriter {
+  font-size: 4rem;
   font-weight: 700;
   color: #333333;
   margin-bottom: 20px;
 }
+
+
 
 .btn-primary, 
 .btn-success, 
@@ -71,7 +78,7 @@
 .btn-primary:hover,
 .btn-success:hover,
 .btn-outline-secondary:hover {
-  background-color: #333333 !important; /* Oscurecer fondo al pasar el cursor */
+  background-color: #ff2727 !important; /* Oscurecer fondo al pasar el cursor */
   transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
 }
 
