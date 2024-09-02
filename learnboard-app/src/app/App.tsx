@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Toolbar from "./components/toolBar";
+import Canvas from "./components/canvas";
+import Compiler from "./components/compiler/compiler";
 import {
     ToolTypeContext,
     ShapeTypeContext,
@@ -15,9 +19,9 @@ import {
     ToolType
 } from "./util/toolType";
 import Dispatcher from "./util/dispatcher";
-import Dashboard from "./Dashboard";
+import Dashboard from './Dashboard';
 import './components/dashboard/App.css';
-import WhiteBoard from "./Whiteboard";
+import Landing from "./components/compiler/components/Landing";
 
 function App(): JSX.Element {
     const [toolType, setToolType] = useState<ToolType>(ToolType.PEN);
@@ -57,15 +61,39 @@ function App(): JSX.Element {
                                 setColor,
                                 setActiveColor: setActiveColorType
                             }}>
-                                <div className="app">
-                                    {/* Renderizar el componente Dashboard */}
-                                    <Dashboard />
-                                    {/* Renderizar el componente WhiteBoard */}
-                                    <WhiteBoard 
-                                        isCompilerActive={isCompilerActive} 
-                                        setIsCompilerActive={setIsCompilerActive} 
-                                    />
-                                </div>
+                                <Router>
+                                    <div className="app">
+                                        <Routes>
+                                            {/* Ruta para el componente Dashboard */}
+                                            <Route path="/" element={<Dashboard />} />
+                                            
+                                            {/* Ruta para el componente combinado de Toolbar, Canvas y Landing */}
+                                            <Route path="/whiteboard/" element={
+                                                <div className="drawing-app" style={{ display: 'flex' }}>
+                                                    {/* Combinación de Toolbar, Canvas y Landing */}
+                                                    {isCompilerActive ? (
+                                                        <Landing setIsCompilerActive={setIsCompilerActive} />
+                                                    ) : (
+                                                        <>
+                                                            <Toolbar setIsCompilerActive={setIsCompilerActive} />
+                                                            <Canvas
+                                                                toolType={toolType}
+                                                                shapeType={shapeType}
+                                                                shapeOutlineType={shapeOutlineType}
+                                                                mainColor={mainColor}
+                                                                subColor={subColor}
+                                                                lineWidthType={lineWidthType}
+                                                                setColor={setColor}
+                                                            />
+                                                           
+                                                        </>
+                                                    )
+                                                    }
+                                                </div>
+                                            } />
+                                        </Routes>
+                                    </div>
+                                </Router>
                             </ColorContext.Provider>
                         </DispatcherContext.Provider>
                     </LineWidthContext.Provider>

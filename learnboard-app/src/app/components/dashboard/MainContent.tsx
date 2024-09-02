@@ -2,6 +2,7 @@ import React from 'react';
 import './MainContent.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Typewriter from 'typewriter-effect';
+import { Link } from 'react-router-dom';
 
 const MainContent: React.FC = () => {
   return (
@@ -49,7 +50,9 @@ const MainContent: React.FC = () => {
       placeholder="Ingrese código"
       style={{ maxWidth: '300px', margin: '0 auto' }}/>
   </div>
+  <Link to="/whiteboard">
   <button className="mt-4 btn btn-success btn-lg">Unirte a la llamada</button>
+  </Link>
   <h2 className="mt-4">Da click para unirte a una llamada y probar nuestra herramienta :D</h2>
       </section>
     </main>
