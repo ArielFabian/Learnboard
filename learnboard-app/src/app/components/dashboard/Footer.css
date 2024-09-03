@@ -1,0 +1,34 @@
+.footer {
+    background-color: #000; /* Fondo negro */
+    color: #fff; /* Texto blanco */
+  }
+  
+  .footer-left, .footer-center, .footer-right {
+    flex: 1;
+  }
+  
+  .footer-left p {
+    margin: 0 0 10px 0; /* Espaciado entre los párrafos */
+  }
+  
+  .footer-center {
+    text-align: center;
+  }
+  
+  .footer-right {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .icon-container {
+    border: 2px solid #fff; /* Borde blanco para el cuadro de imagen */
+    border-radius: 5px; /* Bordes ligeramente redondeados */
+  }
+  
+  .icon-container img {
+    width: 50px; /* Ajusta el tamaño de los iconos según sea necesario */
+    height: auto;
+  }
+  .icon-container img:hover {
+    transform: rotate(5deg) scale(1.1); /* Rotar y agrandar ícono al pasar el cursor */
+  }
