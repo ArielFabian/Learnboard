@@ -11,7 +11,7 @@ function processImage(base64Image) {
             if (err) return reject(err);
 
             // Ejecutar el script de Python
-            execFile('python', ['C:\\Users\\ariel\\OneDrive\\Escritorio\\HandWritingRecognition\\PytesseractTest.py', tempFilePath], (error, stdout, stderr) => {
+            execFile('python', ['/home/pn/app/src/app/util/handwriteRecognition.py', tempFilePath], (error, stdout, stderr) => {
                 // Eliminar el archivo temporal
                 fs.unlink(tempFilePath, (unlinkErr) => {
                     if (unlinkErr) console.error('Error deleting temp file:', unlinkErr);
