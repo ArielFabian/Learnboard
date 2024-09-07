@@ -22,6 +22,7 @@ import Dispatcher from "./util/dispatcher";
 import Dashboard from './Dashboard';
 import './components/dashboard/App.css';
 import Landing from "./components/compiler/components/Landing";
+import Login from "./components/login/login";
 
 function App(): JSX.Element {
     const [toolType, setToolType] = useState<ToolType>(ToolType.PEN);
@@ -66,6 +67,8 @@ function App(): JSX.Element {
                                         <Routes>
                                             {/* Ruta para el componente Dashboard */}
                                             <Route path="/" element={<Dashboard />} />
+
+                                            <Route path="/login" element={<Login />} />
                                             
                                             {/* Ruta para el componente combinado de Toolbar, Canvas y Landing */}
                                             <Route path="/whiteboard/" element={

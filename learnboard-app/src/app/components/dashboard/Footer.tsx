@@ -20,13 +20,13 @@ const Footer: React.FC = () => {
         {/* Espacio para las imágenes de iconos a la derecha */}
         <div className="footer-right d-flex">
           <div className="icon-container bg-white p-2 m-2">
-          <img src="./assets/meet.webp" alt="Meet" className="img-fluid" />
+          <img src="./assets/face.webp" alt="Meet" className="img-fluid" />
           </div>
           <div className="icon-container bg-white p-2 m-2">
-          <img src="./assets/zoom.png" alt="Zoom" className="img-fluid" />
+          <img src="./assets/x.webp" alt="Zoom" className="img-fluid" />
           </div>
           <div className="icon-container bg-white p-2 m-2">
-          <img src="./assets/teams.png" alt="Teams" className="img-fluid" />
+          <img src="./assets/tiktok.webp" alt="Teams" className="img-fluid" />
           </div>
         </div>
       </div>

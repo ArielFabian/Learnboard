@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Header.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -19,6 +20,7 @@ const Header: React.FC = () => {
                   <a href="#" className="py-2 px-4 hover:bg-gray-700 rounded">Contact</a>
               </div>
               <div className="relative">
+               
                   <button 
                       id="accountButton" 
                       className="py-2 px-4 hover:bg-gray-700 rounded" 
@@ -31,7 +33,7 @@ const Header: React.FC = () => {
                           id="accountMenu" 
                           className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg"
                       >
-                          <a href="#" className="block px-4 py-2 hover:bg-gray-200">Vincular cuenta Meet</a>
+                          <Link to=  "/login" className="block px-4 py-2 hover:bg-gray-200">Vincular cuenta Meet</Link>
                           <a href="#" className="block px-4 py-2 hover:bg-gray-200">Vincular cuenta Zoom</a>
                           <a href="#" className="block px-4 py-2 hover:bg-gray-200">Vincular cuenta Teams</a>
                           <a href="#" className="block px-4 py-2 hover:bg-gray-200">Cerrar sesión</a>

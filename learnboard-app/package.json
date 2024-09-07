@@ -19,6 +19,7 @@
     "color": "^4.2.3",
     "customize-cra": "^1.0.0",
     "dotenv": "^16.4.5",
+    "firebase": "^10.13.1",
     "install": "^0.13.0",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",

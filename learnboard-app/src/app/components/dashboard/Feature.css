@@ -3,8 +3,8 @@
 .features {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  gap: 20px;
+  justify-content: center;
+  gap: 30px;
   padding: 20px;
   font-family: 'Montserrat', sans-serif; /* Fuente profesional Montserrat */
   background-color: #f8f9fa; /* Fondo claro de Bootstrap */
