@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { auth } from '~/utils/firebaseconfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import styles from './Register.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,9 +24,15 @@ const Register: React.FC = () => {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert('Cuenta creada exitosamente');
-      router.push('/login');
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Enviar correo de verificación
+      await sendEmailVerification(user);
+      alert('Se ha enviado un correo de verificación. Por favor revisa tu bandeja de entrada.');
+
+      // Redirigir a la página de espera de verificación
+      router.push('/verify-email');
     } catch (err) {
       setError('Error al crear la cuenta.');
     }
@@ -34,7 +40,7 @@ const Register: React.FC = () => {
 
   return (
     <>
-    <Header/>
+    <Header/>   
     <div className={styles.authContainer}>
       <Form onSubmit={handleRegister} className={styles.authForm}>
         <h3 className={styles.title}>Crear Cuenta</h3>

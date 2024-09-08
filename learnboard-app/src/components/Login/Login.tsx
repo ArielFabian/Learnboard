@@ -19,6 +19,7 @@ const Login: React.FC = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       alert('Inicial sesión con éxito');
+      router.push('/welcome');
     } catch (err) {
       setError('Fallo al iniciar sesión, verifica tus credenciales');
     }
@@ -29,6 +30,7 @@ const Login: React.FC = () => {
     try {
       await signInWithPopup(auth, provider);
       alert('Estas logueado con Google');
+      router.push('/welcome');
     } catch (err) {
       setError('Fallo al iniciar sesión con Google');
     }

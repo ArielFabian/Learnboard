@@ -1,4 +1,4 @@
-import React, { useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
+  import React, { useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
 import styled from 'styled-components';
 
 import { TRANSPARENT_BACKGROUND_IMAGE } from '~/config/constants';
