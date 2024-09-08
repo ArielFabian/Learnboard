@@ -1,0 +1,41 @@
+.footer {
+  background-color: #000; /* Fondo negro */
+  color: #fff; /* Texto blanco */
+}
+
+.footerLeft, .footerCenter, .footerRight {
+  flex: 1;
+}
+
+.footerLeft p {
+  margin: 0 0 10px 0; /* Espaciado entre párrafos */
+}
+
+.footerCenter {
+  text-align: center;
+}
+
+.footerRight {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.iconContainer {
+  margin: 0 10px; /* Espaciado entre iconos */
+  transition: transform 0.3s ease, color 0.3s ease;
+  color: white; /* Color inicial de los iconos */
+}
+
+.iconContainer:hover {
+  color: #ff6b6b; /* Cambia el color del icono al pasar el ratón */
+}
+
+.icon {
+  width: 30px; /* Tamaño dinámico del icono */
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.iconContainer:hover .icon {
+  transform: rotate(5deg) scale(1.1); /* Rotación y agrandado al pasar el mouse */
+}

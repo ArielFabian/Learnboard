@@ -1,0 +1,40 @@
+.header {
+  background-color: #f0f0f0;
+  padding: 1rem;
+}
+
+.navbar {
+  justify-content: center; /* Asegura que la navbar esté centrada */
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fffcfc;
+  text-decoration: none;
+}
+
+.navLink {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #fcfbfb;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+
+
+.navLink:hover , .logo:hover {
+  color: #58a6fa;
+}
+
+.showMenu {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .navLink {
+    margin: 0.5rem 0;
+  }
+}

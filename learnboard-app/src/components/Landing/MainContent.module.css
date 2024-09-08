@@ -1,0 +1,122 @@
+/* MainContent.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+.main-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 20px;
+  padding: 20px;
+  font-family: 'Montserrat', sans-serif; /* Fuente profesional Montserrat */
+  background-color: #f8f9fa; /* Fondo claro de Bootstrap */
+}
+
+.section {
+  background-color: #ffffff; /* Fondo blanco */
+  color: #000000; /* Texto negro */
+  border: 1px solid #dee2e6; /* Borde claro */
+  border-radius: 8px; /* Bordes redondeados */
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animaciones */
+  max-width: 300px; /* Limitar el ancho de cada sección */
+}
+
+.section:hover {
+  transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
+  box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1); /* Sombra sutil */
+}
+
+.section img {
+  max-width: 80px; /* Tamaño máximo de los íconos */
+  margin-bottom: 15px;
+  transition: transform 0.3s ease; /* Animación de ícono */
+}
+
+.section img:hover {
+  transform: rotate(5deg) scale(1.1); /* Rotar y agrandar ícono al pasar el cursor */
+}
+
+.section h2 {
+  font-size: 1.25rem;
+  font-weight: 700; /* Título en negrita */
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.section p {
+  font-size: 1rem;
+  font-weight: 400; /* Descripción normal */
+  color: #6c757d; /* Texto de descripción en gris oscuro */
+  margin-bottom: 0;
+}
+
+.Typewriter {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 20px;
+}
+
+
+
+.btn-primary, 
+.btn-success, 
+.btn-outline-secondary {
+  background-color: #000000 !important; /* Fondo negro para los botones */
+  color: #ffffff !important; /* Texto blanco */
+  border: 1px solid #000000; /* Borde negro */
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Animaciones */
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-outline-secondary:hover {
+  background-color: #ff2727 !important; /* Oscurecer fondo al pasar el cursor */
+  transform: scale(1.05); /* Aumentar tamaño al pasar el cursor */
+}
+
+
+.img-fluid {
+  max-width: 50px; /* Tamaño de las imágenes */
+}
+
+.supported-platforms {
+  margin-top: 20px;
+}
+
+.h2 {
+  margin-top: 20px;
+  font-size: 1.5rem;
+}
+
+.eyes {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+}
+.eye {
+  width: 240px;
+  height: 120px;
+  background: #fff;
+  display: inline-block;
+  margin: 30px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.pupil {
+  width: 40px;
+  height: 40px;
+  background: #000;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 15px solid #333;
+}
