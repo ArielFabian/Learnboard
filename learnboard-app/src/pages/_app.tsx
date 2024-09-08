@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap antes de cualquier estilo global
 import { MantineProvider, ColorSchemeProvider, type ColorScheme } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';

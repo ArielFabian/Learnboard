@@ -1,45 +1,87 @@
-import React, { useState } from 'react';
-import styles from './Header.module.css';
+import React, { useState, useEffect } from 'react';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useRouter } from 'next/router';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '~/utils/firebaseconfig';
+import styles from './Header.module.css';
 
 const Header: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Verifica si el usuario está autenticado
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    });
+
+    // Cleanup suscripción
+    return () => unsubscribe();
+  }, []);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const handleCreateAccountClick = () => {
+    router.push('/register');
+  };
+
+  const handleMainClick = () => {
+    router.push('/');
+  };
+
+  const handleLoginClick = () => {
+    router.push('/login');
+  };
+
+  const handleStartCallClick = () => {
+    router.push('/start-call');
+  };
+
+  const handleLogoutClick = async () => {
+    await signOut(auth);
+    router.push('/');
+  };
+
   return (
-    <header className={`${styles.header} bg-gray-800 text-white`}>
-      <nav className="container mx-auto flex justify-between items-center p-4">
-        <div className="flex space-x-4">
-          <a href="#" className={`${styles.navLink} py-2 px-4 hover:bg-gray-700 rounded`}>Home</a>
-          <a href="#" className={`${styles.navLink} py-2 px-4 hover:bg-gray-700 rounded`}>Features</a>
-          <a href="#" className={`${styles.navLink} py-2 px-4 hover:bg-gray-700 rounded`}>Pricing</a>
-          <a href="#" className={`${styles.navLink} py-2 px-4 hover:bg-gray-700 rounded`}>Contact</a>
-        </div>
-        <div className="relative">
-          <button 
-            id="accountButton" 
-            className={`${styles.accountButton} py-2 px-4 hover:bg-gray-700 rounded`} 
-            onClick={toggleMenu}
-          >
-            Cuenta
-          </button>
-          {menuOpen && (
-            <div 
-              id="accountMenu" 
-              className={`${styles.accountMenu} absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg`}
-            >
-              <a href="#" className={`${styles.menuItem} block px-4 py-2 hover:bg-gray-200`}>Vincular cuenta Meet</a>
-              <a href="#" className={`${styles.menuItem} block px-4 py-2 hover:bg-gray-200`}>Vincular cuenta Zoom</a>
-              <a href="#" className={`${styles.menuItem} block px-4 py-2 hover:bg-gray-200`}>Vincular cuenta Teams</a>
-              <a href="#" className={`${styles.menuItem} block px-4 py-2 hover:bg-gray-200`}>Cerrar sesión</a>
-            </div>
-          )}
-        </div>
-      </nav>
-    </header>
+    <Navbar bg="dark" variant="dark" expand="lg" className={styles.navbar}>
+      <Container>
+        <Navbar.Brand href="#" onClick={handleMainClick} className={styles.logo}>
+          LearnBoard
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={toggleMenu} className="text-light" />
+        <Navbar.Collapse id="basic-navbar-nav" className={menuOpen ? styles.showMenu : ''}>
+          <Nav className="m-auto">
+            {!isAuthenticated ? (
+              <>
+                <Nav.Link href="#" className={styles.navLink} onClick={handleCreateAccountClick}>
+                  Crear Cuenta
+                </Nav.Link>
+                <Nav.Link href="#" className={styles.navLink} onClick={handleLoginClick}>
+                  Iniciar Sesión
+                </Nav.Link>
+              </>
+            ) : (
+              <>
+                <Nav.Link href="#" className={styles.navLink} onClick={handleStartCallClick}>
+                  Iniciar Pizarra
+                </Nav.Link>
+                <Nav.Link href="#" className={styles.navLink} onClick={handleLogoutClick}>
+                  Cerrar Sesión
+                </Nav.Link>
+              </>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 

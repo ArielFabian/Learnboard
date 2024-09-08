@@ -20,13 +20,13 @@ const Footer: React.FC = () => {
         {/* Espacio para las imágenes de iconos a la derecha */}
         <div className={`${styles.footerRight} d-flex`}>
           <div className={`${styles.iconContainer} bg-white p-2 m-2`}>
-            <img src="./images/assets/meet.webp" alt="Meet" className="img-fluid" style={{ width: '50px', height: '50px' }} />
+            <img src="./images/assets/face.webp" alt="Meet" className="img-fluid" style={{ width: '50px', height: '50px' }} />
           </div>
           <div className={`${styles.iconContainer} bg-white p-2 m-2`}>
-            <img src="./images/assets/zoom.png" alt="Zoom" className="img-fluid" style={{ width: '50px', height: '50px' }} />
+            <img src="./images/assets/x.webp" alt="Zoom" className="img-fluid" style={{ width: '50px', height: '50px' }} />
           </div>
           <div className={`${styles.iconContainer} bg-white p-2 m-2`}>
-            <img src="./images/assets/teams.png" alt="Teams" className="img-fluid" style={{ width: '50px', height: '50px' }} />
+            <img src="./images/assets/tiktok.webp" alt="Teams" className="img-fluid" style={{ width: '50px', height: '50px' }} />
           </div>
         </div>
       </div>
