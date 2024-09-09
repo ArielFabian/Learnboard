@@ -51,7 +51,7 @@ const Welcome: React.FC = () => {
 
     try {
       // Hacer la petición POST al servidor para crear un espacio colaborativo
-      const response = await axios.post('http://localhost:8000/colabs', {
+      const response = await axios.post('http://64.23.247.40:8000/colabs', {
         name: user.name,
         email: user.email,
       });
@@ -89,7 +89,7 @@ const Welcome: React.FC = () => {
 
     try {
       // Hacer la petición GET al servidor para verificar si existe la pizarra
-      const response = await axios.get(`http://localhost:8000/colabs/${boardCode}`);
+      const response = await axios.get(`http://64.23.247.40:8000/colabs/${boardCode}`);
 
       if (response.status === 200) {
         setSnackbarMessage('Te has unido con éxito a la pizarra');
