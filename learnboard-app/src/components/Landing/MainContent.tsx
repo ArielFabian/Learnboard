@@ -6,16 +6,19 @@ import Typewriter from 'typewriter-effect';
 const MainContent: React.FC = () => {
   return (
     <main className="bg-light container mt-5">
+      {/* Sección Principal */}
       <section className="bg-light p-5 rounded mb-4 text-center">
-        <h2>Una nueva forma de volver tus clases más dinámicas</h2>
-        <p>¿Cansado/a de las clases donde la explicación es aburrida?</p>
+        <h2 className="font-weight-bold text-dark">Transforma tus clases con dinamismo y tecnología</h2>
+        <p className="lead text-muted">Haz que tus lecciones sean interactivas, atractivas y efectivas.</p>
+        
+        {/* Máquina de escribir con frases mejoradas */}
         <Typewriter
           options={{
             strings: [
-              "TODAS LAS PIEZAS SE ESTAN UNIENDO",
-              "POR QUE TU ERES PEÑA NIETO",
-              "¿Donde esta la gotera señora?",
-              "Boka chan ga oshiete kureta ironna mita meni narera puninan ndatte dore dore"
+              "Crea experiencias de aprendizaje inolvidables",
+              "Mejora la participación y el entendimiento de tus estudiantes",
+              "Haz que cada clase sea dinámica y entretenida",
+              "La tecnología que impulsa tu éxito educativo"
             ],
             autoStart: true,
             loop: true,
@@ -23,22 +26,39 @@ const MainContent: React.FC = () => {
             deleteSpeed: 25,
           }}
         />
+        
+        {/* Botón "Consigue LearnBoard ahora" modificado */}
+        <button className="btn btn-primary btn-lg mt-4">Consigue LearnBoard ahora</button>
 
-        <button className="btn btn-success btn-lg">Consigue LearnBoard ahora</button>
+        {/* Ícono de Chrome para la extensión */}
         <div className={`${styles.feature} d-flex justify-content-center mt-4`}>
-          <img src="./images/assets/chrome.png" alt="Meet" className="img-fluid" style={{ width: '50px', height: '50px' }} />        </div>
+          <img 
+            src="./images/assets/chrome.png" 
+            alt="Chrome Extension" 
+            className="img-fluid" 
+            style={{ width: '50px', height: '50px' }} 
+          />
+        </div>
       </section>
+
+      {/* Sección de código de llamada */}
       <section className="text-center">
+         {/* Frase promocional mejorada */}
+        <h2 className="mt-4 text-dark">Haz clic para unirte a una llamada y descubre el poder de LearnBoard</h2>
+        <p className="text-muted">Prueba nuestra herramienta y transforma tu manera de enseñar.</p>
         <div className={`${styles.feature} mt-5`}>
           <input
             type="text"
             className="form-control"
-            placeholder="Ingrese código"
-            style={{ maxWidth: '300px', margin: '0 auto' }} />
+            placeholder="Ingresa el código de la llamada"
+            style={{ maxWidth: '300px', margin: '0 auto' }} 
+          />
         </div>
 
-        <button className="mt-4 btn btn-success btn-lg">Unirte a la llamada</button>
-        <h2 className="mt-4">Da click para unirte a una llamada y probar nuestra herramienta :D</h2>
+        {/* Botón "Unirte a la llamada" */}
+        <button className="mt-4 mb-4 btn btn-success btn-lg">Unirte a la llamada</button>
+
+       
       </section>
     </main>
   );
