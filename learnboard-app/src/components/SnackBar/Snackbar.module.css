@@ -1,0 +1,55 @@
+.snackbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #333;
+    color: white;
+    padding: 16px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    min-width: 300px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, bottom 0.3s ease-in-out;
+    z-index: 1000;
+  }
+  
+  .snackbar.show {
+    opacity: 1;
+    bottom: 40px;
+  }
+  
+  .snackbar.success {
+    background-color: #4caf50; /* Verde para éxito */
+  }
+  
+  .snackbar.error {
+    background-color: #f44336; /* Rojo para error */
+  }
+  
+  .snackbar.warning {
+    background-color: #ff9800; /* Naranja para advertencia */
+  }
+  
+  .snackbar.info {
+    background-color: #2196f3; /* Azul para información */
+  }
+  
+  .icon {
+    margin-right: 16px;
+  }
+  
+  .message {
+    flex-grow: 1;
+  }
+  
+  .close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0;
+  }
+  

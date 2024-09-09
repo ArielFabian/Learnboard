@@ -67,4 +67,15 @@
   .btn-danger:hover {
     background-color: #e35a5a;
   }
-  
+/* Para quitar los spinners en navegadores basados en WebKit (Chrome, Safari) */
+.formControl::-webkit-inner-spin-button,
+.formControl::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para Firefox */
+.formControl {
+  -moz-appearance: textfield;
+}
+

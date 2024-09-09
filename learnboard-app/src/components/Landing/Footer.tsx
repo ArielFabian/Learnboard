@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
       <div className="container d-flex justify-content-between align-items-center">
         {/* Texto del footer a la izquierda */}
         <div className={styles.footerLeft}>
-          <p>LearnBoard - La mejor plataforma para educación colaborativa en línea.</p>
+          <p>LearnBoard - La mejor extension para educación colaborativa en línea.</p>
           <p>&copy; 2024 LearnBoard, Todos los derechos reservados.</p>
         </div>
 

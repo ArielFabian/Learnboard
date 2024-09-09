@@ -1,0 +1,61 @@
+{
+  "__collections__": {
+    "colab-spaces": {
+      "PbaOxEb5ptlZYHGVzgba": {
+        "sds": "sdsd",
+        "sdsd": "sdsdsds",
+        "__collections__": {}
+      },
+      "Qh5cXvANgVJXImmjiF7i": {
+        "admin": {
+          "hasMobile": true,
+          "name": "Juanito admin",
+          "mobile": {
+            "id": "123-admin-mobile"
+          },
+          "id": "123-admin"
+        },
+        "participants": [
+          {
+            "hasMobile": true,
+            "name": "Juanito",
+            "mobile": {
+              "id": "123-123-a-mobile"
+            },
+            "id": "123-123-a",
+            "isActive": false
+          },
+          {
+            "hasMobile": false,
+            "name": "Pablito",
+            "id": "123-123-b",
+            "isActive": false
+          }
+        ],
+        "isActive": true,
+        "__collections__": {}
+      }
+    },
+    "links": {
+      "WrSQ390jQxUYhKRkgi0N": {
+        "link": "https://example.com",
+        "nombre_link": "main",
+        "nombre": "Abrir pizarra",
+        "__collections__": {}
+      },
+      "vx8Ae0tTsJQxzvwzdIUn": {
+        "nombre_link": "registro",
+        "link": "https://www.facebook.com",
+        "nombre": "Crear cuenta",
+        "__collections__": {}
+      }
+    },
+    "users": {
+      "62WdGybCcHLoAlDzaGJi": {
+        "name": "asdfad",
+        "email": "jasdflkdsa@ada.com",
+        "__collections__": {}
+      }
+    }
+  }
+}

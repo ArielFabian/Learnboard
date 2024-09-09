@@ -120,3 +120,15 @@
   border-radius: 50%;
   border: 15px solid #333;
 }
+/* Para quitar los spinners en navegadores basados en WebKit (Chrome, Safari) */
+.formControl::-webkit-inner-spin-button,
+.formControl::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para Firefox */
+.formControl {
+  -moz-appearance: textfield;
+}
+
