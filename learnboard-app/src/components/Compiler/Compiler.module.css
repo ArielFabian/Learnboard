@@ -1,0 +1,52 @@
+.compilerContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap; /* Para que en pantallas pequeñas se acomode en varias líneas */
+  }
+  
+  .editorArea {
+    flex: 2; /* El editor toma más espacio */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .sidebarArea {
+    flex: 1; /* La barra lateral toma menos espacio */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: flex-start;
+  }
+  
+  .runBtn {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    width: 100%;
+  }
+  
+  .runBtn:hover {
+    background-color: #218838;
+  }
+  
+  @media (max-width: 768px) {
+    .compilerContainer {
+      flex-direction: column;
+    }
+  
+    .editorArea,
+    .sidebarArea {
+      width: 100%;
+    }
+  }
+  

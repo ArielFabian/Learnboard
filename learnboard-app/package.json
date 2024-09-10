@@ -28,6 +28,7 @@
     "@mantine/next": "6.0.4",
     "@mantine/notifications": "6.0.4",
     "@mantine/nprogress": "6.0.4",
+    "@monaco-editor/react": "4.6.0",
     "@mui/material": "6.0.2",
     "axios": "1.4.0",
     "bootstrap": "5.3.3",
