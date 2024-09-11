@@ -22,6 +22,7 @@ import colors from '~/theme/colors';
 import { GlobalStyle } from '~/theme/styles/global';
 import getAvailableFonts from '~/utils/getAvailableFonts';
 
+// Cargar los estilos de Monaco Editor desde un CDN
 function RouterTransition() {
   const router = useRouter();
 
@@ -65,7 +66,6 @@ export default function App({ Component, pageProps, router }: AppProps) {
   };
 
   // On app load
-
   useEffect(() => {
     // Initialize color scheme
     const savedColorScheme = getSavedColoScheme();
@@ -134,6 +134,12 @@ export default function App({ Component, pageProps, router }: AppProps) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content={`@${metadata.social.twitter}`} />
         <meta name="twitter:creator" content={`@${metadata.social.twitter}`} />
+
+        {/* Monaco Editor Styles */}
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/editor/editor.main.css"
+        />
       </NextHead>
       <GlobalStyle />
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>

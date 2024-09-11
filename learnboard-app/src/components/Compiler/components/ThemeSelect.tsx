@@ -1,18 +1,22 @@
 import React from 'react';
-import styles from './ThemeSelect.module.css';
+import styles from './ThemeSelect.module.css'; // Asegúrate de importar los estilos
 
 interface ThemeSelectProps {
-  theme: string;
-  setTheme: (theme: string) => void;
+  theme: 'vs-dark' | 'vs-light';
+  setTheme: (theme: 'vs-dark' | 'vs-light') => void;
   themes: { [key: string]: string };
 }
 
 const ThemeSelect: React.FC<ThemeSelectProps> = ({ theme, setTheme, themes }) => {
   return (
-    <select className={styles.themeSelect} value={theme} onChange={(e) => setTheme(e.target.value)}>
-      {Object.keys(themes).map((themeKey) => (
-        <option key={themeKey} value={themeKey}>
-          {themes[themeKey]}
+    <select
+      className={styles.themeSelect} // Aplicar clase local
+      value={theme}
+      onChange={(e) => setTheme(e.target.value as 'vs-dark' | 'vs-light')}
+    >
+      {Object.keys(themes).map((key) => (
+        <option key={key} value={key}>
+          {themes[key]}
         </option>
       ))}
     </select>

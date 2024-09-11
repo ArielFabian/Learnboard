@@ -1,52 +1,108 @@
 .compilerContainer {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    flex-wrap: wrap; /* Para que en pantallas pequeñas se acomode en varias líneas */
-  }
-  
-  .editorArea {
-    flex: 2; /* El editor toma más espacio */
-    display: flex;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  gap: 20px;
+}
+
+.editorArea {
+  flex: 3;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarArea {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.selectContainer {
+  display: flex;
+  justify-content: flex-start; /* Alinea los selects al inicio */
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.selectInput {
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 200px; /* Ajuste del ancho */
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease; /* Transición suave */
+}
+
+.selectInput:hover {
+  border-color: #007bff; /* Cambia el color del borde al pasar el cursor */
+}
+
+.selectInput:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra azul al seleccionar */
+}
+
+.runBtn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.runBtn:hover {
+  background-color: #0056b3; /* Oscurecer el botón al pasar el cursor */
+}
+
+
+/* Estilos Responsivos */
+@media (max-width: 1024px) {
+  .compilerContainer {
     flex-direction: column;
-    gap: 10px;
+    height: auto;
   }
-  
-  .sidebarArea {
-    flex: 1; /* La barra lateral toma menos espacio */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    justify-content: flex-start;
-  }
-  
-  .runBtn {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+
+  .editorArea, .sidebarArea {
+    flex: 1;
     width: 100%;
+    padding: 15px;
   }
-  
-  .runBtn:hover {
-    background-color: #218838;
+
+  .runBtn {
+    width: 100%;
+    margin-top: 15px;
   }
-  
-  @media (max-width: 768px) {
-    .compilerContainer {
-      flex-direction: column;
-    }
-  
-    .editorArea,
-    .sidebarArea {
-      width: 100%;
-    }
+}
+
+@media (max-width: 768px) {
+  .editorArea, .sidebarArea {
+    padding: 10px;
   }
-  
+
+  .runBtn {
+    font-size: 14px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .editorArea, .sidebarArea {
+    padding: 5px;
+  }
+
+  .runBtn {
+    font-size: 12px;
+    padding: 6px;
+  }
+}

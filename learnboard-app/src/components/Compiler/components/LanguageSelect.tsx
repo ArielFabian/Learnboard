@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import styles from './LanguageSelect.module.css'; // Importar CSS Module
+import React from 'react';
+import styles from './LanguageSelect.module.css'; // Asegúrate de importar los estilos
 
 interface LanguageSelectProps {
   language: string;
@@ -8,18 +7,13 @@ interface LanguageSelectProps {
 }
 
 const LanguageSelect: React.FC<LanguageSelectProps> = ({ language, setLanguage }) => {
-  const [languages, setLanguages] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchLanguages = async () => {
-      const response = await axios.get('http://api-server.com/languages');
-      setLanguages(response.data.languages);
-    };
-    fetchLanguages();
-  }, []);
-
+  const languages = ['javascript', 'python', 'cpp', 'java'];
   return (
-    <select className={styles.languageSelect} value={language} onChange={(e) => setLanguage(e.target.value)}>
+    <select
+      className={styles.languageSelect} // Aplicar clase local
+      value={language}
+      onChange={(e) => setLanguage(e.target.value)}
+    >
       {languages.map((lang) => (
         <option key={lang} value={lang}>
           {lang}
