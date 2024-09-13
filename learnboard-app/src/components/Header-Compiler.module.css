@@ -7,18 +7,12 @@
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 10px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .header-compiler {
     display: flex;
-    justify-content: space-between;
-    width: 50%;
-    /* Ocupa el 50% de la pantalla, centrado */
-    max-width: 1200px;
-    /* Puedes limitar el ancho máximo */
+    justify-content: center;
+    align-items: center;
     gap: 15px;
 }
 
@@ -37,9 +31,46 @@
     background-color: #0056b3;
 }
 
+/* Estilos para el overlay y popup del QR */
+.qr-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.qr-popup {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 30px;
+    text-align: center;
+}
+
 .qr-container {
     display: flex;
     justify-content: center;
     margin-top: 20px;
-    background-color: aqua;
 }

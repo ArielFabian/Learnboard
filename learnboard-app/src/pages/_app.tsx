@@ -22,7 +22,6 @@ import colors from '~/theme/colors';
 import { GlobalStyle } from '~/theme/styles/global';
 import getAvailableFonts from '~/utils/getAvailableFonts';
 
-// Cargar los estilos de Monaco Editor desde un CDN
 function RouterTransition() {
   const router = useRouter();
 
@@ -39,7 +38,6 @@ function RouterTransition() {
       router.events.off('routeChangeComplete', handleComplete);
       router.events.off('routeChangeError', handleComplete);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.asPath]);
 
   return <NavigationProgress autoReset={true} progressLabel="Loading page" />;
@@ -47,7 +45,6 @@ function RouterTransition() {
 
 export default function App({ Component, pageProps, router }: AppProps) {
   const { getDeviceHash, setDeviceHash, getSavedColoScheme, setSavedColoScheme } = useCookies();
-
   const setAvailableFonts = useAvailableFonts((state) => state.setAvailableFonts);
 
   const [hasAppLoaded, setHasAppLoaded] = useState<boolean>(false);
@@ -65,26 +62,20 @@ export default function App({ Component, pageProps, router }: AppProps) {
     }
   };
 
-  // On app load
   useEffect(() => {
-    // Initialize color scheme
     const savedColorScheme = getSavedColoScheme();
     if (savedColorScheme) {
       toggleColorScheme(savedColorScheme);
     }
-    // Initialize device hash
     const deviceHash = getDeviceHash();
     if (!deviceHash) {
       setDeviceHash();
     }
-    // Initialize store
     (async () => {
       const result = await getAvailableFonts();
       setAvailableFonts(result);
     })();
-    // Set app ready
     setHasAppLoaded(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const pageUrl = `${metadata.website.url}${router.asPath}`;
@@ -92,55 +83,44 @@ export default function App({ Component, pageProps, router }: AppProps) {
   return (
     <>
       <NextHead>
+        {/* Aquí van todas las etiquetas <meta> y <link> */}
         <meta charSet="utf-8" />
         <meta
           name="viewport"
           content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height"
         />
         <meta name="format-detection" content="telephone=no" />
-
-        {/* Manifest */}
+        {/* Manifesto e iconos */}
         <link rel="manifest" href={metadata.website.manifest} />
-
-        {/* Icon */}
         <link rel="shortcut icon" href={`${metadata.website.url}/images/favicon/favicon.ico`} />
         <link rel="icon" type="image/x-icon" href={`${metadata.website.url}/images/favicon/favicon.ico`} />
         <link rel="apple-touch-icon" sizes="180x180" href={`${metadata.website.url}/images/favicon/apple-touch-icon.png`} />
         <link rel="icon" type="image/png" sizes="32x32" href={`${metadata.website.url}/images/favicon/favicon-32x32.png`} />
         <link rel="icon" type="image/png" sizes="16x16" href={`${metadata.website.url}/images/favicon/favicon-16x16.png`} />
-
-        {/* Browser Theme */}
+        {/* Colores del navegador */}
         <meta name="theme-color" content={metadata.website.themeColor} />
         <meta name="msapplication-TileColor" content={metadata.website.themeColor} />
-
-        {/* Search Engines */}
+        {/* Motores de búsqueda */}
         <meta name="robots" content="index, follow" />
-
-        {/* Name */}
         <meta name="application-name" content={metadata.website.name} />
         <meta name="copyright" content={metadata.website.name} />
         <meta name="author" content={metadata.website.name} />
         <meta name="owner" content={metadata.website.name} />
         <meta name="designer" content={metadata.website.name} />
         <meta property="og:site_name" content={metadata.website.name} />
-
-        {/* Page URL */}
+        {/* URL de la página */}
         <meta name="url" content={pageUrl} />
         <meta property="og:url" content={pageUrl} />
         <link rel="canonical" href={pageUrl} />
-
         {/* Social */}
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content={`@${metadata.social.twitter}`} />
         <meta name="twitter:creator" content={`@${metadata.social.twitter}`} />
-
-        {/* Monaco Editor Styles */}
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/editor/editor.main.css"
-        />
+        {/* Estilos de Monaco Editor */}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/editor/editor.main.css" />
       </NextHead>
+
       <GlobalStyle />
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <ColorSchemeContextProvider>
@@ -148,21 +128,21 @@ export default function App({ Component, pageProps, router }: AppProps) {
             <MantineProvider theme={{ colorScheme }} withNormalizeCSS withGlobalStyles>
               <ModalsProvider>
                 <ModalContextProvider>
-                  {!hasAppLoaded && <LoadingOverlay />}
-                  <RouterTransition />
-                  <Notifications position="top-right" zIndex={theme.layers.notifications} />
-                  <Component {...pageProps} />
+                  {hasAppLoaded ? (
+                    <>
+                      <RouterTransition />
+                      <Component {...pageProps} />
+                    </>
+                  ) : (
+                    <LoadingOverlay />
+                  )}
+                  <Notifications />
                 </ModalContextProvider>
               </ModalsProvider>
             </MantineProvider>
           </CanvasContextProvider>
         </ColorSchemeContextProvider>
       </ColorSchemeProvider>
-      <GoogleAnalytics
-        gaMeasurementId={metadata.services.googleAnalyticsMeasurementId}
-        strategy="afterInteractive"
-        trackPageViews
-      />
     </>
   );
 }

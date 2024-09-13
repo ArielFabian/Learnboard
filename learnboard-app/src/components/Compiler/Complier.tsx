@@ -1,3 +1,4 @@
+// src/components/Compiler.tsx
 import React, { useState } from 'react';
 import CodeEditor from './components/CodeEditor';
 import LanguageSelect from './components/LanguageSelect';

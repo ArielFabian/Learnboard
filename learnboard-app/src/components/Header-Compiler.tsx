@@ -1,35 +1,25 @@
-// src/components/HeaderCompiler.tsx
 import React, { useState } from 'react';
+import { QRCodeCanvas } from 'qrcode.react'; // Asegúrate de que la librería esté instalada correctamente
 import Compiler from './Compiler/Complier';
-import Canvas from './Canvas';
-import styles from './Header-Compiler.module.css';
-import CanvasPreview from './CanvasPreview';
-import LoadingOverlay from './LoadingOverlay';
 import AppLayout from '~/layouts/AppLayout';
-import { QRCodeCanvas } from 'qrcode.react';
+import styles from './Header-Compiler.module.css';
 
 const HeaderCompiler: React.FC = () => {
-  // Estado para manejar si se muestra Compiler o Canvas
   const [showCompiler, setShowCompiler] = useState(true);
-  // Estado para controlar la visibilidad del QR
   const [showQR, setShowQR] = useState(false);
 
-  // Función para alternar entre Compiler y Canvas
   const toggleView = () => {
     setShowCompiler(!showCompiler);
   };
 
-  // Función para mostrar/ocultar el código QR
   const toggleQR = () => {
     setShowQR(!showQR);
   };
 
-  // Obtener la URL actual del navegador
   const currentUrl = window.location.href;
 
   return (
     <div>
-      {/* Contenedor fijo para el header */}
       <div className={styles['header-container']}>
         <header className={styles['header-compiler']}>
           <button className={styles['header-button']} onClick={toggleView}>
@@ -42,14 +32,18 @@ const HeaderCompiler: React.FC = () => {
         </header>
       </div>
 
-      {/* Mostrar el código QR si el botón es presionado */}
+      {/* Modal QR */}
       {showQR && (
-        <div className="qr-container">
-          <QRCodeCanvas value={currentUrl} size={200} /> {/* Generar el QR con la URL actual */}
+        <div className={styles['qr-overlay']}>
+          <div className={styles['qr-popup']}>
+            <QRCodeCanvas value={currentUrl} size={200} />
+            <button className={styles['close-button']} onClick={toggleQR}>
+              X
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Renderización condicional de los componentes */}
       {showCompiler ? <Compiler /> : <AppLayout />}
     </div>
   );

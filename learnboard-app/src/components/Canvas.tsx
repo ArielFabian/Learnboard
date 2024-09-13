@@ -1,4 +1,4 @@
-  import React, { useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
+import React, { useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
 import styled from 'styled-components';
 
 import { TRANSPARENT_BACKGROUND_IMAGE } from '~/config/constants';
@@ -461,18 +461,6 @@ export default function Canvas() {
           backgroundColor: 'white',
         }}
       >
-        <h1
-          style={{
-            position: 'absolute',
-            top: `${-38 / (zoom / 100)}px`,
-            left: '0',
-            width: `${Number.MAX_SAFE_INTEGER}px`,
-            color: 'white',
-            fontSize: `${20 / (zoom / 100)}px`,
-          }}
-        >
-          {`${canvasWorkingSize.width} x ${canvasWorkingSize.height} px`}
-        </h1>
         <canvas ref={canvasRef} width={canvasWorkingSize.width} height={canvasWorkingSize.height} />
       </div>
     </FixedMain>

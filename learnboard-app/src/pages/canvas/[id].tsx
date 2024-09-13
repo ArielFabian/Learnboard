@@ -8,7 +8,7 @@ import HeaderCompiler from '~/components/Header-Compiler';
 export default function Page() {
   return (
     <>
-        <HeaderCompiler />
+      <HeaderCompiler />
       <PageSEO />
     </>
   );
