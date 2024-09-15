@@ -11,7 +11,7 @@ function processImage(base64Image) {
             if (err) return reject(err);
 
             // Ejecutar el script de Python
-            execFile('python', ['C:\\Users\\ariel\\OneDrive\\Escritorio\\HandWritingRecognition\\PytesseractTest.py', tempFilePath], (error, stdout, stderr) => {
+            execFile('python', ['/home/kali/Desktop/handwriteRecognition.py', tempFilePath], (error, stdout, stderr) => {
                 // Eliminar el archivo temporal
                 fs.unlink(tempFilePath, (unlinkErr) => {
                     if (unlinkErr) console.error('Error deleting temp file:', unlinkErr);
@@ -27,4 +27,24 @@ function processImage(base64Image) {
     });
 }
 
-module.exports = { processImage };
+function processLatex(latex) {
+    return new Promise((resolve, reject) => {
+        // Crear un archivo temporal con el contenido LaTeX
+        const tempFilePath = path.join(__dirname, 'temp_latex.txt');
+        fs.writeFileSync(tempFilePath, latex);
+
+        // Ejecutar el script de Python
+        execFile('python', ['/home/kali/Desktop/latexRecognition.py', tempFilePath], (error, stdout, stderr) => {
+            // Limpiar archivo temporal
+            fs.unlinkSync(tempFilePath);
+
+            if (error) return reject(error);
+            if (stderr) return reject(new Error(stderr.trim()));
+
+            // Devolver la salida del script de Python
+            resolve(stdout.trim());
+        });
+    });
+}
+
+module.exports = { processImage, processLatex};
