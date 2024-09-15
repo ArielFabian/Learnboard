@@ -1,0 +1,11 @@
+.App {
+    font-family: Arial, sans-serif;
+  }
+  .mainContent{
+    background-color: rgb(221, 225, 229);
+  }
+  .features {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }

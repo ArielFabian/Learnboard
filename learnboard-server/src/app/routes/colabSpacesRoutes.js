@@ -1,12 +1,26 @@
 const express = require('express');
-const colabSpacesController = require('../controllers/colabSpacesController');
+const {
+  createColabSpace,
+  getColabSpaceByCode,
+  addParticipant,
+  removeParticipant,
+  toggleIsActiveForParticipants
+} = require('../controllers/colabSpacesController');
 
 const router = express.Router();
 
-router.get('/', colabSpacesController.getAllColabSpaces);
-router.get('/:id', colabSpacesController.getColabSpaceId);
-router.post('/', colabSpacesController.createColabSpace);
-router.put('/:id', colabSpacesController.updateColabSpace);
-router.delete('/:id', colabSpacesController.deleteColabSpace);
+// Rutas agrupadas y optimizadas
+router.route('/')
+  .post(createColabSpace);
+
+router.route('/:code')
+  .get(getColabSpaceByCode);
+
+router.route('/:code/participants')
+  .post(addParticipant)
+  .delete(removeParticipant);
+
+router.route('/:code/toggle-active')
+  .put(toggleIsActiveForParticipants);
 
 module.exports = router;

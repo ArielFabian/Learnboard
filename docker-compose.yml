@@ -1,14 +1,5 @@
 version: '2.25.6'
 services:
-  learnboard-app:
-    build: ./learnboard-app
-    ports:
-      - 3000:3000
-    volumes:
-      - ./learnboard-app:/app
-    depends_on:
-      - learnboard-server
-
   learnboard-server:
     build: ./learnboard-server
     ports:

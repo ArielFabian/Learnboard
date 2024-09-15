@@ -1,19 +1,24 @@
 const { db } = require("../util/admin");
+const admin = require("firebase-admin");
 
-// Create a new colab-space
+// Create a new colab-space with email and code
 exports.createColabSpace = (req, res) => {
-    // Get the data from the request body
+    const generateRandomCode = () => {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    };
+
     const newColabSpace = {
         name: req.body.name,
-        description: req.body.description,
+        email: req.body.email, // Add email
+        code: generateRandomCode(), // Generate a 6-digit random code
+        date: new Date().toISOString()
     };
 
     // Add the new colab-space to the "colab-spaces" collection
     db.collection("colab-spaces")
         .add(newColabSpace)
         .then((docRef) => {
-            // Return the ID of the newly created colab-space
-            res.json({ message: `Colab-space created with ID: ${docRef.id}` });
+            res.json({ message: `Colab-space created with code: ${newColabSpace.code}`,code: newColabSpace.code }); 
         })
         .catch((err) => {
             console.error(err);
@@ -21,43 +26,18 @@ exports.createColabSpace = (req, res) => {
         });
 };
 
-// Get all colab-spaces
-exports.getAllColabSpaces = (req, res) => {
-    // Get all documents from the "colab-spaces" collection
-    db.collection("colab-spaces")
-        .get()
-        .then((data) => {
-            let colabSpaces = [];
-            data.forEach((doc) => {
-                // Push each colab-space document to the array
-                result = {
-                    id: doc.id,
-                    data: doc.data()
-                }
-                colabSpaces.push(result);
-            });
-            // Return the array of colab-spaces
-            res.json(colabSpaces);
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).json({ error: "Something went wrong" });
-        });
-};
+// Get a specific colab-space by code
+exports.getColabSpaceByCode = (req, res) => {
+    const colabSpaceCode = req.params.code;
 
-// Get a specific colab-space
-exports.getColabSpaceId = (req, res) => {
-    // Get the colab-space ID from the request parameters
-    const colabSpaceId = req.params.id;
-
-    // Get the document with the specified ID from the "colab-spaces" collection
+    // Get the document with the specified code from the "colab-spaces" collection
     db.collection("colab-spaces")
-        .doc(colabSpaceId)
+        .where("code", "==", colabSpaceCode)
         .get()
-        .then((doc) => {
-            if (doc.exists) {
-                // Return the colab-space document
-                res.json(doc.data());
+        .then((snapshot) => {
+            if (!snapshot.empty) {
+                const doc = snapshot.docs[0]; // Assuming the code is unique
+                res.json({ id: doc.id, data: doc.data() });
             } else {
                 res.status(404).json({ error: "Colab-space not found" });
             }
@@ -68,63 +48,34 @@ exports.getColabSpaceId = (req, res) => {
         });
 };
 
-// Update a colab-space
-exports.updateColabSpace = (req, res) => {
-    // Get the colab-space ID from the request parameters
-    const colabSpaceId = req.params.id;
-
-    // Get the updated data from the request body
-    const updatedColabSpace = req.body;
-
-    // Update the document with the specified ID in the "colab-spaces" collection
-    db.collection("colab-spaces")
-        .doc(colabSpaceId)
-        .update(updatedColabSpace)
-        .then(() => {
-            res.json({ message: "Colab-space updated successfully" });
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).json({ error: "Something went wrong" });
-        });
-};
-
-// Delete a colab-space
-exports.deleteColabSpace = (req, res) => {
-    // Get the colab-space ID from the request parameters
-    const colabSpaceId = req.params.colabSpaceId;
-
-    // Delete the document with the specified ID from the "colab-spaces" collection
-    db.collection("colab-spaces")
-        .doc(colabSpaceId)
-        .delete()
-        .then(() => {
-            res.json({ message: "Colab-space deleted successfully" });
-        })
-        .catch((err) => {
-            console.error(err);
-            res.status(500).json({ error: "Something went wrong" });
-        });
-};
-
-
-
 // Add a participant to a colab-space
 exports.addParticipant = (req, res) => {
-    // Get the colab-space ID from the request parameters
-    const colabSpaceId = req.params.id;
+    const colabSpaceCode = req.params.code;
+    const newParticipant = {
+        name: req.body.name,
+        id: req.body.id,
+        hasMobile: req.body.hasMobile || false,
+        mobile: req.body.mobile || null,
+        isActive: false,  // Participant is active by default
+    };
 
-    // Get the participant data from the request body
-    const newParticipant = req.body;
-
-    // Add the participant to the "participants" array in the colab-space document
     db.collection("colab-spaces")
-        .doc(colabSpaceId)
-        .update({
-            participants: admin.firestore.FieldValue.arrayUnion(newParticipant)
-        })
-        .then(() => {
-            res.json({ message: "Participant added successfully" });
+        .where("code", "==", colabSpaceCode)
+        .get()
+        .then((snapshot) => {
+            if (!snapshot.empty) {
+                const docRef = snapshot.docs[0].ref;
+
+                // Add the participant to the participants array
+                docRef.update({
+                    participants: admin.firestore.FieldValue.arrayUnion(newParticipant)
+                })
+                .then(() => {
+                    res.json({ message: "Participant added successfully" });
+                });
+            } else {
+                res.status(404).json({ error: "Colab-space not found" });
+            }
         })
         .catch((err) => {
             console.error(err);
@@ -134,20 +85,60 @@ exports.addParticipant = (req, res) => {
 
 // Remove a participant from a colab-space
 exports.removeParticipant = (req, res) => {
-    // Get the colab-space ID from the request parameters
-    const colabSpaceId = req.params.id;
-
-    // Get the participant ID from the request body
+    const colabSpaceCode = req.params.code;
     const participantId = req.body.participantId;
 
-    // Remove the participant from the "participants" array in the colab-space document
     db.collection("colab-spaces")
-        .doc(colabSpaceId)
-        .update({
-            participants: admin.firestore.FieldValue.arrayRemove(participantId)
+        .where("code", "==", colabSpaceCode)
+        .get()
+        .then((snapshot) => {
+            if (!snapshot.empty) {
+                const docRef = snapshot.docs[0].ref;
+
+                // Remove the participant from the participants array
+                docRef.update({
+                    participants: admin.firestore.FieldValue.arrayRemove({ id: participantId })
+                })
+                .then(() => {
+                    res.json({ message: "Participant removed successfully" });
+                });
+            } else {
+                res.status(404).json({ error: "Colab-space not found" });
+            }
         })
-        .then(() => {
-            res.json({ message: "Participant removed successfully" });
+        .catch((err) => {
+            console.error(err);
+            res.status(500).json({ error: "Something went wrong" });
+        });
+};
+
+// Toggle the 'isActive' field for all participants in a colab-space
+exports.toggleIsActiveForParticipants = (req, res) => {
+    const colabSpaceCode = req.params.code;
+
+    // Get the colab-space with the specified code
+    db.collection("colab-spaces")
+        .where("code", "==", colabSpaceCode)
+        .get()
+        .then((snapshot) => {
+            if (!snapshot.empty) {
+                const docRef = snapshot.docs[0].ref;
+                const colabSpaceData = snapshot.docs[0].data();
+
+                // Toggle 'isActive' field for each participant
+                const updatedParticipants = colabSpaceData.participants.map(participant => {
+                    participant.isActive = !participant.isActive; // Toggle isActive (true <-> false)
+                    return participant;
+                });
+
+                // Update the document with the new participants array
+                docRef.update({ participants: updatedParticipants })
+                    .then(() => {
+                        res.json({ message: "'isActive' toggled for all participants" });
+                    });
+            } else {
+                res.status(404).json({ error: "Colab-space not found" });
+            }
         })
         .catch((err) => {
             console.error(err);

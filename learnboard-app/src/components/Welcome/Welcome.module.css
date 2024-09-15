@@ -1,0 +1,81 @@
+.authContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+    background-color: #f8f9fa;
+  }
+  
+  .authForm {
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    background-color: #ffffff;
+  }
+  
+  .title {
+    color: #ff6b6b;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+  }
+  
+  .img-fluid {
+    max-width: 100px;
+    margin: 0 auto;
+    display: block;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .text-danger {
+    color: #ff6b6b;
+    font-size: 0.875rem;
+  }
+  
+  .text-success {
+    color: #28a745;
+    font-size: 0.875rem;
+  }
+  
+  .form-control {
+    border-radius: 4px;
+    border: 1px solid #dddddd;
+    padding: 0.75rem;
+  }
+  
+  .form-control:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+  }
+  
+  .btn-danger {
+    background-color: #ff6b6b;
+    border: none;
+  }
+  
+  .btn-danger:hover {
+    background-color: #e35a5a;
+  }
+/* Para quitar los spinners en navegadores basados en WebKit (Chrome, Safari) */
+.formControl::-webkit-inner-spin-button,
+.formControl::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para Firefox */
+.formControl {
+  -moz-appearance: textfield;
+}
+
