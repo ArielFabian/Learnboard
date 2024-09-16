@@ -7,7 +7,17 @@ interface LanguageSelectProps {
 }
 
 const LanguageSelect: React.FC<LanguageSelectProps> = ({ language, setLanguage }) => {
-  const languages = ['javascript', 'python', 'cpp', 'java'];
+  const languages = [
+    'javascript',
+    'python',
+    'cpp',
+    'java',
+    'c',
+    'ruby',
+    'swift',
+    'kotlin',
+    'go'
+  ];
   return (
     <select
       className={styles.languageSelect} // Aplicar clase local

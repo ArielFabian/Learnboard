@@ -148,3 +148,28 @@
   transform: scale(0.95);
   transition: transform 0.1s ease;
 }
+.downloadBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #28a745; /* Fondo verde */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.downloadBtn:hover {
+  background-color: #218838; /* Verde más oscuro al pasar el mouse */
+}
+
+.downloadIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  filter: invert(1); /* Hace el SVG blanco */
+}
