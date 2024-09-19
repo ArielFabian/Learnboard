@@ -1,11 +1,14 @@
 import { ActionIcon, Tooltip } from '@mantine/core';
-import React, { type ReactNode } from 'react';
+import { QRCodeCanvas } from 'qrcode.react';
+import React, { useState, type ReactNode } from 'react';
 import { BsSquare, BsCircle, BsImageFill } from 'react-icons/bs';
-import { FaMousePointer } from 'react-icons/fa';
+import { FaMousePointer, FaQrcode } from 'react-icons/fa';
 import { HiPencil } from 'react-icons/hi';
 import { RiImageLine } from 'react-icons/ri';
 import { RxText } from 'react-icons/rx';
 import styled from 'styled-components';
+import HeaderCompiler from '~/components/HeaderCompiler';
+import styles from '~/components/Overlay/OverlayNavbar/OverlayNavbar.module.css';
 
 import type { UserMode } from '~/config/types';
 import useActiveObjectId from '~/store/useActiveObjectId';
@@ -85,6 +88,7 @@ const userModeButtonsSecondary: UserModeButton[] = [
     label: 'Icon',
     icon: <RiImageLine />,
   },
+
   {
     mode: 'image',
     label: 'Image',
@@ -92,11 +96,53 @@ const userModeButtonsSecondary: UserModeButton[] = [
   },
 ];
 
-export default function OverlayNavbar() {
+export default function OverlayNavbar({
+  showCompiler,
+  onShowCompilerChange,
+}: {
+  showCompiler: boolean;
+  onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
+}) {
   const setActiveObjectId = useActiveObjectId((state) => state.setActiveObjectId);
 
   const userMode = useUserMode((state) => state.userMode);
   const setUserMode = useUserMode((state) => state.setUserMode);
+
+  const [showQR, setShowQR] = useState(false);
+
+  const toggleQR = () => {
+    setShowQR(!showQR);
+  };
+
+  const currentUrl = window.location.href;
+
+  const renderSpecialButtons = () => {
+    return (
+      <Div>
+        <Ul>
+          <li>
+            <Tooltip position="bottom-start" label="Compilador" offset={16}>
+              <ActionIcon
+                color="dark"
+                variant={userMode === 'select' ? 'gradient' : 'dark'}
+                size="lg"
+                onClick={toggleShowCompiler}
+              >
+                <FaMousePointer />
+              </ActionIcon>
+            </Tooltip>
+          </li>
+          <li>
+            <Tooltip position="bottom-start" label="QR" offset={16}>
+              <ActionIcon color="dark" variant={userMode === 'select' ? 'gradient' : 'dark'} size="lg" onClick={toggleQR}>
+                <FaQrcode />
+              </ActionIcon>
+            </Tooltip>
+          </li>
+        </Ul>
+      </Div>
+    );
+  };
 
   const renderUserModeButtons = (buttons: UserModeButton[]) => (
     <Div>
@@ -129,10 +175,25 @@ export default function OverlayNavbar() {
     </Div>
   );
 
+  const toggleShowCompiler = () => {
+    onShowCompilerChange && onShowCompilerChange(!showCompiler);
+  };
+
   return (
     <Nav>
       {renderUserModeButtons(userModeButtonsPrimary)}
       {renderUserModeButtons(userModeButtonsSecondary)}
+      {renderSpecialButtons()}
+      {showQR && (
+        <div className={styles['qr-overlay']}>
+          <div className={styles['qr-popup']}>
+            <QRCodeCanvas value={currentUrl} size={200} />
+            <button className={styles['close-button']} onClick={toggleQR}>
+              X
+            </button>
+          </div>
+        </div>
+      )}
     </Nav>
   );
 }

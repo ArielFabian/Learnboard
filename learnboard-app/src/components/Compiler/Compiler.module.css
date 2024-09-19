@@ -8,7 +8,7 @@
 
 .editorArea {
   flex: 3;
-  padding: 20px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
 }
@@ -24,9 +24,9 @@
   display: flex;
   justify-content: flex-start;
   /* Alinea los selects al inicio */
-  gap: 15px;
-  margin-top: 10px;
-  margin-bottom: 15px;
+  gap: 10px;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 .selectInput {
@@ -148,11 +148,13 @@
   transform: scale(0.95);
   transition: transform 0.1s ease;
 }
+
 .downloadBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #28a745; /* Fondo verde */
+  background-color: #28a745;
+  /* Fondo verde */
   color: white;
   padding: 10px 20px;
   border: none;
@@ -164,12 +166,68 @@
 }
 
 .downloadBtn:hover {
-  background-color: #218838; /* Verde más oscuro al pasar el mouse */
+  background-color: #218838;
+  /* Verde más oscuro al pasar el mouse */
 }
 
 .downloadIcon {
   width: 20px;
   height: 20px;
   margin-right: 10px;
-  filter: invert(1); /* Hace el SVG blanco */
+  filter: invert(1);
+  /* Hace el SVG blanco */
+}
+
+.qr-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.qr-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.header-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }

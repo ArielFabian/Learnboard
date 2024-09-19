@@ -6,6 +6,8 @@ import OverlayNavbar from '~/components/Overlay/OverlayNavbar';
 import OverlaySidebar from '~/components/Overlay/OverlaySidebar';
 import OverlayZoom from '~/components/Overlay/OverlayZoom';
 import theme from '~/theme';
+import HeaderCompiler from '../HeaderCompiler';
+import IframeComponent from '../Compiler/components/IframeCompiler';
 
 const FixedDiv = styled.div`
   pointer-events: none;
@@ -46,11 +48,18 @@ const BottomRightDiv = styled.div`
   right: 0;
 `;
 
-export default function Overlay() {
+export default function Overlay({
+  showCompiler,
+  onShowCompilerChange,
+}: {
+  showCompiler: boolean;
+  onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
+  initialSrc: string;
+}) {
   return (
     <FixedDiv>
       <TopDiv>
-        <OverlayNavbar />
+        <OverlayNavbar showCompiler={showCompiler} onShowCompilerChange={onShowCompilerChange} />
         <OverlayMenu />
       </TopDiv>
       <BottomRightDiv>

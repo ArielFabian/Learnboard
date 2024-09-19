@@ -6,6 +6,18 @@ import CommandInput from './components/CommandInput';
 import OutputArea from './components/OutputArea';
 import axios from 'axios';
 import styles from './Compiler.module.css';
+import AppLayout from '~/layouts/AppLayout';
+import { QRCodeCanvas } from 'qrcode.react';
+import IframeComponent from './components/IframeCompiler';
+import HeaderCompiler from '../HeaderCompiler';
+
+interface CompilerProps {
+  showCompiler?: boolean;
+  onShowCompilerChange?: (newShowCompiler: boolean) => void;
+  initialSrc: string; // src inicial del iframe
+  width?: string;
+  height?: string;
+}
 
 // Mapear lenguajes a extensiones de archivo
 const languageToExtension: { [key: string]: string } = {
@@ -38,14 +50,14 @@ const statuses = [
 ];
 
 // Función para decodificar una cadena en base64
-const decodeBase64 = (encodedData:string) => {
+const decodeBase64 = (encodedData: string) => {
   try {
     return atob(encodedData);
   } catch (error) {
     return 'Error decoding base64';
   }
 };
-const Compiler: React.FC = () => {
+const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange, width = '300px', height = '200px' }) => {
   const [code, setCode] = useState<string>('');
   const [theme, setTheme] = useState<'vs-dark' | 'vs-light'>('vs-dark');
   const [language, setLanguage] = useState<string>('javascript');
@@ -78,6 +90,31 @@ const Compiler: React.FC = () => {
     }
   };
 
+  const toggleShowCompiler = () => {
+    onShowCompilerChange && onShowCompilerChange(!showCompiler);
+  };
+
+  const [showQR, setShowQR] = useState(false);
+
+  const toggleQR = () => {
+    setShowQR(!showQR);
+  };
+
+  const currentUrl = window.location.href;
+
+  const renderIframe = (src: string, width: string, height: string) => (
+    <iframe
+      src={src}
+      style={{ width: width, height: height }} // Estilos en línea para ajustar dinámicamente el tamaño
+      className={styles.iframe}
+      frameBorder="0"
+      allowFullScreen
+      title="Iframe Content"
+    />
+  );
+
+  const iframeSrc = 'https://www.example.com';
+
   const handleDownloadCode = () => {
     const blob = new Blob([code], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -90,29 +127,50 @@ const Compiler: React.FC = () => {
   };
 
   return (
-    <div className={styles.compilerContainer}>
-      <div className={styles.editorArea}>
-        <div className={styles.selectContainer}>
-          <ThemeSelect theme={theme} setTheme={setTheme} themes={{ 'vs-dark': 'Dark', 'vs-light': 'Light' }} />
-          <LanguageSelect language={language} setLanguage={setLanguage} />
-          {/* Botón de descarga */}
-          <button className={styles.downloadBtn} onClick={handleDownloadCode}>
-            <img src="/images/assets/svgs/download.svg" alt="Download" className={styles.downloadIcon} />
-            Descargar Código
-          </button>
-          <a ref={downloadLinkRef} style={{ display: 'none' }}>
-            Descargar
-          </a>
+    <div>
+      <div className={styles.compilerContainer}>
+        <div className={styles.editorArea}>
+          <div className={styles.selectContainer}>
+            <ThemeSelect theme={theme} setTheme={setTheme} themes={{ 'vs-dark': 'Dark', 'vs-light': 'Light' }} />
+            <LanguageSelect language={language} setLanguage={setLanguage} />
+            <button className={styles.downloadBtn} onClick={handleDownloadCode}>
+              <img src="/images/assets/svgs/download.svg" alt="Download" className={styles.downloadIcon} />
+              Descargar Código
+            </button>
+            <button className={styles.runBtn} onClick={handleSubmit}>
+              Ejecutar Código
+            </button>
+            <a ref={downloadLinkRef} style={{ display: 'none' }}>
+              Descargar
+            </a>
+            <button className={styles.runBtn} onClick={toggleShowCompiler}>
+              Canvas
+            </button>
+            <button className={styles.runBtn} onClick={toggleQR}>
+              {showQR ? 'Ocultar QR' : 'QR'}
+              {showQR && (
+                <div className={styles['qr-overlay']}>
+                  <div className={styles['qr-popup']}>
+                    <QRCodeCanvas value={currentUrl} size={200} />
+                    <button className={styles['close-button']} onClick={toggleQR}>
+                      X
+                    </button>
+                  </div>
+                </div>
+              )}
+            </button>
+          </div>
+          <CodeEditor code={code} setCode={setCode} theme={theme} language={language} />
+          <OutputArea output={output} />
         </div>
-        <CodeEditor code={code} setCode={setCode} theme={theme} language={language} />
-      </div>
 
-      <div className={styles.sidebarArea}>
-        <CommandInput commands={commands} setCommands={setCommands} />
-        <button className={styles.runBtn} onClick={handleSubmit}>
-          Ejecutar Código
-        </button>
-        <OutputArea output={output} />
+        <div className={styles.sidebarArea}>
+          <CommandInput commands={commands} setCommands={setCommands} />
+          <div className={styles.iframeContainer}>
+            {/* Renderización del iframe mediante la función con el enlace codificado */}
+            {renderIframe(iframeSrc, width, height)}
+          </div>
+        </div>
       </div>
     </div>
   );
