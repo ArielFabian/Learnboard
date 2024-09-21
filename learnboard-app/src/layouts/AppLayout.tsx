@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 
+import styles from './AppLayout.module.css';
+
 import Canvas from '~/components/Canvas';
 import CanvasEventListeners from '~/components/CanvasEventListeners';
-import IframeComponent from '~/components/Compiler/components/IframeCompiler';
-import IframeCompiler from '~/components/Compiler/components/IframeCompiler';
-import HeaderCompiler from '~/components/HeaderCompiler';
 import Overlay from '~/components/Overlay';
-import styles from './AppLayout.module.css';
+
 
 const renderIframe = (src: string, width: string, height: string) => (
   <iframe

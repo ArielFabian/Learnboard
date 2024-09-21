@@ -57,7 +57,7 @@ const decodeBase64 = (encodedData: string) => {
     return 'Error decoding base64';
   }
 };
-const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange, width = '300px', height = '200px' }) => {
+const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange, width = '500px', height = '400px' }) => {
   const [code, setCode] = useState<string>('');
   const [theme, setTheme] = useState<'vs-dark' | 'vs-light'>('vs-dark');
   const [language, setLanguage] = useState<string>('javascript');
@@ -105,7 +105,7 @@ const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange,
   const renderIframe = (src: string, width: string, height: string) => (
     <iframe
       src={src}
-      style={{ width: width, height: height }} // Estilos en línea para ajustar dinámicamente el tamaño
+      style={{ width: width, height: height }}
       className={styles.iframe}
       frameBorder="0"
       allowFullScreen
@@ -127,49 +127,49 @@ const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange,
   };
 
   return (
-    <div>
-      <div className={styles.compilerContainer}>
-        <div className={styles.editorArea}>
-          <div className={styles.selectContainer}>
-            <ThemeSelect theme={theme} setTheme={setTheme} themes={{ 'vs-dark': 'Dark', 'vs-light': 'Light' }} />
-            <LanguageSelect language={language} setLanguage={setLanguage} />
-            <button className={styles.downloadBtn} onClick={handleDownloadCode}>
-              <img src="/images/assets/svgs/download.svg" alt="Download" className={styles.downloadIcon} />
-              Descargar Código
-            </button>
-            <button className={styles.runBtn} onClick={handleSubmit}>
-              Ejecutar Código
-            </button>
-            <a ref={downloadLinkRef} style={{ display: 'none' }}>
-              Descargar
-            </a>
-            <button className={styles.runBtn} onClick={toggleShowCompiler}>
-              Canvas
-            </button>
-            <button className={styles.runBtn} onClick={toggleQR}>
-              {showQR ? 'Ocultar QR' : 'QR'}
-              {showQR && (
-                <div className={styles['qr-overlay']}>
-                  <div className={styles['qr-popup']}>
-                    <QRCodeCanvas value={currentUrl} size={200} />
-                    <button className={styles['close-button']} onClick={toggleQR}>
-                      X
-                    </button>
-                  </div>
+    <div className={styles.compilerContainer}>
+      <div className={styles.editorArea}>
+        <div className={styles.selectContainer}>
+          <ThemeSelect theme={theme} setTheme={setTheme} themes={{ 'vs-dark': 'Dark', 'vs-light': 'Light' }} />
+          <LanguageSelect language={language} setLanguage={setLanguage} />
+          <button className={styles.downloadBtn} onClick={handleDownloadCode}>
+            <img src="/images/assets/svgs/download.svg" alt="Download" className={styles.downloadIcon} />
+            Descargar Código
+          </button>
+          <button className={styles.runBtn} onClick={handleSubmit}>
+            Ejecutar Código
+          </button>
+          <a ref={downloadLinkRef} style={{ display: 'none' }}>
+            Descargar
+          </a>
+          <button className={styles.runBtn} onClick={toggleShowCompiler}>
+            Canvas
+          </button>
+          <button className={styles.runBtn} onClick={toggleQR}>
+            {showQR ? 'Ocultar QR' : 'QR'}
+            {showQR && (
+              <div className={styles['qr-overlay']}>
+                <div className={styles['qr-popup']}>
+                  <QRCodeCanvas value={currentUrl} size={200} />
+                  <button className={styles['close-button']} onClick={toggleQR}>
+                    X
+                  </button>
                 </div>
-              )}
-            </button>
-          </div>
-          <CodeEditor code={code} setCode={setCode} theme={theme} language={language} />
-          <OutputArea output={output} />
+              </div>
+            )}
+          </button>
         </div>
+        <div className={styles.codeEditor}>
+          <CodeEditor code={code} setCode={setCode} theme={theme} language={language} />
+        </div>
+        <OutputArea output={output} />
+      </div>
 
-        <div className={styles.sidebarArea}>
-          <CommandInput commands={commands} setCommands={setCommands} />
-          <div className={styles.iframeContainer}>
-            {/* Renderización del iframe mediante la función con el enlace codificado */}
-            {renderIframe(iframeSrc, width, height)}
-          </div>
+      <div className={styles.sidebarArea}>
+        <h3 className={styles.inputLabel}>Inputs</h3>
+        <CommandInput commands={commands} setCommands={setCommands} />
+        <div className={styles.iframeContainer}>
+          {renderIframe(iframeSrc, width, height)}
         </div>
       </div>
     </div>

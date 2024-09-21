@@ -8,7 +8,8 @@ interface OutputAreaProps {
 const OutputArea: React.FC<OutputAreaProps> = ({ output }) => {
   return (
     <div className={styles.outputArea}>
-      <textarea readOnly value={output} placeholder="El resultado aparecerá aquí"></textarea>
+      <h3 className={styles.outputLabel}>Output</h3>
+      <textarea readOnly value={output} placeholder="El resultado aparecerá aquí" disabled></textarea>
     </div>
   );
 };

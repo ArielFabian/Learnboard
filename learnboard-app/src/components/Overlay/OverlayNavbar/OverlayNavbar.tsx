@@ -2,14 +2,13 @@ import { ActionIcon, Tooltip } from '@mantine/core';
 import { QRCodeCanvas } from 'qrcode.react';
 import React, { useState, type ReactNode } from 'react';
 import { BsSquare, BsCircle, BsImageFill } from 'react-icons/bs';
-import { FaMousePointer, FaQrcode } from 'react-icons/fa';
+import { FaMousePointer, FaQrcode, FaCode } from 'react-icons/fa';
 import { HiPencil } from 'react-icons/hi';
 import { RiImageLine } from 'react-icons/ri';
 import { RxText } from 'react-icons/rx';
 import styled from 'styled-components';
-import HeaderCompiler from '~/components/HeaderCompiler';
-import styles from '~/components/Overlay/OverlayNavbar/OverlayNavbar.module.css';
 
+import styles from '~/components/Overlay/OverlayNavbar/OverlayNavbar.module.css';
 import type { UserMode } from '~/config/types';
 import useActiveObjectId from '~/store/useActiveObjectId';
 import useUserMode from '~/store/useUserMode';
@@ -128,7 +127,7 @@ export default function OverlayNavbar({
                 size="lg"
                 onClick={toggleShowCompiler}
               >
-                <FaMousePointer />
+                <FaCode />
               </ActionIcon>
             </Tooltip>
           </li>
