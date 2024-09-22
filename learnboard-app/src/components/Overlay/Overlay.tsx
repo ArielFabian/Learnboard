@@ -54,7 +54,6 @@ export default function Overlay({
 }: {
   showCompiler: boolean;
   onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
-  initialSrc: string;
 }) {
   return (
     <FixedDiv>

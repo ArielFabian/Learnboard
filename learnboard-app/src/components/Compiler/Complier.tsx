@@ -8,15 +8,15 @@ import axios from 'axios';
 import styles from './Compiler.module.css';
 import AppLayout from '~/layouts/AppLayout';
 import { QRCodeCanvas } from 'qrcode.react';
-import IframeComponent from './components/IframeCompiler';
 import HeaderCompiler from '../HeaderCompiler';
 
 interface CompilerProps {
   showCompiler?: boolean;
   onShowCompilerChange?: (newShowCompiler: boolean) => void;
-  initialSrc: string; // src inicial del iframe
-  width?: string;
-  height?: string;
+
+  iframeSrc: string;
+
+  handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
 }
 
 // Mapear lenguajes a extensiones de archivo
@@ -57,7 +57,7 @@ const decodeBase64 = (encodedData: string) => {
     return 'Error decoding base64';
   }
 };
-const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange, width = '500px', height = '400px' }) => {
+const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange, iframeSrc, handleIframeStateChange }) => {
   const [code, setCode] = useState<string>('');
   const [theme, setTheme] = useState<'vs-dark' | 'vs-light'>('vs-dark');
   const [language, setLanguage] = useState<string>('javascript');
@@ -101,19 +101,6 @@ const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange,
   };
 
   const currentUrl = window.location.href;
-
-  const renderIframe = (src: string, width: string, height: string) => (
-    <iframe
-      src={src}
-      style={{ width: width, height: height }}
-      className={styles.iframe}
-      frameBorder="0"
-      allowFullScreen
-      title="Iframe Content"
-    />
-  );
-
-  const iframeSrc = 'https://www.example.com';
 
   const handleDownloadCode = () => {
     const blob = new Blob([code], { type: 'text/plain' });
@@ -168,9 +155,6 @@ const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange,
       <div className={styles.sidebarArea}>
         <h3 className={styles.inputLabel}>Inputs</h3>
         <CommandInput commands={commands} setCommands={setCommands} />
-        <div className={styles.iframeContainer}>
-          {renderIframe(iframeSrc, width, height)}
-        </div>
       </div>
     </div>
   );

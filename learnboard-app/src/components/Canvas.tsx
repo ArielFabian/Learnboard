@@ -37,7 +37,13 @@ const FixedMain = styled.main`
 
 type PointerOrTouchEvent = PointerEvent<HTMLElement> | TouchEvent<HTMLElement>;
 
-export default function Canvas() {
+export default function Canvas({
+  iframeSrc,
+  handleIframeStateChange,
+}: {
+  iframeSrc: string;
+  handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
+}) {
   const { canvasRef, contextRef, drawEverything } = useCanvasContext();
 
   const previousTouchRef = useRef<Touch | null>(null);

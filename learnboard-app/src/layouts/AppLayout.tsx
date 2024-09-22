@@ -6,26 +6,16 @@ import Canvas from '~/components/Canvas';
 import CanvasEventListeners from '~/components/CanvasEventListeners';
 import Overlay from '~/components/Overlay';
 
-
-const renderIframe = (src: string, width: string, height: string) => (
-  <iframe
-    src={src}
-    style={{ width: width, height: height }} // Estilos en línea para ajustar dinámicamente el tamaño
-    className={styles.iframe}
-    frameBorder="0"
-    allowFullScreen
-    title="Iframe Content"
-  />
-);
-
-const iframeSrc = 'https://www.example.com';
-
 export default function AppLayout({
   showCompiler,
   onShowCompilerChange,
+  iframeSrc,
+  handleIframeStateChange,
 }: {
   showCompiler: boolean;
   onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
+  iframeSrc: string;
+  handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
 }) {
   useEffect(() => {
     const html = document.querySelector('html');
@@ -43,13 +33,9 @@ export default function AppLayout({
 
   return (
     <>
-      <Overlay showCompiler={showCompiler} onShowCompilerChange={onShowCompilerChange} initialSrc={''} />
-      <Canvas />
+      <Overlay showCompiler={showCompiler} onShowCompilerChange={onShowCompilerChange} />
+      <Canvas iframeSrc={iframeSrc} handleIframeStateChange={handleIframeStateChange} />
       <CanvasEventListeners />
-      <div className={styles.iframeContainer}>
-        {/* Renderización del iframe mediante la función con el enlace codificado */}
-        {renderIframe(iframeSrc, '100%', '300px')} {/* Puedes ajustar el tamaño del iframe aquí */}
-      </div>
     </>
   );
 }
