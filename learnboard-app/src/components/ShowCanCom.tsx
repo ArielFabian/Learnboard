@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-
 import Compiler from './Compiler/Complier';
-
 import AppLayout from '~/layouts/AppLayout';
+import Draggable from 'react-draggable';
+import styles from './ParentComponent.module.css'; // Importa el módulo CSS
 
 // Componente principal que gestiona el estado del Compiler y del Iframe
 const ParentComponent: React.FC = () => {
   const [showCompiler, setShowCompiler] = useState(false);
-  const [iframeSrc, setIframeSrc] = useState('https://www.ejemplo.com'); // Estado para manejar la URL del iframe
+  const [iframeSrc, setIframeSrc] = useState('https://example.com/'); // Estado para manejar la URL del iframe
+  const [showIframe, setShowIframe] = useState(true); // Estado para manejar la visibilidad del iframe
 
   // Función para manejar el cambio de estado de showCompiler
   const handleShowCompilerChange = (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => {
@@ -32,7 +33,7 @@ const ParentComponent: React.FC = () => {
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
           iframeSrc={iframeSrc}
-          handleIframeStateChange={handleIframeStateChange} // Pasar la función para manejar el iframe/>
+          handleIframeStateChange={handleIframeStateChange} // Pasar la función para manejar el iframe
         />
       </div>
 
@@ -46,20 +47,33 @@ const ParentComponent: React.FC = () => {
         />
       </div>
 
-      {/* Iframe independiente para mantener su estado */}
-      <iframe
-        src={iframeSrc}
-        width="300px"
-        height="500px"
-        title="Iframe Content"
-        style={{
-          position: 'absolute',
-          top: '50%', // Posiciona el iframe al 50% desde la parte superior
-          right: '0', // Pega el iframe al lado derecho
-          transform: 'translateY(-30%)', // Centra el iframe verticalmente en la mitad de la página
-          zIndex: '100', // Ajusta el z-index si necesitas que esté encima o debajo de otros elementos
-        }}
-      />
+      {/* Contenedor Draggable */}
+      <Draggable handle={`.${styles.moveButton}`}>
+        <div className={styles.draggableContainer}>
+          <div className={styles.iframeContainer}>
+            <button className={styles.moveButton}>
+              Mover
+            </button>
+            <button
+              onClick={() => setShowIframe(!showIframe)}
+              className={styles.toggleButton}
+            >
+              {showIframe ? 'Ocultar' : 'Mostrar'}
+            </button>
+            {showIframe ? (
+              <div className={`${styles.resizer} ${styles.ugly}`}>
+                <iframe
+                  src={iframeSrc}
+                  title="Iframe Content"
+                  className={styles.resized}
+                />
+              </div>
+            ) : (
+              <div className={styles.hiddenIframe}>Iframe oculto</div>
+            )}
+          </div>
+        </div>
+      </Draggable>
     </div>
   );
 };

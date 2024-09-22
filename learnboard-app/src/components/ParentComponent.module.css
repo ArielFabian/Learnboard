@@ -1,0 +1,75 @@
+.draggableContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
+
+@media (max-width: 768px) {
+  .draggableContainer {
+    position: static;
+    transform: none;
+    margin-top: 20px;
+  }
+}
+
+.iframeContainer {
+  position: relative;
+}
+
+.moveButton {
+  position: absolute;
+  top: -30px;
+  left: 0;
+  z-index: 101;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: move;
+}
+
+.toggleButton {
+  position: absolute;
+  top: -30px;
+  right: 0;
+  z-index: 101;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.iframe {
+  width: 100%;
+  height: 100%;
+  border: none; /* Elimina el borde del iframe para una mejor apariencia */
+}
+
+.hiddenIframe {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.resizer {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  resize: both;
+  overflow: hidden;
+}
+
+.resizer > .resized {
+  flex-grow: 1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
