@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Compiler from './Compiler/Complier';
+import Compiler from '../Compiler/Complier';
 import AppLayout from '~/layouts/AppLayout';
 import Draggable from 'react-draggable';
 import styles from './ParentComponent.module.css'; // Importa el módulo CSS

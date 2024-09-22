@@ -6,8 +6,6 @@ import OverlayNavbar from '~/components/Overlay/OverlayNavbar';
 import OverlaySidebar from '~/components/Overlay/OverlaySidebar';
 import OverlayZoom from '~/components/Overlay/OverlayZoom';
 import theme from '~/theme';
-import HeaderCompiler from '../HeaderCompiler';
-import IframeComponent from '../Compiler/components/IframeCompiler';
 
 const FixedDiv = styled.div`
   pointer-events: none;
