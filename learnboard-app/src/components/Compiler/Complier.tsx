@@ -6,18 +6,17 @@ import CommandInput from './components/CommandInput';
 import OutputArea from './components/OutputArea';
 import axios from 'axios';
 import styles from './Compiler.module.css';
-import AppLayout from '~/layouts/AppLayout';
 import { QRCodeCanvas } from 'qrcode.react';
-import HeaderCompiler from '../HeaderCompiler';
+import { io, Socket } from 'socket.io-client';
 
 interface CompilerProps {
   showCompiler?: boolean;
   onShowCompilerChange?: (newShowCompiler: boolean) => void;
-
   iframeSrc: string;
-
   handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
 }
+
+const socket: Socket = io('http://localhost:8000');
 
 // Mapear lenguajes a extensiones de archivo
 const languageToExtension: { [key: string]: string } = {
@@ -57,12 +56,13 @@ const decodeBase64 = (encodedData: string) => {
     return 'Error decoding base64';
   }
 };
+
 const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange, iframeSrc, handleIframeStateChange }) => {
   const [code, setCode] = useState<string>('');
   const [theme, setTheme] = useState<'vs-dark' | 'vs-light'>('vs-dark');
   const [language, setLanguage] = useState<string>('javascript');
   const [commands, setCommands] = useState<string>('');
-  const [output, setOutput] = useState<string>('');
+  const [output, setOutput] = useState<string>(''); // Estado para almacenar el output actual
   const downloadLinkRef = useRef<HTMLAnchorElement>(null);
 
   const handleSubmit = async () => {
@@ -84,9 +84,15 @@ const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange,
         outputText = decodeBase64(result.stdout) || 'No stdout output';
       }
       const finalOutput = `Status: ${statusDescription}\n${time}\n${memory}\n\nOutput:\n${outputText}`;
-      setOutput(finalOutput);
+      setOutput(finalOutput); // Actualizar el estado del output
+
+      // Enviar el resultado al OutputArea a través de sockets
+      const roomId: string = window.location.pathname.split('/')[2];
+      socket.emit('outputChange', finalOutput, roomId);
     } catch (error) {
-      setOutput('Error executing code');
+      const errorMessage = 'Error executing code';
+      setOutput(errorMessage);
+      socket.emit('outputChange', errorMessage);
     }
   };
 
@@ -149,12 +155,13 @@ const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange,
         <div className={styles.codeEditor}>
           <CodeEditor code={code} setCode={setCode} theme={theme} language={language} />
         </div>
-        <OutputArea output={output} />
+        {/* Integrar OutputArea para mostrar el resultado en tiempo real */}
+        <OutputArea output={output} socket={socket} />
       </div>
 
       <div className={styles.sidebarArea}>
         <h3 className={styles.inputLabel}>Inputs</h3>
-        <CommandInput commands={commands} setCommands={setCommands} />
+        <CommandInput commands={commands} setCommands={setCommands} socket={socket} />
       </div>
     </div>
   );
