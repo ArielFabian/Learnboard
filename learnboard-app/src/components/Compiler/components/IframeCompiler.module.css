@@ -1,0 +1,11 @@
+.iframeContainer {
+    position: fixed;
+    top: 20px;
+    right: 10px;
+    z-index: 110;
+}
+
+.iframe {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}

@@ -46,11 +46,17 @@ const BottomRightDiv = styled.div`
   right: 0;
 `;
 
-export default function Overlay() {
+export default function Overlay({
+  showCompiler,
+  onShowCompilerChange,
+}: {
+  showCompiler: boolean;
+  onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
+}) {
   return (
     <FixedDiv>
       <TopDiv>
-        <OverlayNavbar />
+        <OverlayNavbar showCompiler={showCompiler} onShowCompilerChange={onShowCompilerChange} />
         <OverlayMenu />
       </TopDiv>
       <BottomRightDiv>

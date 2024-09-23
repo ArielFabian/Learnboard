@@ -1,0 +1,254 @@
+.compilerContainer {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  gap: 20px;
+}
+
+.editorArea {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  margin-left: 5px;
+}
+
+.sidebarArea {
+  margin-top: 2%;
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.selectContainer {
+  display: flex;
+  justify-content: flex-start;
+  /* Alinea los selects al inicio */
+  gap: 10px;
+  margin: 10px;
+}
+
+.selectInput {
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  width: 200px;
+  /* Ajuste del ancho */
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  /* Transición suave */
+}
+
+.selectInput:hover {
+  border-color: #007bff;
+  /* Cambia el color del borde al pasar el cursor */
+}
+
+.selectInput:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  /* Sombra azul al seleccionar */
+}
+
+.runBtn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  /* Transición suave */
+}
+
+.runBtn:hover {
+  background-color: #0056b3;
+  /* Oscurecer el botón al pasar el cursor */
+}
+
+
+/* Estilos Responsivos */
+@media (max-width: 1024px) {
+  .compilerContainer {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .editorArea,
+  .sidebarArea {
+    flex: 1;
+    width: 100%;
+    padding: 15px;
+  }
+
+  .runBtn {
+    width: 100%;
+    margin-top: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .editorArea,
+  .sidebarArea {
+    padding: 10px;
+  }
+
+  .runBtn {
+    font-size: 14px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .editorArea,
+  .sidebarArea {
+    padding: 5px;
+  }
+
+  .runBtn {
+    font-size: 12px;
+    padding: 6px;
+  }
+}
+
+.headerCompiler {
+  background-color: #000;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerButton {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #fff;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.headerButton:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.headerButton:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
+}
+
+.downloadBtn {
+  justify-content: center;
+  background-color: #28a745;
+  color: white;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.downloadBtn:hover {
+  background-color: #218838;
+  /* Verde más oscuro al pasar el mouse */
+}
+
+.downloadIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  filter: invert(1);
+  /* Hace el SVG blanco */
+}
+
+.qr-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.qr-popup {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.header-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.codeEditor {
+  margin-bottom: 10px;
+  border: 1px solid #887c7c;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #887c7c;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.inputLabel {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: white;
+  margin-left: 5px;
+}
+
+.iframeContainer{
+  justify-content: start;
+  align-items: start;
+  margin-top: 2%;
+}

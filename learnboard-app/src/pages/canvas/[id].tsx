@@ -1,15 +1,13 @@
-
 import React from 'react';
 
 import PageSEO from '~/components/PageSEO';
-import AppLayout from '~/layouts/AppLayout';
-import Header from '~/components/Landing/Header';
+import ShowCanCom from '~/components/ShowCanCom/ShowCanCom';
+
 export default function Page() {
   return (
     <>
-      
       <PageSEO />
-      <AppLayout />
+      <ShowCanCom />
     </>
   );
 }
