@@ -394,38 +394,37 @@ export default function Canvas({
       distanceBetweenTouchesRef.current = 0;
     }
 
-    switch (userMode) {
-      case 'select': {
-        break;
-      }
-      case 'text': {
-        break;
-      }
-      case 'free-draw': {
-        context.closePath();
-        if (activeObject) {
-          const dimensions = getDimensionsFromFreeDraw({
-            freeDrawObject: activeObject,
-          });
-          updateCanvasObject(activeObject.id, {
-            width: dimensions.width,
-            height: dimensions.height,
-          });
+    // Añadir un retraso de X milisegundos (ej. 1000 ms = 1 segundo)
+    const delayInMilliseconds = 15000; // Cambia esto por el tiempo que quieras
+
+    setTimeout(() => {
+      switch (userMode) {
+        case 'free-draw': {
+          context.closePath();
+          if (activeObject) {
+            const dimensions = getDimensionsFromFreeDraw({
+              freeDrawObject: activeObject,
+            });
+            updateCanvasObject(activeObject.id, {
+              width: dimensions.width,
+              height: dimensions.height,
+            });
+          }
+          setUserMode('select');
+          drawEverything();
+          break;
         }
-        setUserMode('select');
-        drawEverything();
-        break;
+        case 'rectangle':
+        case 'ellipse': {
+          setUserMode('select');
+          drawEverything();
+          break;
+        }
+        default: {
+          break;
+        }
       }
-      case 'rectangle':
-      case 'ellipse': {
-        setUserMode('select');
-        drawEverything();
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+    }, delayInMilliseconds); // Este es el tiempo de retraso antes de ejecutar el código
   };
 
   return (
