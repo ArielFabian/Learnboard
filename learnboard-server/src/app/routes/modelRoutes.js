@@ -16,8 +16,8 @@ router.post('/process-image', async (req, res) => {
 // Ruta para procesar Latex
 router.post('/process-latex', async (req, res) => {
     try {
-        const latex = req.body.latex;
-        const result = await processLatex(latex);
+        const expression = req.body.expression;
+        const result = await processLatex(expression);
         res.send({ result });
     } catch (error) {
         res.status(500).send({ error: error.message });
