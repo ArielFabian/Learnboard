@@ -19,7 +19,6 @@ import OpacityControl from './controls/OpacityControl';
 import StrokeColorControl from './controls/StrokeColorControl';
 import StrokeWidthControl from './controls/StrokeWidthControl';
 import TextControl from './controls/TextControl';
-import HeaderCompiler from '~/components/HeaderCompiler';
 
 const Aside = styled.aside`
   pointer-events: auto;
