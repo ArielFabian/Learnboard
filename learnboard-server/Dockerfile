@@ -5,10 +5,10 @@ USER root
 WORKDIR /home/pn/app
 
 # Instalar dependencias necesarias para OpenCV y Tesseract
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    tesseract-ocr
+# RUN apt-get update && apt-get install -y \
+#     libgl1-mesa-glx \
+#     libglib2.0-0 \
+#     tesseract-ocr
 
 # Copiar los archivos de la aplicación al contenedor
 COPY package.json package-lock.json /home/pn/app/
@@ -38,7 +38,7 @@ USER pn
 EXPOSE 8000
 
 # Instalar las dependencias de Python
-RUN pip install pytesseract opencv-python
+RUN pip install openai matplotlib pillow
 
 # Comando para iniciar la aplicación
 CMD ["npm", "start"]
