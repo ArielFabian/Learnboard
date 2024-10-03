@@ -1,4 +1,4 @@
-import React, { useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
+import React, { useEffect, useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
 import styled from 'styled-components';
 
 import { TRANSPARENT_BACKGROUND_IMAGE } from '~/config/constants';
@@ -85,6 +85,49 @@ export default function Canvas({
   const initialDrawingPositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const activeObject = canvasObjects.find((canvasObject) => canvasObject.id === activeObjectId);
+
+  useEffect(() => {
+    const elem = document.querySelector('#screenshot') as HTMLElement;
+
+    if (elem) {
+      const handleScreenshotClick = () => {
+        const canvas = canvasRef.current;
+
+        if (canvas) {
+          // Obtener imagen en formato base64 y mostrar en consola
+          const base64Image = canvas.toDataURL('image/png');
+          console.log(base64Image);
+
+          // Convertir el canvas en un blob para descargar
+          canvas.toBlob((blob: Blob | null) => {
+            if (blob) {
+              saveBlob(blob, `screencapture-${canvas.width}x${canvas.height}.png`);
+            }
+          });
+        }
+      };
+
+      elem.addEventListener('click', handleScreenshotClick);
+
+      // Limpiar el evento cuando el componente se desmonta
+      return () => {
+        elem.removeEventListener('click', handleScreenshotClick);
+      };
+    }
+  }, [canvasRef]);
+
+  const saveBlob = (() => {
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.style.display = 'none';
+    return function saveData(blob: Blob, fileName: string) {
+      const url = window.URL.createObjectURL(blob);
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      window.URL.revokeObjectURL(url); // Limpiamos el objeto URL después de usarlo
+    };
+  })();
 
   // On pointer down
 
