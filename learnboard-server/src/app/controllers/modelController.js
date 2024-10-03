@@ -5,7 +5,7 @@ const path = require('path');
 function processImage(base64Image) {
     return new Promise((resolve, reject) => {
         // Ejecutar el script de Python con la imagen base64 como argumento
-        execFile('python', ['/home/kali/Desktop/handwriteRecognition.py', base64Image], (error, stdout, stderr) => {
+        execFile('python', ['/home/pn/app/src/app/util/handwriteRecognition.py', base64Image], (error, stdout, stderr) => {
             if (error) return reject(error);
             if (stderr) return reject(new Error(stderr.trim()));
 
