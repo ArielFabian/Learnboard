@@ -1,0 +1,6 @@
+Status: Accepted
+Execution Time: 0.039 sec
+Memory Usage: 33592 KB
+
+Output:
+hola mundo
