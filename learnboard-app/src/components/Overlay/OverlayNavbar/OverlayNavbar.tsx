@@ -1,8 +1,8 @@
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { QRCodeCanvas } from 'qrcode.react';
-import React, { useState, type ReactNode } from 'react';
+import React, { useRef, useState, type ReactNode } from 'react';
 import { BsSquare, BsCircle, BsImageFill } from 'react-icons/bs';
-import { FaMousePointer, FaQrcode, FaCode } from 'react-icons/fa';
+import { FaMousePointer, FaQrcode, FaCode, FaCamera } from 'react-icons/fa';
 import { HiPencil } from 'react-icons/hi';
 import { RiImageLine } from 'react-icons/ri';
 import { RxText } from 'react-icons/rx';
@@ -114,6 +114,8 @@ export default function OverlayNavbar({
   };
 
   const currentUrl = window.location.href;
+  const screenshotButtonRef = useRef<HTMLButtonElement | null>(null); // Referencia al botón de captura
+  const canvasRef = useRef<HTMLCanvasElement | null>(null); // Referencia al canvas
 
   const renderSpecialButtons = () => {
     return (
@@ -135,6 +137,23 @@ export default function OverlayNavbar({
             <Tooltip position="bottom-start" label="QR" offset={16}>
               <ActionIcon color="dark" variant={userMode === 'select' ? 'gradient' : 'dark'} size="lg" onClick={toggleQR}>
                 <FaQrcode />
+              </ActionIcon>
+            </Tooltip>
+          </li>
+          <li>
+            {/* Botón de captura de pantalla */}
+            <Tooltip position="bottom-start" label="Captura de pantalla" offset={16}>
+              <ActionIcon
+                color="dark"
+                variant={userMode === 'select' ? 'gradient' : 'dark'}
+                size="lg"
+                onClick={() => {
+                  if (screenshotButtonRef.current) {
+                    screenshotButtonRef.current.click(); // Simula el clic en el botón de captura
+                  }
+                }}
+              >
+                <FaCamera />
               </ActionIcon>
             </Tooltip>
           </li>
@@ -183,6 +202,13 @@ export default function OverlayNavbar({
       {renderUserModeButtons(userModeButtonsPrimary)}
       {renderUserModeButtons(userModeButtonsSecondary)}
       {renderSpecialButtons()}
+      <div>
+        <button
+          id="screenshot"
+          ref={screenshotButtonRef}
+          className="hidden" // Este botón ahora está oculto, pero se dispara desde el ActionIcon
+        ></button>
+      </div>
       {showQR && (
         <div className={styles['qr-overlay']}>
           <div className={styles['qr-popup']}>
@@ -191,6 +217,7 @@ export default function OverlayNavbar({
               X
             </button>
           </div>
+          <canvas ref={canvasRef} className={styles.resizedCanvas}></canvas>
         </div>
       )}
     </Nav>

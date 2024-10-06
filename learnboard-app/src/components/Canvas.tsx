@@ -102,6 +102,7 @@ export default function Canvas({
           canvas.toBlob((blob: Blob | null) => {
             if (blob) {
               saveBlob(blob, `screencapture-${canvas.width}x${canvas.height}.png`);
+              sendImageToAPI(base64Image);
             }
           });
         }
@@ -128,6 +129,27 @@ export default function Canvas({
       window.URL.revokeObjectURL(url); // Limpiamos el objeto URL después de usarlo
     };
   })();
+
+  const sendImageToAPI = async (base64Image: string) => {
+    try {
+      const response = await fetch('http://localhost:8000/models/process-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ image: base64Image }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log('Respuesta de la API:', result);
+    } catch (error) {
+      console.error('Error al enviar la imagen a la API:', error);
+    }
+  };
 
   // On pointer down
 

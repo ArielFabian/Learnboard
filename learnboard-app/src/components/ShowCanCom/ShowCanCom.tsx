@@ -57,18 +57,11 @@ const ParentComponent: React.FC = () => {
             <button onClick={() => setShowIframe(!showIframe)} className={styles.toggleButton}>
               {showIframe ? 'Ocultar' : 'Mostrar'}
             </button>
-            <button
-              id="screenshot"
-              ref={screenshotButtonRef}
-              className="group relative rounded-xl bg-gray-100 p-2 text-blue-600 hover:bg-gray-50"
-            >
-              SS
-            </button>
 
             {showIframe ? (
               <div className={`${styles.resizer} ${styles.ugly}`}>
                 {/* El canvas al que hacemos referencia */}
-                <canvas ref={canvasRef} className={styles.resizedCanvas}></canvas>
+                {/* <canvas ref={canvasRef} className={styles.resizedCanvas}></canvas> */}
 
                 <iframe src={iframeSrc} title="Iframe Content" className={styles.resized} />
               </div>
