@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useEffect, useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
 import styled from 'styled-components';
 
@@ -94,14 +95,14 @@ export default function Canvas({
         const canvas = canvasRef.current;
 
         if (canvas) {
-          // Obtener imagen en formato base64 y mostrar en consola
-          const base64Image = canvas.toDataURL('image/png');
-          console.log(base64Image);
+          // Obtener imagen en formato base64 sin "data:image/png;base64,"
+          const base64Image = canvas.toDataURL('image/png').split(',')[1];
+          console.log('Imagen base64 sin prefijo:', base64Image);
 
           // Convertir el canvas en un blob para descargar
           canvas.toBlob((blob: Blob | null) => {
             if (blob) {
-              saveBlob(blob, `screencapture-${canvas.width}x${canvas.height}.png`);
+              sendImageToAPI(base64Image); // Enviar imagen base64 sin prefijo a la API
             }
           });
         }
@@ -116,18 +117,46 @@ export default function Canvas({
     }
   }, [canvasRef]);
 
-  const saveBlob = (() => {
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.style.display = 'none';
-    return function saveData(blob: Blob, fileName: string) {
-      const url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = fileName;
-      a.click();
-      window.URL.revokeObjectURL(url); // Limpiamos el objeto URL después de usarlo
-    };
-  })();
+  // Función para enviar la imagen a la API
+  // Función para enviar la imagen a la API
+  const sendImageToAPI = async (base64Image: string) => {
+    try {
+      const response = await axios.post('http://localhost:8000/model/process-image', {
+        image: base64Image, // Ya está sin el prefijo
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      // Suponemos que la respuesta también está en base64 sin prefijo
+      const resultBase64 = response.data.image;
+      console.log('Respuesta de la API en base64:', resultBase64);
+
+      // Llamar a la función para obtener el elemento imagen a partir del base64
+      const imageElement = await getImageElementFromUrl(resultBase64);
+
+      // Dibujar la imagen devuelta por la API en el canvas
+      const canvas = canvasRef.current;
+      if (canvas && imageElement) {
+        const ctx = canvas.getContext('2d');
+        ctx?.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas antes de dibujar
+        ctx?.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+      }
+    } catch (error) {
+      console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
+    }
+  };
+
+  // Función para convertir la URL base64 en un elemento de imagen
+  async function getImageElementFromUrl(base64Image: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = (error) => reject(error);
+      image.src = `data:image/png;base64,${base64Image}`;
+    });
+  }
 
   // On pointer down
 
