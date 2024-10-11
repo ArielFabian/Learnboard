@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import OverlayMenu from '~/components/Overlay/OverlayMenu';
@@ -49,14 +49,27 @@ const BottomRightDiv = styled.div`
 export default function Overlay({
   showCompiler,
   onShowCompilerChange,
+  onTextChange,
 }: {
+  handleClick: () => void;
+  onTextChange: (text: string) => void;
   showCompiler: boolean;
   onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
 }) {
+  const [text, setText] = useState('');
+
+  const handleClick = () => {
+    onTextChange(text); // Llama a la función del padre para actualizar el texto
+  };
   return (
     <FixedDiv>
       <TopDiv>
-        <OverlayNavbar showCompiler={showCompiler} onShowCompilerChange={onShowCompilerChange} />
+        <OverlayNavbar
+          showCompiler={showCompiler}
+          onShowCompilerChange={onShowCompilerChange}
+          onTextChange={onTextChange}
+          handleClick={handleClick}
+        />
         <OverlayMenu />
       </TopDiv>
       <BottomRightDiv>

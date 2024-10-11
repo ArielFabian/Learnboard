@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
+import React, { useEffect, useRef, useState, type PointerEvent, type Touch, type TouchEvent } from 'react';
 import styled from 'styled-components';
 
 import { TRANSPARENT_BACKGROUND_IMAGE } from '~/config/constants';
@@ -41,7 +41,11 @@ type PointerOrTouchEvent = PointerEvent<HTMLElement> | TouchEvent<HTMLElement>;
 export default function Canvas({
   iframeSrc,
   handleIframeStateChange,
+  onTextChange,
+  text,
 }: {
+  text: string;
+  onTextChange: (text: string) => void;
   iframeSrc: string;
   handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
 }) {
@@ -87,6 +91,7 @@ export default function Canvas({
 
   const activeObject = canvasObjects.find((canvasObject) => canvasObject.id === activeObjectId);
 
+  // Screenshot
   useEffect(() => {
     const elem = document.querySelector('#screenshot') as HTMLElement;
 
@@ -118,7 +123,6 @@ export default function Canvas({
   }, [canvasRef]);
 
   // Función para enviar la imagen a la API
-  // Función para enviar la imagen a la API
   const sendImageToAPI = async (base64Image: string) => {
     try {
       const response = await axios.post('http://localhost:8000/model/process-image', {
@@ -128,9 +132,8 @@ export default function Canvas({
       if (response.status !== 200) {
         throw new Error(`Error: ${response.statusText}`);
       }
+      const resultBase64 = response.data.result;
 
-      // Suponemos que la respuesta también está en base64 sin prefijo
-      const resultBase64 = response.data.image;
       console.log('Respuesta de la API en base64:', resultBase64);
 
       // Llamar a la función para obtener el elemento imagen a partir del base64
@@ -157,6 +160,41 @@ export default function Canvas({
       image.src = `data:image/png;base64,${base64Image}`;
     });
   }
+
+  //Latex
+
+  useEffect(() => {
+    if (text) {
+      sendLatexToAPI(text); // Llama a la API solo si hay texto
+    }
+  }, [text]); // Efecto se ejecuta cuando el texto cambia
+
+  const sendLatexToAPI = async (latex: string) => {
+    try {
+      const response = await axios.post('http://localhost:8000/model/process-latex', {
+        expression: latex,
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const resultLatex = response.data.result;
+      console.log('Respuesta de la API en base64:', resultLatex);
+
+      const imageElement = await getImageElementFromUrl(resultLatex);
+
+      const canvas = canvasRef.current;
+      if (canvas && imageElement) {
+        const ctx = canvas.getContext('2d');
+        ctx?.clearRect(0, 0, canvas.width, canvas.height);
+        ctx?.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+      }
+    } catch (error) {
+      console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
+    }
+    return <div>Texto enviado a la API: {text}</div>;
+  };
 
   // On pointer down
 
