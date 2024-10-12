@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Compiler from '../Compiler/Complier';
 import AppLayout from '~/layouts/AppLayout';
 import Draggable from 'react-draggable';
@@ -9,8 +9,6 @@ const ParentComponent: React.FC = () => {
   const [showCompiler, setShowCompiler] = useState(false);
   const [iframeSrc, setIframeSrc] = useState('https://example.com/'); // Estado para manejar la URL del iframe
   const [showIframe, setShowIframe] = useState(true); // Estado para manejar la visibilidad del iframe
-  const canvasRef = useRef<HTMLCanvasElement | null>(null); // Referencia al canvas
-  const screenshotButtonRef = useRef<HTMLButtonElement | null>(null); // Referencia al botón de captura
 
   // Función para manejar el cambio de estado de showCompiler
   const handleShowCompilerChange = (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => {
@@ -34,8 +32,6 @@ const ParentComponent: React.FC = () => {
         <AppLayout
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
-          iframeSrc={iframeSrc}
-          handleIframeStateChange={handleIframeStateChange} // Pasar la función para manejar el iframe
         />
       </div>
 
@@ -57,19 +53,9 @@ const ParentComponent: React.FC = () => {
             <button onClick={() => setShowIframe(!showIframe)} className={styles.toggleButton}>
               {showIframe ? 'Ocultar' : 'Mostrar'}
             </button>
-            <button
-              id="screenshot"
-              ref={screenshotButtonRef}
-              className="group relative rounded-xl bg-gray-100 p-2 text-blue-600 hover:bg-gray-50"
-            >
-              SS
-            </button>
 
             {showIframe ? (
               <div className={`${styles.resizer} ${styles.ugly}`}>
-                {/* El canvas al que hacemos referencia */}
-                <canvas ref={canvasRef} className={styles.resizedCanvas}></canvas>
-
                 <iframe src={iframeSrc} title="Iframe Content" className={styles.resized} />
               </div>
             ) : (

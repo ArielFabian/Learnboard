@@ -25,7 +25,7 @@ function processLatex(expression) {
         console.log(`Expression to process: ${expression}`);
 
         // Ejecutar el script de Python con la expresión como argumento
-        execFile('python', ['/home/kali/Desktop/latexRecognition.py', expression], (error, stdout, stderr) => {
+        execFile('python', ['/home/pn/app/src/app/util/latexRecognition.py', expression], (error, stdout, stderr) => {
             if (error) return reject(error);
             if (stderr) return reject(new Error(stderr.trim()));
 
