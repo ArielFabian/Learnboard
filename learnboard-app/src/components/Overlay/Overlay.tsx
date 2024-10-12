@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import OverlayMenu from '~/components/Overlay/OverlayMenu';
@@ -49,14 +49,30 @@ const BottomRightDiv = styled.div`
 export default function Overlay({
   showCompiler,
   onShowCompilerChange,
+  onTextChange,
+  onTakeScreenshotChange,
 }: {
+  handleLatexClick: () => void;
+  onTextChange: (text: string) => void;
   showCompiler: boolean;
   onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
+  onTakeScreenshotChange: (takeScreenshot: boolean) => void;
 }) {
+  const [text] = useState('');
+
+  const handleLatexClick = () => {
+    onTextChange(text);
+  };
   return (
     <FixedDiv>
       <TopDiv>
-        <OverlayNavbar showCompiler={showCompiler} onShowCompilerChange={onShowCompilerChange} />
+        <OverlayNavbar
+          showCompiler={showCompiler}
+          onShowCompilerChange={onShowCompilerChange}
+          onTextChange={onTextChange}
+          handleLatexClick={handleLatexClick}
+          onTakeScreenshotChange={onTakeScreenshotChange}
+        />
         <OverlayMenu />
       </TopDiv>
       <BottomRightDiv>
