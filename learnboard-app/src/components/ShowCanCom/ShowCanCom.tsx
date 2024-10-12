@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Compiler from '../Compiler/Complier';
 import AppLayout from '~/layouts/AppLayout';
 import Draggable from 'react-draggable';
@@ -32,8 +32,6 @@ const ParentComponent: React.FC = () => {
         <AppLayout
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
-          iframeSrc={iframeSrc}
-          handleIframeStateChange={handleIframeStateChange} // Pasar la función para manejar el iframe
         />
       </div>
 

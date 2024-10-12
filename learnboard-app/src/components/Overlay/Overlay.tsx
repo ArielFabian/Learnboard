@@ -50,16 +50,18 @@ export default function Overlay({
   showCompiler,
   onShowCompilerChange,
   onTextChange,
+  onTakeScreenshotChange,
 }: {
-  handleClick: () => void;
+  handleLatexClick: () => void;
   onTextChange: (text: string) => void;
   showCompiler: boolean;
   onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
+  onTakeScreenshotChange: (takeScreenshot: boolean) => void;
 }) {
-  const [text, setText] = useState('');
+  const [text] = useState('');
 
-  const handleClick = () => {
-    onTextChange(text); // Llama a la función del padre para actualizar el texto
+  const handleLatexClick = () => {
+    onTextChange(text);
   };
   return (
     <FixedDiv>
@@ -68,7 +70,8 @@ export default function Overlay({
           showCompiler={showCompiler}
           onShowCompilerChange={onShowCompilerChange}
           onTextChange={onTextChange}
-          handleClick={handleClick}
+          handleLatexClick={handleLatexClick}
+          onTakeScreenshotChange={onTakeScreenshotChange}
         />
         <OverlayMenu />
       </TopDiv>

@@ -23,6 +23,9 @@ import getCursorFromModes from '~/utils/getCursorFromModes';
 import getDimensionsFromFreeDraw from '~/utils/getDimensionsFromFreeDraw';
 import getRelativeMousePositionOnCanvas from '~/utils/getRelativeMousePositionOnCanvas';
 import isCursorWithinRectangle from '~/utils/isCursorWithinRectangle';
+import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
+import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
+import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
 
 const FixedMain = styled.main`
   position: fixed;
@@ -38,17 +41,19 @@ const FixedMain = styled.main`
 
 type PointerOrTouchEvent = PointerEvent<HTMLElement> | TouchEvent<HTMLElement>;
 
-export default function Canvas({
-  iframeSrc,
-  handleIframeStateChange,
-  onTextChange,
-  text,
-}: {
-  text: string;
-  onTextChange: (text: string) => void;
-  iframeSrc: string;
-  handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
-}) {
+export default function Canvas(
+  {
+    text,
+    handleTextChange,
+    takeScreenshot,
+    handleTakeScreenshot
+  }:
+  {
+    text: string,
+    handleTextChange: (text: string) => void
+    takeScreenshot: boolean,
+    handleTakeScreenshot: (takeScreenshot: boolean) => void
+  }) {
   const { canvasRef, contextRef, drawEverything } = useCanvasContext();
 
   const previousTouchRef = useRef<Touch | null>(null);
@@ -91,110 +96,69 @@ export default function Canvas({
 
   const activeObject = canvasObjects.find((canvasObject) => canvasObject.id === activeObjectId);
 
+  const [imageUrl, setImageUrl] = useState<string>('');
+
+  const appendImageObject = useCanvasObjects((state) => state.appendImageObject);
+
   // Screenshot
   useEffect(() => {
-    const elem = document.querySelector('#screenshot') as HTMLElement;
-
-    if (elem) {
-      const handleScreenshotClick = () => {
+    if (takeScreenshot) {
+      setTimeout(() => {
         const canvas = canvasRef.current;
-
         if (canvas) {
-          // Obtener imagen en formato base64 sin "data:image/png;base64,"
           const base64Image = canvas.toDataURL('image/png').split(',')[1];
-          console.log('Imagen base64 sin prefijo:', base64Image);
-
-          // Convertir el canvas en un blob para descargar
-          canvas.toBlob((blob: Blob | null) => {
-            if (blob) {
-              sendImageToAPI(base64Image); // Enviar imagen base64 sin prefijo a la API
-            }
-          });
+          sendImageToAPI(base64Image);
         }
-      };
+      } , 5000)
 
-      elem.addEventListener('click', handleScreenshotClick);
-
-      // Limpiar el evento cuando el componente se desmonta
-      return () => {
-        elem.removeEventListener('click', handleScreenshotClick);
-      };
     }
-  }, [canvasRef]);
+  },);
 
   // Función para enviar la imagen a la API
   const sendImageToAPI = async (base64Image: string) => {
     try {
       const response = await axios.post('http://localhost:8000/model/process-image', {
-        image: base64Image, // Ya está sin el prefijo
+        image: base64Image,
       });
 
       if (response.status !== 200) {
         throw new Error(`Error: ${response.statusText}`);
       }
       const resultBase64 = response.data.result;
-
-      console.log('Respuesta de la API en base64:', resultBase64);
-
-      // Llamar a la función para obtener el elemento imagen a partir del base64
-      const imageElement = await getImageElementFromUrl(resultBase64);
-
-      // Dibujar la imagen devuelta por la API en el canvas
-      const canvas = canvasRef.current;
-      if (canvas && imageElement) {
-        const ctx = canvas.getContext('2d');
-        ctx?.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas antes de dibujar
-        ctx?.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
-      }
+      commonPushImageObject(`data:image/png;base64,${resultBase64}`)
+      handleTakeScreenshot(false);
     } catch (error) {
       console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
     }
   };
-
-  // Función para convertir la URL base64 en un elemento de imagen
-  async function getImageElementFromUrl(base64Image: string): Promise<HTMLImageElement> {
-    return new Promise((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => resolve(image);
-      image.onerror = (error) => reject(error);
-      image.src = `data:image/png;base64,${base64Image}`;
-    });
-  }
 
   //Latex
-
   useEffect(() => {
-    if (text) {
-      sendLatexToAPI(text); // Llama a la API solo si hay texto
-    }
-  }, [text]); // Efecto se ejecuta cuando el texto cambia
+    const sendLatexToAPI = async (latex: string) => {
+      try {
+        const response = await axios.post('http://localhost:8000/model/process-latex', {
+          expression: latex,
+        });
 
-  const sendLatexToAPI = async (latex: string) => {
-    try {
-      const response = await axios.post('http://localhost:8000/model/process-latex', {
-        expression: latex,
-      });
+        if (response.status !== 200) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
 
-      if (response.status !== 200) {
-        throw new Error(`Error: ${response.statusText}`);
+        const resultLatex = response.data.result;
+        commonPushImageObject(`data:image/png;base64,${resultLatex}`)
+        handleTextChange('')
+      } catch (error) {
+        console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
       }
+    };
 
-      const resultLatex = response.data.result;
-      console.log('Respuesta de la API en base64:', resultLatex);
-
-      const imageElement = await getImageElementFromUrl(resultLatex);
-
-      const canvas = canvasRef.current;
-      if (canvas && imageElement) {
-        const ctx = canvas.getContext('2d');
-        ctx?.clearRect(0, 0, canvas.width, canvas.height);
-        ctx?.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
-      }
-    } catch (error) {
-      console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
+    if (text !== '') {
+      setTimeout(() => {
+        sendLatexToAPI(text)
+      } , 5000)
     }
-    return <div>Texto enviado a la API: {text}</div>;
-  };
+  });
+
 
   // On pointer down
 
@@ -504,8 +468,7 @@ export default function Canvas({
       distanceBetweenTouchesRef.current = 0;
     }
 
-    // Añadir un retraso de X milisegundos (ej. 1000 ms = 1 segundo)
-    const delayInMilliseconds = 15000; // Cambia esto por el tiempo que quieras
+    const delayInMilliseconds = 15000;
 
     setTimeout(() => {
       switch (userMode) {
@@ -534,8 +497,35 @@ export default function Canvas({
           break;
         }
       }
-    }, delayInMilliseconds); // Este es el tiempo de retraso antes de ejecutar el código
+    }, delayInMilliseconds);
   };
+
+  const commonPushImageObject = async (url: string) => {
+    const imageElement = await getImageElementFromUrl(url);
+    const dimensions = await getDimensionsFromImage({
+      context: contextRef?.current,
+      imageObject: { x: 0, y: 0, imageElement },
+    });
+    pushImageObject({ imageUrl: url, imageElement, dimensions });
+  };
+
+  const pushImageObject = async ({ imageUrl, imageElement, dimensions }: OptionItem) => {
+    setImageUrl(imageUrl);
+    const createdObjectId = generateUniqueId();
+    appendImageObject({
+      id: createdObjectId,
+      x: 0,
+      y: 0,
+      width: dimensions.width,
+      height: dimensions.height,
+      opacity: 100,
+      imageUrl,
+      imageElement,
+    });
+    setActiveObjectId(createdObjectId);
+    setUserMode('select');
+  };
+
 
   return (
     <FixedMain

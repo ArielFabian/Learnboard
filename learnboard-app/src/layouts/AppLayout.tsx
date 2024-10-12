@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from 'react';
-
-import styles from './AppLayout.module.css';
-
 import Canvas from '~/components/Canvas';
 import CanvasEventListeners from '~/components/CanvasEventListeners';
 import Overlay from '~/components/Overlay';
-import { text } from 'stream/consumers';
 
 export default function AppLayout({
   showCompiler,
   onShowCompilerChange,
-  iframeSrc,
-  handleIframeStateChange,
 }: {
   showCompiler: boolean;
   onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
-  iframeSrc: string;
-  handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
 }) {
-  const [inputText, setInputText] = useState(''); // Estado del texto
-
+  const [inputText, setInputText] = useState('');
+  const [takeScreenshot, setTakeScreenshot] = useState(false);
   const handleTextChange = (text: string) => {
-    setInputText(text); // Actualiza el estado del texto
+    setInputText(text);
   };
-
+  const handleTakeScreenshot = (takeScreenshot: boolean) => {
+    setTakeScreenshot(takeScreenshot);
+  };
   useEffect(() => {
     const html = document.querySelector('html');
 
@@ -44,11 +38,12 @@ export default function AppLayout({
         showCompiler={showCompiler}
         onShowCompilerChange={onShowCompilerChange}
         onTextChange={handleTextChange}
-        handleClick={function (): void {
+        onTakeScreenshotChange={handleTakeScreenshot}
+        handleLatexClick={function (): void {
           throw new Error('Function not implemented.');
         }}
       />
-      <Canvas iframeSrc={iframeSrc} handleIframeStateChange={handleIframeStateChange} onTextChange={handleTextChange} text={''} />
+      <Canvas text={inputText} handleTextChange={handleTextChange} takeScreenshot = {takeScreenshot} handleTakeScreenshot = {handleTakeScreenshot}/>
       <CanvasEventListeners />
     </>
   );

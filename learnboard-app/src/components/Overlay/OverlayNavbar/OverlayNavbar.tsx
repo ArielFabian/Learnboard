@@ -1,6 +1,6 @@
 import { ActionIcon, Button, TextInput, Tooltip } from '@mantine/core';
 import { QRCodeCanvas } from 'qrcode.react';
-import React, { useEffect, useRef, useState, type ReactNode } from 'react';
+import React, { useRef, useState, type ReactNode } from 'react';
 import { BsSquare, BsCircle, BsImageFill } from 'react-icons/bs';
 import { FaMousePointer, FaQrcode, FaCode, FaCamera, FaEnvelopeOpenText } from 'react-icons/fa';
 import { HiPencil } from 'react-icons/hi';
@@ -39,7 +39,7 @@ const Ul = styled.ul`
   display: grid;
   grid-gap: 0.15rem;
   align-items: center;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   & > li {
     width: 100%;
@@ -99,11 +99,13 @@ export default function OverlayNavbar({
   showCompiler,
   onShowCompilerChange,
   onTextChange,
+  onTakeScreenshotChange,
 }: {
-  handleClick: () => void;
+  handleLatexClick: () => void;
   onTextChange: (text: string) => void;
   showCompiler: boolean;
   onShowCompilerChange: (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => void;
+  onTakeScreenshotChange: (takeScreenshot: boolean) => void;
 }) {
   const setActiveObjectId = useActiveObjectId((state) => state.setActiveObjectId);
 
@@ -122,31 +124,22 @@ export default function OverlayNavbar({
 
   const currentUrl = window.location.href;
 
-  const screenshotButtonRef = useRef<HTMLButtonElement | null>(null); // Referencia al botón de captura
   const canvasRef = useRef<HTMLCanvasElement | null>(null); // Referencia al canvas
 
-  const textButtonRef = useRef<HTMLButtonElement | null>(null); // Referencia al botón de captura
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [text, setText] = useState('');
 
-  const handleClick = () => {
-    onTextChange(text); // Llama a la función del padre para actualizar el texto
+  const handleLatexClick = () => {
+    setDropdownOpen(false)
+    onTextChange(text);
+    setText('');
   };
-  // Close dropdown if clicked outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const handleTakeScreenshot = (takeScreenshot: boolean) => {
+    onTakeScreenshotChange(takeScreenshot);
+  }
 
   const renderSpecialButtons = () => {
     return (
@@ -172,7 +165,7 @@ export default function OverlayNavbar({
             </Tooltip>
           </li>
           <div>
-            <Tooltip position="bottom-start" label="Captura de pantalla" offset={16}>
+            <Tooltip position="bottom-start" label="Generar expresion" offset={16}>
               <ActionIcon color="dark" variant="filled" size="lg" onClick={() => setDropdownOpen((prev) => !prev)}>
                 <FaEnvelopeOpenText />
               </ActionIcon>
@@ -192,8 +185,8 @@ export default function OverlayNavbar({
                   borderRadius: '8px',
                 }}
               >
-                <TextInput type="text" value={text} onChange={(e) => setText(e.target.value)} placeholder="Escribe algo aquí" />
-                <Button onClick={handleClick}>Generar</Button>
+                <TextInput type="text" value={text} onChange={(e) => setText(e.target.value)} placeholder="Escribe un enunciado matematico" />
+                <Button onClick={handleLatexClick}>Generar</Button>
               </div>
             )}
           </div>
@@ -204,11 +197,7 @@ export default function OverlayNavbar({
                 color="dark"
                 variant={userMode === 'select' ? 'gradient' : 'dark'}
                 size="lg"
-                onClick={() => {
-                  if (screenshotButtonRef.current) {
-                    screenshotButtonRef.current.click();
-                  }
-                }}
+                onClick={() => handleTakeScreenshot(true)}
               >
                 <FaCamera />
               </ActionIcon>
@@ -255,21 +244,6 @@ export default function OverlayNavbar({
       {renderUserModeButtons(userModeButtonsPrimary)}
       {renderUserModeButtons(userModeButtonsSecondary)}
       {renderSpecialButtons()}
-      <div>
-        <button
-          id="screenshot"
-          ref={screenshotButtonRef}
-          className="hidden" // Este botón ahora está oculto, pero se dispara desde el ActionIcon
-        ></button>
-
-        <div>
-          <button
-            id="submitText"
-            ref={textButtonRef}
-            className="hidden" // Este botón ahora está oculto, pero se dispara desde el ActionIcon
-          ></button>
-        </div>
-      </div>
       {showQR && (
         <div className={styles['qr-overlay']}>
           <div className={styles['qr-popup']}>
