@@ -7,12 +7,6 @@ const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-  },
-});
 
 app.use(cors());
 app.use(express.json());
@@ -33,7 +27,16 @@ const roomsDirectory = path.join(__dirname, 'rooms');
 if (!fs.existsSync(roomsDirectory)) {
   fs.mkdirSync(roomsDirectory);
 }
+const io = new Server(server, {
+  cors: {
+    origin: ['https://learn-board.tech', 'http://localhost:3000'], // Agregar frontend en producción
+    methods: ['GET', 'POST'],
+  },
+});
 
+app.use(cors({
+  origin: ['https://learn-board.tech', 'http://localhost:3000'], // Configurar los orígenes permitidos
+}));
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
