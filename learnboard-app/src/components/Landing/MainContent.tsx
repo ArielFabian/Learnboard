@@ -97,7 +97,11 @@ const JoinCallPage: React.FC = () => {
                     deleteSpeed: 25,
                   }}
                 />
-                <Button variant="primary" className="mt-4">
+                <Button
+                  variant="primary"
+                  className="mt-4"
+                  onClick={() => window.location.href = 'https://chromewebstore.google.com/detail/learnboard/bacnninbabfmiacmonimildafkapdeap?authuser=0&hl=es-419'}
+                >
                   Consigue la extensión LearnBoard
                 </Button>
                 <div className="d-flex justify-content-center mt-4">
