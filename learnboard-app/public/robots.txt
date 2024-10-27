@@ -1,4 +1,4 @@
-Sitemap: https://flatdraw.pages.dev/sitemap.xml
+Sitemap: https://learn-board.tech/sitemap.xml
 
 User-agent: *
 Allow: /
