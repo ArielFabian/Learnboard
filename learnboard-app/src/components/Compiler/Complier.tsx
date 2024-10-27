@@ -67,7 +67,7 @@ const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange,
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/execute', {
+      const response = await axios.post('https://api.learn-board.tech/execute', {
         language,
         code,
         commands,

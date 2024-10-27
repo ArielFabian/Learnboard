@@ -117,7 +117,7 @@ export default function Canvas(
   // Función para enviar la imagen a la API
   const sendImageToAPI = async (base64Image: string) => {
     try {
-      const response = await axios.post('http://localhost:8000/model/process-image', {
+      const response = await axios.post('https://api.learn-board.tech/model/process-image', {
         image: base64Image,
       });
 
@@ -136,7 +136,7 @@ export default function Canvas(
   useEffect(() => {
     const sendLatexToAPI = async (latex: string) => {
       try {
-        const response = await axios.post('http://localhost:8000/model/process-latex', {
+        const response = await axios.post('https://api.learn-board.tech/model/process-latex', {
           expression: latex,
         });
 
