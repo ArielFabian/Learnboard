@@ -43,7 +43,7 @@ const JoinCallPage: React.FC = () => {
 
     try {
       // Hacer la petición GET al servidor para unirse a la llamada
-      const response = await axios.get(`https://api.learnboard.com/colabs/${callCode}`);
+      const response = await axios.get(`https://api.learnboard.tech/colabs/${callCode}`);
 
       if (response.status === 200) {
         setSnackbarMessage('Te has unido con éxito a la llamada');
