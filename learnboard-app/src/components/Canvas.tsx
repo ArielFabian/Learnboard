@@ -117,6 +117,7 @@ export default function Canvas(
   // Función para enviar la imagen a la API
   const sendImageToAPI = async (base64Image: string) => {
     try {
+
       const response = await axios.post('https://api.learn-board.tech/model/process-image', {
         image: base64Image,
       });
