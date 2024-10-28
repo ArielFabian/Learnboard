@@ -7,8 +7,14 @@ const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
+const corsOptions = {
+  origin: ['https://learn-board.tech', 'http://localhost:3000'], // Incluye dominios permitidos
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
+  credentials: true // Permitir cookies si es necesario
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 const userRoutes = require('./routes/userRoutes');
 const colabRoutes = require('./routes/colabSpacesRoutes');
