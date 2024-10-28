@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import MonacoEditor, { OnChange } from '@monaco-editor/react';
 import { io, Socket } from 'socket.io-client';
 
-const socket: Socket = io('http://64.23.247.40:8000');
+const socket: Socket = io('https://api.learn-board.tech/');
 
 interface CodeEditorProps {
   code: string;
