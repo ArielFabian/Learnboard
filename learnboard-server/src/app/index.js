@@ -1,5 +1,4 @@
 const express = require('express');
-const cors = require('cors');
 const https = require('https'); // Cambiado de http a https
 const { Server } = require('socket.io');
 const path = require('path');
@@ -15,14 +14,12 @@ const credentials = { key: privateKey, cert: certificate, ca: ca };
 const app = express();
 const server = https.createServer(credentials, app); // Cambiado a https
 
-app.use(cors());
 app.use(express.json());
 const userRoutes = require('./routes/userRoutes');
 const colabRoutes = require('./routes/colabSpacesRoutes');
 const modelRoutes = require('./routes/modelRoutes');
 const executeRoutes = require('./routes/executeRoutes');
 
-app.use(cors());
 app.use(express.json());
 
 app.use('/users', userRoutes);
@@ -35,13 +32,8 @@ if (!fs.existsSync(roomsDirectory)) {
   fs.mkdirSync(roomsDirectory);
 }
 
-// Configuración de Socket.IO con CORS
-const io = new Server(server, {
-  cors: {
-    origin: ['https://learn-board.tech', 'http://localhost:3000'], // Agregar frontend en producción
-    methods: ['GET', 'POST'],
-  },
-});
+// Configuración de Socket.IO sin CORS
+const io = new Server(server);
 
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
