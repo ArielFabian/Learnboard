@@ -30,6 +30,8 @@
     "@mantine/nprogress": "6.0.4",
     "@monaco-editor/react": "4.6.0",
     "@mui/material": "6.0.2",
+    "@zoom/meetingsdk": "3.9.0",
+    "@zoomus/websdk": "2.18.3",
     "axios": "1.4.0",
     "bootstrap": "5.3.3",
     "canvas-txt": "3.0.0",

@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, type PointerEvent, type Touch, type TouchEvent } from 'react';
+import axios from 'axios';
+import React, { useEffect, useRef, useState, type PointerEvent, type Touch, type TouchEvent } from 'react';
 import styled from 'styled-components';
 
 import { TRANSPARENT_BACKGROUND_IMAGE } from '~/config/constants';
@@ -22,6 +23,9 @@ import getCursorFromModes from '~/utils/getCursorFromModes';
 import getDimensionsFromFreeDraw from '~/utils/getDimensionsFromFreeDraw';
 import getRelativeMousePositionOnCanvas from '~/utils/getRelativeMousePositionOnCanvas';
 import isCursorWithinRectangle from '~/utils/isCursorWithinRectangle';
+import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
+import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
+import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
 
 const FixedMain = styled.main`
   position: fixed;
@@ -37,13 +41,19 @@ const FixedMain = styled.main`
 
 type PointerOrTouchEvent = PointerEvent<HTMLElement> | TouchEvent<HTMLElement>;
 
-export default function Canvas({
-  iframeSrc,
-  handleIframeStateChange,
-}: {
-  iframeSrc: string;
-  handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
-}) {
+export default function Canvas(
+  {
+    text,
+    handleTextChange,
+    takeScreenshot,
+    handleTakeScreenshot
+  }:
+  {
+    text: string,
+    handleTextChange: (text: string) => void
+    takeScreenshot: boolean,
+    handleTakeScreenshot: (takeScreenshot: boolean) => void
+  }) {
   const { canvasRef, contextRef, drawEverything } = useCanvasContext();
 
   const previousTouchRef = useRef<Touch | null>(null);
@@ -86,48 +96,69 @@ export default function Canvas({
 
   const activeObject = canvasObjects.find((canvasObject) => canvasObject.id === activeObjectId);
 
+  const [imageUrl, setImageUrl] = useState<string>('');
+
+  const appendImageObject = useCanvasObjects((state) => state.appendImageObject);
+
+  // Screenshot
   useEffect(() => {
-    const elem = document.querySelector('#screenshot') as HTMLElement;
-
-    if (elem) {
-      const handleScreenshotClick = () => {
+    if (takeScreenshot) {
+      setTimeout(() => {
         const canvas = canvasRef.current;
-
         if (canvas) {
-          // Obtener imagen en formato base64 y mostrar en consola
-          const base64Image = canvas.toDataURL('image/png');
-          console.log(base64Image);
-
-          // Convertir el canvas en un blob para descargar
-          canvas.toBlob((blob: Blob | null) => {
-            if (blob) {
-              saveBlob(blob, `screencapture-${canvas.width}x${canvas.height}.png`);
-            }
-          });
+          const base64Image = canvas.toDataURL('image/png').split(',')[1];
+          sendImageToAPI(base64Image);
         }
-      };
+      } , 5000)
 
-      elem.addEventListener('click', handleScreenshotClick);
-
-      // Limpiar el evento cuando el componente se desmonta
-      return () => {
-        elem.removeEventListener('click', handleScreenshotClick);
-      };
     }
-  }, [canvasRef]);
+  },);
 
-  const saveBlob = (() => {
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.style.display = 'none';
-    return function saveData(blob: Blob, fileName: string) {
-      const url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = fileName;
-      a.click();
-      window.URL.revokeObjectURL(url); // Limpiamos el objeto URL después de usarlo
+  // Función para enviar la imagen a la API
+  const sendImageToAPI = async (base64Image: string) => {
+    try {
+      const response = await axios.post('http://64.23.247.40:8000/model/process-image', {
+        image: base64Image,
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      const resultBase64 = response.data.result;
+      commonPushImageObject(`data:image/png;base64,${resultBase64}`)
+      handleTakeScreenshot(false);
+    } catch (error) {
+      console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
+    }
+  };
+
+  //Latex
+  useEffect(() => {
+    const sendLatexToAPI = async (latex: string) => {
+      try {
+        const response = await axios.post('http://64.23.247.40:8000/model/process-latex', {
+          expression: latex,
+        });
+
+        if (response.status !== 200) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+
+        const resultLatex = response.data.result;
+        commonPushImageObject(`data:image/png;base64,${resultLatex}`)
+        handleTextChange('')
+      } catch (error) {
+        console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
+      }
     };
-  })();
+
+    if (text !== '') {
+      setTimeout(() => {
+        sendLatexToAPI(text)
+      } , 5000)
+    }
+  });
+
 
   // On pointer down
 
@@ -437,8 +468,7 @@ export default function Canvas({
       distanceBetweenTouchesRef.current = 0;
     }
 
-    // Añadir un retraso de X milisegundos (ej. 1000 ms = 1 segundo)
-    const delayInMilliseconds = 15000; // Cambia esto por el tiempo que quieras
+    const delayInMilliseconds = 15000;
 
     setTimeout(() => {
       switch (userMode) {
@@ -467,8 +497,35 @@ export default function Canvas({
           break;
         }
       }
-    }, delayInMilliseconds); // Este es el tiempo de retraso antes de ejecutar el código
+    }, delayInMilliseconds);
   };
+
+  const commonPushImageObject = async (url: string) => {
+    const imageElement = await getImageElementFromUrl(url);
+    const dimensions = await getDimensionsFromImage({
+      context: contextRef?.current,
+      imageObject: { x: 0, y: 0, imageElement },
+    });
+    pushImageObject({ imageUrl: url, imageElement, dimensions });
+  };
+
+  const pushImageObject = async ({ imageUrl, imageElement, dimensions }: OptionItem) => {
+    setImageUrl(imageUrl);
+    const createdObjectId = generateUniqueId();
+    appendImageObject({
+      id: createdObjectId,
+      x: 0,
+      y: 0,
+      width: dimensions.width,
+      height: dimensions.height,
+      opacity: 100,
+      imageUrl,
+      imageElement,
+    });
+    setActiveObjectId(createdObjectId);
+    setUserMode('select');
+  };
+
 
   return (
     <FixedMain

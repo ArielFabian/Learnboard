@@ -1,6 +1,6 @@
 import packageJson from '~/../package.json';
 
-const cleanUrl = 'flatdraw.pages.dev';
+const cleanUrl = 'learn-board.tech';
 
 const metadata = {
   website: {
@@ -16,7 +16,7 @@ const metadata = {
     version: packageJson.version,
   },
   social: {
-    twitter: 'flatdraw',
+    twitter: 'learnboard',
   },
   links: {
     github: 'https://github.com',

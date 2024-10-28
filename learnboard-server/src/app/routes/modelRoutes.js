@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { processImage, processLatex } = require('../controllers/modelController');
 
-// Ruta para procesar la imagen
 router.post('/process-image', async (req, res) => {
     try {
         const base64Image = req.body.image;
@@ -13,7 +12,6 @@ router.post('/process-image', async (req, res) => {
     }
 });
 
-// Ruta para procesar Latex
 router.post('/process-latex', async (req, res) => {
     try {
         const expression = req.body.expression;
