@@ -6,4 +6,3 @@ services:
       - 8000:8000
     volumes:
       - ./learnboard-server:/app
-      - /etc/letsencrypt:/etc/letsencrypt:ro # Montar certificados SSL como solo lectura
