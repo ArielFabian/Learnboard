@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const https = require('https'); // Cambiado de http a https
 const { Server } = require('socket.io');
 const path = require('path');
@@ -14,13 +15,14 @@ const credentials = { key: privateKey, cert: certificate, ca: ca };
 const app = express();
 const server = https.createServer(credentials, app); // Cambiado a https
 
+// Configuración de CORS para permitir todos los orígenes
+app.use(cors({ origin: '*' }));
 app.use(express.json());
+
 const userRoutes = require('./routes/userRoutes');
 const colabRoutes = require('./routes/colabSpacesRoutes');
 const modelRoutes = require('./routes/modelRoutes');
 const executeRoutes = require('./routes/executeRoutes');
-
-app.use(express.json());
 
 app.use('/users', userRoutes);
 app.use('/colabs', colabRoutes);
@@ -32,8 +34,13 @@ if (!fs.existsSync(roomsDirectory)) {
   fs.mkdirSync(roomsDirectory);
 }
 
-// Configuración de Socket.IO sin CORS
-const io = new Server(server);
+// Configuración de Socket.IO con CORS permitiendo todos los orígenes
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
 
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
