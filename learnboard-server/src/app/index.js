@@ -4,6 +4,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 const fs = require('fs');
+const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
@@ -14,8 +15,14 @@ const io = new Server(server, {
   },
 });
 
-app.use(cors());
+
 app.use(express.json());
+// Configurar CORS para permitir solicitudes desde 'https://learn-board.tech'
+app.use(cors({
+  origin: 'https://learn-board.tech',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 const userRoutes = require('./routes/userRoutes');
 const colabRoutes = require('./routes/colabSpacesRoutes');
 const modelRoutes = require('./routes/modelRoutes');
