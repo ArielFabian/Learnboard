@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import { useRouter } from 'next/router';
 import styles from './Welcome.module.css';
@@ -8,7 +8,6 @@ import Header from '../Landing/Header';
 import Footer from '../Landing/Footer';
 import Snackbar from '../SnackBar/Snackbar';
 import { auth } from '~/utils/firebaseconfig'; 
-
 
 const Welcome: React.FC = () => {
   const router = useRouter();
@@ -27,12 +26,13 @@ const Welcome: React.FC = () => {
           email: loggedInUser.email,
         });
       } else {
-        setUser(null);
+        // Redirigir a la página de inicio de sesión si no está autenticado
+        router.push('/login');
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   // Validar que el código solo tenga números
   const isValidCode = (code: string) => {
