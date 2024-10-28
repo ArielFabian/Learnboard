@@ -20,6 +20,7 @@ const userRoutes = require('./routes/userRoutes');
 const colabRoutes = require('./routes/colabSpacesRoutes');
 const modelRoutes = require('./routes/modelRoutes');
 const executeRoutes = require('./routes/executeRoutes');
+const zoomRoutes = require('./routes/zoomRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -28,6 +29,7 @@ app.use('/users', userRoutes);
 app.use('/colabs', colabRoutes);
 app.use('/model', modelRoutes);
 app.use('/execute', executeRoutes);
+app.use('/zoom', zoomRoutes);
 
 const roomsDirectory = path.join(__dirname, 'rooms');
 if (!fs.existsSync(roomsDirectory)) {
