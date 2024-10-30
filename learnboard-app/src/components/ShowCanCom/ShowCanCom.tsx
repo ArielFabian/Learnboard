@@ -3,6 +3,7 @@ import Compiler from '../Compiler/Complier';
 import AppLayout from '~/layouts/AppLayout';
 import Draggable from 'react-draggable';
 import styles from './ParentComponent.module.css'; // Importa el módulo CSS
+import ZoomOverlay from '../Zoom/ZoomOverlay';
 
 // Componente principal que gestiona el estado del Compiler y del Iframe
 const ParentComponent: React.FC = () => {
@@ -28,22 +29,22 @@ const ParentComponent: React.FC = () => {
   return (
     <div>
       {/* AppLayout visible cuando showCompiler es false */}
-      <div style={{ display: showCompiler ? 'none' : 'block' }}>
+      {/* <div style={{ display: showCompiler ? 'none' : 'block' }}>
         <AppLayout
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
         />
-      </div>
+      </div> */}
 
       {/* Compiler visible cuando showCompiler es true */}
-      <div style={{ display: showCompiler ? 'block' : 'none' }}>
+      {/* <div style={{ display: showCompiler ? 'block' : 'none' }}>
         <Compiler
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
           iframeSrc={iframeSrc}
           handleIframeStateChange={handleIframeStateChange} // Pasar la función para manejar el iframe
         />
-      </div>
+      </div> */}
 
       {/* Contenedor Draggable */}
       <Draggable handle={`.${styles.moveButton}`}>
@@ -66,6 +67,9 @@ const ParentComponent: React.FC = () => {
           </div>
         </div>
       </Draggable>
+
+      {/* ZoomOverlay */}
+      <ZoomOverlay />
     </div>
   );
 };
