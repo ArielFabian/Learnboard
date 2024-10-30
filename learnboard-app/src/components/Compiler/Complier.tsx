@@ -16,7 +16,7 @@ interface CompilerProps {
   handleIframeStateChange: (newSrc: string | ((prevState: string) => string)) => void;
 }
 
-const socket: Socket = io('http://64.23.247.40:8000');
+const socket: Socket = io('https://api.learn-board.tech/');
 
 // Mapear lenguajes a extensiones de archivo
 const languageToExtension: { [key: string]: string } = {
@@ -67,7 +67,8 @@ const Compiler: React.FC<CompilerProps> = ({ showCompiler, onShowCompilerChange,
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://64.23.247.40:8000/execute', {
+
+      const response = await axios.post('https://api.learn-board.tech/execute', {
         language,
         code,
         commands,

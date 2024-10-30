@@ -69,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ isVerificationPage = false }) => {
                 </>
               ) : (
                 <>
-                  <Nav.Link href="#" className={styles.navLink} onClick={() => router.push('/start-call')}>
+                  <Nav.Link href="#" className={styles.navLink} onClick={() => router.push('/welcome')}>
                     Iniciar Pizarra
                   </Nav.Link>
                   <Nav.Link href="#" className={styles.navLink} onClick={handleLogoutClick}>
