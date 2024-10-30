@@ -29,22 +29,22 @@ const ParentComponent: React.FC = () => {
   return (
     <div>
       {/* AppLayout visible cuando showCompiler es false */}
-      {/* <div style={{ display: showCompiler ? 'none' : 'block' }}>
+      <div style={{ display: showCompiler ? 'none' : 'block' }}>
         <AppLayout
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
         />
-      </div> */}
-
+      </div>
+      
       {/* Compiler visible cuando showCompiler es true */}
-      {/* <div style={{ display: showCompiler ? 'block' : 'none' }}>
+      <div style={{ display: showCompiler ? 'block' : 'none' }}>
         <Compiler
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
           iframeSrc={iframeSrc}
           handleIframeStateChange={handleIframeStateChange} // Pasar la función para manejar el iframe
         />
-      </div> */}
+      </div>
 
       {/* Contenedor Draggable */}
       <Draggable handle={`.${styles.moveButton}`}>
@@ -68,8 +68,8 @@ const ParentComponent: React.FC = () => {
         </div>
       </Draggable>
 
-      {/* ZoomOverlay */}
-      <ZoomOverlay />
+      {/* ZoomOverlay
+      <ZoomOverlay /> */}
     </div>
   );
 };
