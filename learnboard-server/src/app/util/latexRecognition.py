@@ -7,7 +7,7 @@ from openai import OpenAI
 
 # Configurar la API key de OpenAI
 client = OpenAI(
-    api_key=""
+    api_key="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"
 )
 
 def generate_latex_from_expression(expression):

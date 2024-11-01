@@ -30,7 +30,7 @@ async function initClient() {
     authEndpoint: "http://localhost:8000/api/zoom/signature",
     sdkKey: "JTr5VJncSpOAumB0wos1Xw",
     signature: "",
-    meetingNumber: "76029781713",
+    meetingNumber: "79837041877",
     role: 0, // 0 implies client, 1 implies host
     userName: 'React', // username: user need to input,
   }

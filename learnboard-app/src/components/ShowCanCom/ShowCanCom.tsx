@@ -3,6 +3,7 @@ import Compiler from '../Compiler/Complier';
 import AppLayout from '~/layouts/AppLayout';
 import Draggable from 'react-draggable';
 import styles from './ParentComponent.module.css'; // Importa el módulo CSS
+import Overlay from '../VideoSDK/Overlay';
 import ZoomOverlay from '../Zoom/ZoomOverlay';
 
 // Componente principal que gestiona el estado del Compiler y del Iframe
@@ -67,9 +68,8 @@ const ParentComponent: React.FC = () => {
           </div>
         </div>
       </Draggable>
-
-      {/* ZoomOverlay */}
-      <ZoomOverlay />
+      {/* <ZoomOverlay /> */}
+      <Overlay />
     </div>
   );
 };
