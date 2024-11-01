@@ -1,27 +1,24 @@
 const express = require('express');
 const cors = require('cors');
-const http = require('https');
+const https = require('https'); // Cambiado de http a https
 const { Server } = require('socket.io');
 const path = require('path');
 const fs = require('fs');
 
+// Cargar certificados SSL desde la misma carpeta
+const privateKey = fs.readFileSync(path.join(__dirname, 'privkey.pem'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, 'cert.pem'), 'utf8');
+const ca = fs.readFileSync(path.join(__dirname, 'chain.pem'), 'utf8');
+
+const credentials = { key: privateKey, cert: certificate, ca: ca };
+
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
-});
+const server = https.createServer(credentials, app); // Cambiado a https
 
-
+// Configuración de CORS para permitir todos los orígenes
+app.use(cors({ origin: '*' }));
 app.use(express.json());
-// Configurar CORS para permitir solicitudes desde 'https://learn-board.tech'
-app.use(cors({
-  origin: ['https://learn-board.tech', 'http://localhost:3000','https://www.learn-board.tech'],
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+
 const userRoutes = require('./routes/userRoutes');
 const colabRoutes = require('./routes/colabSpacesRoutes');
 const modelRoutes = require('./routes/modelRoutes');
@@ -36,6 +33,14 @@ const roomsDirectory = path.join(__dirname, 'rooms');
 if (!fs.existsSync(roomsDirectory)) {
   fs.mkdirSync(roomsDirectory);
 }
+
+// Configuración de Socket.IO con CORS permitiendo todos los orígenes
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
 
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
@@ -69,7 +74,7 @@ io.on('connection', (socket) => {
     // Escuchar cambios en el output
     socket.on('outputChange', (newOutput) => {
       fs.writeFileSync(outputFilePath, newOutput);
-      io.in(roomId).emit('receiveOutput', newOutput); // Emitir a todos en la sala, incluyendo al emisor
+      io.in(roomId).emit('receiveOutput', newOutput);
     });
 
     // Cargar comandos existentes si el archivo ya existe
@@ -81,7 +86,7 @@ io.on('connection', (socket) => {
     // Escuchar cambios en los comandos
     socket.on('commandChange', (newCommands) => {
       fs.writeFileSync(commandsFilePath, newCommands);
-      io.in(roomId).emit('receiveCommands', newCommands); // Emitir a todos en la sala, incluyendo al emisor
+      io.in(roomId).emit('receiveCommands', newCommands);
     });
 
     socket.on('disconnect', () => {
