@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const http = require('http');
+const http = require('https');
 const { Server } = require('socket.io');
 const path = require('path');
 const fs = require('fs');
@@ -18,7 +18,7 @@ const io = new Server(server, {
 app.use(express.json());
 // Configurar CORS para permitir solicitudes desde 'https://learn-board.tech'
 app.use(cors({
-  origin: 'https://learn-board.tech',
+  origin: ['https://learn-board.tech', 'http://localhost:3000','https://www.learn-board.tech'],
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

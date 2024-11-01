@@ -11,7 +11,7 @@ client = OpenAI(
 )
 
 def generate_latex_from_expression(expression):
-    prompt = f"Genera el codigo latex del siguiente enunciado: {expression}"
+    prompt = f"Genera el codigo latex del siguiente enunciado: {expression}, si lo anterior no es posible, genera un enunciado similar que pueda ser expresado en latex."
     
     try:
         response = client.chat.completions.create(
