@@ -30,8 +30,6 @@ RUN mkdir -p /home/pn/app/src/app/rooms && \
     chown -R pn:pn /home/pn/app/src/app/rooms && \
     chmod -R 755 /home/pn/app/src/app/rooms
 
-# Cambiar al usuario pn nuevamente
-USER pn
 
 # Exponer el puerto en el que se ejecuta la aplicación
 EXPOSE 8000
