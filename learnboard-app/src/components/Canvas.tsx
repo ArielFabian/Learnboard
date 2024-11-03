@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState, type PointerEvent, type Touch, type TouchEvent } from 'react';
 import styled from 'styled-components';
-
+import io from 'socket.io-client'; // Instalar con: npm install socket.io-client
 import { TRANSPARENT_BACKGROUND_IMAGE } from '~/config/constants';
 import { APP_FIXED_MAIN_UNIQUE_ID } from '~/config/globalElementIds';
 import { CANVAS_CONTROLS_OVERLAY } from '~/config/globalElementIds';
@@ -26,6 +26,8 @@ import isCursorWithinRectangle from '~/utils/isCursorWithinRectangle';
 import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
 import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
 import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
+import { createBootstrapComponent } from 'react-bootstrap/esm/ThemeProvider';
+const socket = io('http://localhost:4000'); // Conecta al servidor de sockets
 
 const FixedMain = styled.main`
   position: fixed;
@@ -99,6 +101,8 @@ export default function Canvas(
   const [imageUrl, setImageUrl] = useState<string>('');
 
   const appendImageObject = useCanvasObjects((state) => state.appendImageObject);
+  
+
 
   // Screenshot
   useEffect(() => {
@@ -109,10 +113,64 @@ export default function Canvas(
           const base64Image = canvas.toDataURL('image/png').split(',')[1];
           sendImageToAPI(base64Image);
         }
-      } , 5000)
-
+      }, 5000);
     }
-  },);
+      socket.on('connect', () => {
+        console.log('Conectado al servidor de WebSocket');
+      });
+  
+      // Recepción de datos de inicio de dibujo
+      socket.on('start-drawing', (data) => {
+        switch (data.type) {
+          case 'free-draw':
+            appendFreeDrawObject(data);
+            break;
+          case 'rectangle':
+            appendRectangleObject(data);
+            break;
+          case 'ellipse':
+            appendEllipseObject(data);
+            break;
+          case 'text':
+            appendTextObject(data);
+            break;
+          default:
+            break;
+        }
+        drawEverything(); // Redibujar después de actualizar el objeto
+      });
+  
+      // Recepción de datos en tiempo real (puntos para free-draw)
+      socket.on('drawing-data', (data) => {
+        if (data.type === 'free-draw') {
+          appendFreeDrawPointToCanvasObject(data.id, { x: data.x, y: data.y });
+        } else if (data.type === 'rectangle' || data.type === 'ellipse') {
+          // Actualizar posición y tamaño en tiempo real para los rectángulos y elipses
+          updateCanvasObject(data.id, {
+            x: data.x,
+            y: data.y,
+            width: data.width,
+            height: data.height,
+          });
+        }
+        drawEverything();
+      });
+  
+      // Finalización del dibujo
+      socket.on('stop-drawing', (data) => {
+        console.log('stop-drawing', data);
+        drawEverything(); // Redibujar una vez finalizado el trazo
+      });
+  
+      // Limpiar listeners al desmontar
+      return () => {
+        socket.off('connect');
+        socket.off('start-drawing');
+        socket.off('drawing-data');
+        socket.off('stop-drawing');
+      };
+    }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything]);
+  
 
   // Función para enviar la imagen a la API
   const sendImageToAPI = async (base64Image: string) => {
@@ -164,7 +222,6 @@ export default function Canvas(
   // On pointer down
 
   const onPointerDown = (event: PointerOrTouchEvent) => {
-    event.preventDefault();
     const canvas = canvasRef.current;
     const context = contextRef.current;
     if (!canvas || !context) return;
@@ -191,9 +248,8 @@ export default function Canvas(
       case 'image':
       case 'select': {
         let isResizing = false;
-        // Resize object
+        
         if (activeObject) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { position, ...boxes } = getControlPoints({
             canvasObject: activeObject,
             zoom,
@@ -248,8 +304,9 @@ export default function Canvas(
         drawEverything();
         break;
       }
+
       case 'free-draw': {
-        appendFreeDrawObject({
+        const freeDrawObject = {
           id: createdObjectId,
           x: initialDrawingPositionRef.current.x,
           y: initialDrawingPositionRef.current.y,
@@ -264,13 +321,18 @@ export default function Canvas(
               y: initialDrawingPositionRef.current.y,
             },
           ],
-        });
+        };
+        appendFreeDrawObject(freeDrawObject);
         setActiveObjectId(createdObjectId);
         setActionMode({ type: 'isDrawing' });
+
+        // Emitir el objeto de dibujo libre al servidor
+        socket.emit('start-drawing', { ...freeDrawObject, type: 'free-draw' });
         break;
       }
+
       case 'rectangle': {
-        appendRectangleObject({
+        const rectangleObject = {
           id: createdObjectId,
           x: initialDrawingPositionRef.current.x,
           y: initialDrawingPositionRef.current.y,
@@ -281,13 +343,18 @@ export default function Canvas(
           strokeWidth: 0,
           opacity: 100,
           borderRadius: 0,
-        });
+        };
+        appendRectangleObject(rectangleObject);
         setActiveObjectId(createdObjectId);
         setActionMode({ type: 'isDrawing' });
+
+        // Emitir el objeto de rectángulo al servidor
+        socket.emit('start-drawing', { ...rectangleObject, type: 'rectangle' });
         break;
       }
+
       case 'ellipse': {
-        appendEllipseObject({
+        const ellipseObject = {
           id: createdObjectId,
           x: initialDrawingPositionRef.current.x,
           y: initialDrawingPositionRef.current.y,
@@ -298,12 +365,36 @@ export default function Canvas(
           strokeWidth: 0,
           opacity: 100,
           borderRadius: 0,
-        });
+        };
+        appendEllipseObject(ellipseObject);
         setActiveObjectId(createdObjectId);
         setActionMode({ type: 'isDrawing' });
+
+        // Emitir el objeto de elipse al servidor
+        socket.emit('start-drawing', { ...ellipseObject, type: 'ellipse' });
         break;
       }
+
       case 'text': {
+        const textObject = {
+          id: createdObjectId,
+          x: initialDrawingPositionRef.current.x,
+          y: initialDrawingPositionRef.current.y,
+          width: 200,
+          height: 100,
+          text: 'Add text',
+          textAlignHorizontal: 'center',
+          textAlignVertical: 'middle',
+          textJustify: false,
+          fontColorHex: defaultParams.fontColorHex,
+          fontSize: 44,
+          fontFamily: 'sans-serif',
+          fontStyle: 'normal',
+          fontWeight: 'normal',
+          fontVariant: 'normal',
+          fontLineHeightRatio: 1,
+          opacity: 100,
+        };
         appendTextObject({
           id: createdObjectId,
           x: initialDrawingPositionRef.current.x,
@@ -326,17 +417,20 @@ export default function Canvas(
         setActiveObjectId(createdObjectId);
         setUserMode('select');
         setActionMode(null);
+
+        // Emitir el objeto de texto al servidor
+        socket.emit('start-drawing', { ...textObject, type: 'text' });
         break;
       }
+
       default:
         break;
     }
-  };
+};
 
   // On pointer move
 
   const onPointerMove = (event: PointerOrTouchEvent) => {
-    event.preventDefault();
     const canvas = canvasRef.current;
     const context = contextRef.current;
     if (!canvas || !context || !actionMode) return;
@@ -453,6 +547,12 @@ export default function Canvas(
         break;
       }
     }
+    socket.emit('drawing-data', {
+      id: activeObjectId,
+      x: relativeMousePosition.relativeMouseX,
+      y: relativeMousePosition.relativeMouseY,
+      type: userMode,
+    });
   };
 
   // On pointer up
@@ -469,7 +569,7 @@ export default function Canvas(
       distanceBetweenTouchesRef.current = 0;
     }
 
-    const delayInMilliseconds = 15000;
+    const delayInMilliseconds = 300;
 
     setTimeout(() => {
       switch (userMode) {
@@ -499,6 +599,7 @@ export default function Canvas(
         }
       }
     }, delayInMilliseconds);
+    socket.emit('stop-drawing', { id: activeObjectId });
   };
 
   const commonPushImageObject = async (url: string) => {
