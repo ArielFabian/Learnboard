@@ -27,6 +27,8 @@ import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
 import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
 import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
 import { createBootstrapComponent } from 'react-bootstrap/esm/ThemeProvider';
+import { width } from '@mui/system';
+import { set } from 'lodash';
 const socket = io('http://localhost:4000'); // Conecta al servidor de sockets
 
 const FixedMain = styled.main`
@@ -50,12 +52,12 @@ export default function Canvas(
     takeScreenshot,
     handleTakeScreenshot
   }:
-  {
-    text: string,
-    handleTextChange: (text: string) => void
-    takeScreenshot: boolean,
-    handleTakeScreenshot: (takeScreenshot: boolean) => void
-  }) {
+    {
+      text: string,
+      handleTextChange: (text: string) => void
+      takeScreenshot: boolean,
+      handleTakeScreenshot: (takeScreenshot: boolean) => void
+    }) {
   const { canvasRef, contextRef, drawEverything } = useCanvasContext();
 
   const previousTouchRef = useRef<Touch | null>(null);
@@ -101,7 +103,7 @@ export default function Canvas(
   const [imageUrl, setImageUrl] = useState<string>('');
 
   const appendImageObject = useCanvasObjects((state) => state.appendImageObject);
-  
+
 
 
   // Screenshot
@@ -115,62 +117,86 @@ export default function Canvas(
         }
       }, 5000);
     }
-      socket.on('connect', () => {
-        console.log('Conectado al servidor de WebSocket');
-      });
+    socket.on('connect', () => {
+      console.log('Conectado al servidor de WebSocket');
+    });
+
+    // Recepción de datos de inicio de dibujo
+    socket.on('start-drawing', (data) => {
+      switch (data.type) {
+        case 'free-draw':
+          appendFreeDrawObject(data);
+          break;
+        case 'rectangle':
+          appendRectangleObject(data);
+          break;
+        case 'ellipse':
+          appendEllipseObject(data);
+          break;
+        case 'text':
+          appendTextObject(data);
+          break;
+        default:
+          break;
+      }
+      setActiveObjectId(data.id);
+      setUserMode('select');
+      setActionMode(null);
+      drawEverything(); // Redibujar después de actualizar el objeto
+    });
+
+    // Recepción de datos en tiempo real (puntos para free-draw)
+    socket.on('drawing-data', (data) => {
+      if (data.type === 'free-draw') {
+        appendFreeDrawPointToCanvasObject(data.id, { x: data.x, y: data.y });
+      } else if (data.type === 'rectangle' || data.type === 'ellipse') {
+        // Actualizar posición y tamaño en tiempo real para los rectángulos y elipses
+        updateCanvasObject(data.id, {
+          x: data.x,
+          y: data.y,
+          width: data.width,
+          height: data.height,
+        });
+      }
+      drawEverything();
+    });
+
+    // Finalización del dibujo
+    socket.on('stop-drawing', (data) => {
+      setActionMode(null);
+      const canvas = canvasRef.current;
+      const context = contextRef.current;
+      if (!canvas || !context) return;
   
-      // Recepción de datos de inicio de dibujo
-      socket.on('start-drawing', (data) => {
-        switch (data.type) {
-          case 'free-draw':
-            appendFreeDrawObject(data);
-            break;
-          case 'rectangle':
-            appendRectangleObject(data);
-            break;
-          case 'ellipse':
-            appendEllipseObject(data);
-            break;
-          case 'text':
-            appendTextObject(data);
-            break;
-          default:
-            break;
-        }
-        drawEverything(); // Redibujar después de actualizar el objeto
-      });
+      previousTouchRef.current = null;
+      distanceBetweenTouchesRef.current = 0;
   
-      // Recepción de datos en tiempo real (puntos para free-draw)
-      socket.on('drawing-data', (data) => {
-        if (data.type === 'free-draw') {
-          appendFreeDrawPointToCanvasObject(data.id, { x: data.x, y: data.y });
-        } else if (data.type === 'rectangle' || data.type === 'ellipse') {
-          // Actualizar posición y tamaño en tiempo real para los rectángulos y elipses
-          updateCanvasObject(data.id, {
-            x: data.x,
-            y: data.y,
-            width: data.width,
-            height: data.height,
-          });
-        }
-        drawEverything();
-      });
-  
-      // Finalización del dibujo
-      socket.on('stop-drawing', (data) => {
-        console.log('stop-drawing', data);
-        drawEverything(); // Redibujar una vez finalizado el trazo
-      });
-  
-      // Limpiar listeners al desmontar
-      return () => {
-        socket.off('connect');
-        socket.off('start-drawing');
-        socket.off('drawing-data');
-        socket.off('stop-drawing');
-      };
-    }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything]);
-  
+      console.log('stop-drawing', data);
+      if (data.type === 'free-draw') {
+        context.closePath()
+        const activeObject =data.id;
+        console.log(activeObject);
+        const dimensions = getDimensionsFromFreeDraw({
+          freeDrawObject: activeObject,
+        });
+        console.log('dimensions', dimensions);  
+        updateCanvasObject(activeObject.id, {
+          width: data.width,
+          height: data.height,
+        });
+      }
+      drawEverything(); // Redibujar una vez finalizado el trazo
+    });
+
+    // Limpiar listeners al desmontar
+    return () => {
+      socket.off('connect');
+      socket.off('start-drawing');
+      socket.off('drawing-data');
+      socket.off('stop-drawing');
+    };
+  }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything]);
+
 
   // Función para enviar la imagen a la API
   const sendImageToAPI = async (base64Image: string) => {
@@ -214,7 +240,7 @@ export default function Canvas(
     if (text !== '') {
       setTimeout(() => {
         sendLatexToAPI(text)
-      } , 5000)
+      }, 5000)
     }
   });
 
@@ -248,7 +274,7 @@ export default function Canvas(
       case 'image':
       case 'select': {
         let isResizing = false;
-        
+
         if (activeObject) {
           const { position, ...boxes } = getControlPoints({
             canvasObject: activeObject,
@@ -426,7 +452,7 @@ export default function Canvas(
       default:
         break;
     }
-};
+  };
 
   // On pointer move
 
@@ -462,15 +488,15 @@ export default function Canvas(
       'movementX' in event
         ? event.movementX
         : previousTouchRef.current?.pageX
-        ? event.touches[0].pageX - previousTouchRef.current.pageX
-        : 0;
+          ? event.touches[0].pageX - previousTouchRef.current.pageX
+          : 0;
 
     const movementY =
       'movementY' in event
         ? event.movementY
         : previousTouchRef.current?.pageY
-        ? event.touches[0].pageY - previousTouchRef.current.pageY
-        : 0;
+          ? event.touches[0].pageY - previousTouchRef.current.pageY
+          : 0;
 
     if ('touches' in event) {
       previousTouchRef.current = event.touches[0];
@@ -576,6 +602,7 @@ export default function Canvas(
         case 'free-draw': {
           context.closePath();
           if (activeObject) {
+            console.log(activeObject);
             const dimensions = getDimensionsFromFreeDraw({
               freeDrawObject: activeObject,
             });
@@ -583,6 +610,7 @@ export default function Canvas(
               width: dimensions.width,
               height: dimensions.height,
             });
+            socket.emit('stop-drawing', { id: activeObject, width: dimensions.width, height: dimensions.height, type: 'free-draw' });
           }
           setUserMode('select');
           drawEverything();
@@ -599,7 +627,6 @@ export default function Canvas(
         }
       }
     }, delayInMilliseconds);
-    socket.emit('stop-drawing', { id: activeObjectId });
   };
 
   const commonPushImageObject = async (url: string) => {
