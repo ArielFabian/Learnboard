@@ -21,6 +21,7 @@ app.use(cors({
   origin: '*',
   methods: ['GET', 'POST'],
 }));
+
 const userRoutes = require('./routes/userRoutes');
 const colabRoutes = require('./routes/colabSpacesRoutes');
 const modelRoutes = require('./routes/modelRoutes');

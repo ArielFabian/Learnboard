@@ -6,3 +6,12 @@ services:
       - 8000:8000
     volumes:
       - ./learnboard-server:/app
+  
+  learnboard-board:
+    build: ./learnboard-server-board
+    ports:
+      - 4000:4000
+    volumes:
+      - ./learnboard-server-board:/app
+    depends_on:
+      - learnboard-server
