@@ -29,7 +29,7 @@ import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
 import { createBootstrapComponent } from 'react-bootstrap/esm/ThemeProvider';
 import { width } from '@mui/system';
 import { set } from 'lodash';
-const socket = io('http://localhost:4000'); // Conecta al servidor de sockets
+const socket = io('https://board.learn-board.tech'); // Conecta al servidor de sockets
 
 const FixedMain = styled.main`
   position: fixed;
