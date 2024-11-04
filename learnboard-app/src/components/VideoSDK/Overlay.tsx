@@ -1,4 +1,15 @@
-import React, { useEffect, useMemo, useRef, useState, Suspense } from "react";
+"use client";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  MeetingProvider,
+  MeetingConsumer,
+  useMeeting,
+  useParticipant,
+} from "@videosdk.live/react-sdk";
+import ReactPlayer from "react-player";
+import styles from './Overlay.module.css';
+import {FaMicrophone, FaCamera, FaPhoneSlash} from 'react-icons/fa'
+import { ActionIcon, Button, TextInput, Tooltip } from '@mantine/core';
 
 // Componente para la pantalla de unirse a la reunión
 function JoinScreen({ getMeetingAndToken }) {
@@ -9,7 +20,7 @@ function JoinScreen({ getMeetingAndToken }) {
   };
 
   return (
-    <div>
+    <div className={styles.centeredContainer}>
       <input
         type="text"
         placeholder="Enter Meeting Id"
@@ -18,14 +29,15 @@ function JoinScreen({ getMeetingAndToken }) {
       <button onClick={onClick}>Join</button>
       {" or "}
       <button onClick={onClick}>Create Meeting</button>
+      <h4 className={styles.centeredText}>Creando tu videollamada, espera ...</h4>
     </div>
   );
 }
 
-// Vista de cada participante en la videollamada
-function ParticipantView({ participantId, useParticipant }) {
+function ParticipantView(props) {
   const micRef = useRef(null);
-  const { webcamStream, micStream, webcamOn, micOn, isLocal, displayName } = useParticipant(participantId);
+  const { webcamStream, micStream, webcamOn, micOn, isLocal, displayName } =
+    useParticipant(props.participantId);
 
   const videoStream = useMemo(() => {
     if (webcamOn && webcamStream) {
@@ -40,8 +52,13 @@ function ParticipantView({ participantId, useParticipant }) {
       if (micOn && micStream) {
         const mediaStream = new MediaStream();
         mediaStream.addTrack(micStream.track);
+
         micRef.current.srcObject = mediaStream;
-        micRef.current.play().catch((error) => console.error("Error al reproducir audio", error));
+        micRef.current
+          .play()
+          .catch((error) =>
+            console.error("videoElem.current.play() failed", error)
+          );
       } else {
         micRef.current.srcObject = null;
       }
@@ -51,89 +68,124 @@ function ParticipantView({ participantId, useParticipant }) {
   return (
     <div>
       <p>
-        Participant: {displayName} | Webcam: {webcamOn ? "ON" : "OFF"} | Mic: {micOn ? "ON" : "OFF"}
+        Participant: {displayName} | Webcam: {webcamOn ? "ON" : "OFF"} | Mic:{" "}
+        {micOn ? "ON" : "OFF"}
       </p>
       <audio ref={micRef} autoPlay playsInline muted={isLocal} />
       {webcamOn && (
-        <Suspense fallback={<p>Cargando video...</p>}>
-          <ReactPlayer
-            playsinline
-            pip={false}
-            light={false}
-            controls={false}
-            muted={true}
-            playing={true}
-            url={videoStream}
-            height={"300px"}
-            width={"300px"}
-            onError={(err) => console.error("Error en el video del participante", err)}
-          />
-        </Suspense>
+        <ReactPlayer
+          //
+          playsinline // extremely crucial prop
+          pip={false}
+          light={false}
+          controls={false}
+          muted={true}
+          playing={true}
+          //
+          url={videoStream}
+          //
+          height={"300px"}
+          width={"300px"}
+          onError={(err) => {
+            console.log(err, "participant video error");
+          }}
+        />
       )}
     </div>
   );
 }
 
 // Controles de la reunión
-function Controls({ useMeeting }) {
+function Controls() {
   const { leave, toggleMic, toggleWebcam } = useMeeting();
 
   return (
-    <div>
-      <button onClick={leave}>Leave</button>
-      <button onClick={toggleMic}>Toggle Mic</button>
-      <button onClick={toggleWebcam}>Toggle Webcam</button>
+    <div className={styles.divUl}>
+      <Tooltip position="bottom-start" label="Abandonar llamada" offset={16}>
+        <ActionIcon
+          color="dark"
+          variant="gradient"
+          size="md"
+          onClick={() => leave()}
+        >
+          <FaPhoneSlash />
+        </ActionIcon>
+      </Tooltip>
+      <Tooltip position="bottom-start" label="Mutear" offset={16}>
+        <ActionIcon
+          color="dark"
+          variant="gradient"
+          size="md"
+          onClick={() => toggleMic()}
+        >
+          <FaMicrophone />
+        </ActionIcon>
+      </Tooltip>
+      <Tooltip position="bottom-start" label="Encender camara" offset={16}>
+        <ActionIcon
+          color="dark"
+          variant="gradient"
+          size="md"
+          onClick={() => toggleWebcam()}
+        >
+          <FaCamera />
+        </ActionIcon>
+      </Tooltip>
     </div>
   );
 }
 
-// Vista de la reunión completa
-function MeetingView({ meetingId, onMeetingLeave, useMeeting, useParticipant }) {
-  const [joined, setJoined] = useState(false);
+function MeetingView(props) {
+  const [joined, setJoined] = useState<null | "JOINING" | "JOINED">(null);
+  //Get the method which will be used to join the meeting.
+  //We will also get the participants list to display all participants
   const { join, participants } = useMeeting({
-    onMeetingJoined: () => setJoined(true),
-    onMeetingLeft: onMeetingLeave,
+    //callback for when meeting is joined successfully
+    onMeetingJoined: () => {
+      setJoined("JOINED");
+    },
+    //callback for when meeting is left
+    onMeetingLeft: () => {
+      props.onMeetingLeave();
+    },
   });
 
   const joinMeeting = () => {
-    setJoined(true);
+    setJoined("JOINING");
     join();
   };
 
   return (
     <div className="container">
-      <h3>Meeting Id: {meetingId}</h3>
-      {joined ? (
-        <div>
-          <Controls useMeeting={useMeeting} />
+    <h3>Meeting Id: {props.meetingId}</h3>
+    {joined && joined == "JOINED" ? (
+      <div>
+        <div className={styles.buttonRow}>
+          <Controls />
+        </div>
+        <div className={styles.textRow}>
           {[...participants.keys()].map((participantId) => (
-            <ParticipantView participantId={participantId} key={participantId} useParticipant={useParticipant} />
+            <ParticipantView
+              participantId={participantId}
+              key={participantId}
+            />
           ))}
         </div>
-      ) : (
-        <button onClick={joinMeeting}>Join</button>
-      )}
-    </div>
+      </div>
+    ) : joined && joined == "JOINING" ? (
+      <p>Joining the meeting...</p>
+    ) : (
+      <button onClick={joinMeeting}>Join</button>
+    )}
+  </div>
   );
 }
 
 // Componente principal
 function App() {
   const [meetingId, setMeetingId] = useState(null);
-  const [sdk, setSdk] = useState(null);
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0MGVjNzBmYS0zOThkLTRkNTAtYmM5ZC00MmI3NzM3YTMyOTMiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTczMDE1OTQzNSwiZXhwIjoxNzM3OTM1NDM1fQ.QNF_OU-u0VLf_-K3xno5uS1yRwc7M4UiWP5kE_A1B68";
-
-  useEffect(() => {
-    // Cargar SDK de manera dinámica
-    import("@videosdk.live/react-sdk").then((module) => {
-      setSdk({
-        MeetingProvider: module.MeetingProvider,
-        useMeeting: module.useMeeting,
-        useParticipant: module.useParticipant,
-      });
-    });
-  }, []);
-
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0MGVjNzBmYS0zOThkLTRkNTAtYmM5ZC00MmI3NzM3YTMyOTMiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTczMDE1OTQzNSwiZXhwIjoxNzM3OTM1NDM1fQ.QNF_OU-u0VLf_-K3xno5uS1yRwc7M4UiWP5kE_A1B68";;
+  const [userName, setUserName] = useState("Nombre de usuario");
   const getMeetingAndToken = async (id) => {
     const meetingId = id == null ? await createMeeting() : id;
     setMeetingId(meetingId);
@@ -147,32 +199,38 @@ function App() {
     return data.meetingId;
   };
 
+  // useEffect(() => {
+  //   if (!meetingId || !token) {
+  //     setTimeout(() => {
+  //       getMeetingAndToken(null);
+  //     }, 3000);
+  //   }
+  // });
+
   const onMeetingLeave = () => {
     setMeetingId(null);
   };
 
-  if (!sdk) return <p>Cargando SDK...</p>;
-
   return token && meetingId ? (
-    <Suspense fallback={<p>Cargando reunión...</p>}>
-      <sdk.MeetingProvider
+    <MeetingProvider
         config={{
           meetingId,
           micEnabled: true,
           webcamEnabled: true,
-          name: "C.V. Raman",
+          name: userName,
           debugMode: true,
         }}
         token={token}
       >
-        <MeetingView
-          meetingId={meetingId}
-          onMeetingLeave={onMeetingLeave}
-          useMeeting={sdk.useMeeting}
-          useParticipant={sdk.useParticipant}
-        />
-      </sdk.MeetingProvider>
-    </Suspense>
+        <div className={styles.videocallContainer}>
+          <MeetingView
+            meetingId={meetingId}
+            onMeetingLeave={onMeetingLeave}
+            useMeeting={useMeeting}
+            useParticipant={useParticipant}
+          />
+        </div>
+      </MeetingProvider>
   ) : (
     <JoinScreen getMeetingAndToken={getMeetingAndToken} />
   );
