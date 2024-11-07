@@ -172,8 +172,8 @@ function MeetingView(props: MeetingViewProps) {
       <div className={styles.buttonRow}>
         <Controls />
       </div>
-      <div className={styles.textRow}>
-        {[...participants.keys()].map((participantId) => (
+       <div className={styles.textRow}>
+        {Array.from(participants.keys()).map((participantId) => (
           <ParticipantView
             participantId={participantId}
             key={participantId}
