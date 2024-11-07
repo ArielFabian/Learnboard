@@ -1,52 +1,74 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Compiler from '../Compiler/Complier';
 import AppLayout from '~/layouts/AppLayout';
 import Draggable from 'react-draggable';
 import styles from './ParentComponent.module.css'; // Importa el módulo CSS
-import ZoomOverlay from '../Zoom/ZoomOverlay';
+// import ZoomOverlay from '../Zoom/ZoomOverlay';
+import dynamic from "next/dynamic";
+import axios from 'axios';
+import { useRouter } from "next/router";
 
-// Componente principal que gestiona el estado del Compiler y del Iframe
+const Overlay = dynamic(
+  () => import("../VideoSDK/Overlay"),
+  {
+    ssr: false,
+  }
+);
+
 const ParentComponent: React.FC = () => {
+  const router = useRouter();
   const [showCompiler, setShowCompiler] = useState(false);
-  const [iframeSrc, setIframeSrc] = useState('https://example.com/'); // Estado para manejar la URL del iframe
-  const [showIframe, setShowIframe] = useState(true); // Estado para manejar la visibilidad del iframe
+  const [iframeSrc, setIframeSrc] = useState('https://example.com/');
+  const [showIframe, setShowIframe] = useState(true);
+  const [meetingId, setMeetingId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Función para manejar el cambio de estado de showCompiler
   const handleShowCompilerChange = (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => {
     setShowCompiler(newShowCompiler);
   };
 
-  // Función para manejar el estado del iframe y asegurar que se mantenga entre cambios
   const handleIframeStateChange = (newSrc: string | ((prevState: string) => string)) => {
     setIframeSrc(newSrc);
   };
 
+  const fetchMeetingId = async () => {
+    const boardCode = router.query.id;
+    try {
+      const response = await axios.get(`http://localhost:8000/colabs/${boardCode}`);
+      if (response.status === 200) {
+        setMeetingId(response.data.data.meetingId);
+      }
+    } catch (error) {
+      console.error("Error obteniendo el ID de la reunión:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Mantener el estado del iframe aunque se cambie entre Compiler y AppLayout
+    fetchMeetingId();
+    console.log("meetingId: ", meetingId);
     handleIframeStateChange((prevSrc) => prevSrc);
   }, []);
 
   return (
     <div>
-      {/* AppLayout visible cuando showCompiler es false */}
-      {/* <div style={{ display: showCompiler ? 'none' : 'block' }}>
+      <div style={{ display: showCompiler ? 'none' : 'block' }}>
         <AppLayout
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
         />
-      </div> */}
+      </div>
 
-      {/* Compiler visible cuando showCompiler es true */}
-      {/* <div style={{ display: showCompiler ? 'block' : 'none' }}>
+      <div style={{ display: showCompiler ? 'block' : 'none' }}>
         <Compiler
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
           iframeSrc={iframeSrc}
-          handleIframeStateChange={handleIframeStateChange} // Pasar la función para manejar el iframe
+          handleIframeStateChange={handleIframeStateChange}
         />
-      </div> */}
+      </div>
 
-      {/* Contenedor Draggable */}
       <Draggable handle={`.${styles.moveButton}`}>
         <div className={styles.draggableContainer}>
           <div className={styles.iframeContainer}>
@@ -55,21 +77,17 @@ const ParentComponent: React.FC = () => {
               {showIframe ? 'Ocultar' : 'Mostrar'}
             </button>
 
-            {showIframe ? (
-              <div className={`${styles.resizer} ${styles.ugly}`}>
-                <iframe src={iframeSrc} title="Iframe Content" className={styles.resized} />
-              </div>
-            ) : (
-              <div className={styles.hiddenIframe}>Iframe oculto</div>
+            {loading ? (
+              <div className={styles.hiddenIframe}>Estamos creando tu videollamada, espera...</div>
+            ) : meetingId ? (
+              <Overlay meetingId={meetingId}/>
+            ) :(
+              <div className={styles.hiddenIframe}>Ocurrio un error al crear la videollamada</div>
             )}
-
-            {/* Nuevo botón para capturar la pantalla del canvas */}
           </div>
         </div>
       </Draggable>
-
-      {/* ZoomOverlay */}
-      <ZoomOverlay />
+      {/* <ZoomOverlay /> */}
     </div>
   );
 };
