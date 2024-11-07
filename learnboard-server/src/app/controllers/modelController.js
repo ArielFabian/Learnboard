@@ -4,7 +4,7 @@ const path = require('path');
 
 function processImage(base64Image) {
     return new Promise((resolve, reject) => {
-        execFile('python', ['/home/pn/app/src/app/util/handwriteRecognition.py', base64Image], (error, stdout, stderr) => {
+        execFile('python', ['/home/kali/Documents/GitHub/Learnboard/learnboard-server/src/app/util/handwriteRecognition.py', base64Image], (error, stdout, stderr) => {
             if (error) return reject(error);
             if (stderr) return reject(new Error(stderr.trim()));
 
@@ -18,8 +18,7 @@ function processLatex(expression) {
         if (!expression) {
             return reject(new Error("Expression is undefined"));
         }
-        console.log("si entro");
-        console.log('object', expression);
+
         execFile('python', ['/home/pn/app/src/app/util/latexRecognition.py', expression], (error, stdout, stderr) => {
             if (error) return reject(error);
             if (stderr) return reject(new Error(stderr.trim()));

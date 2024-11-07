@@ -1,17 +1,21 @@
 const { db } = require("../util/admin");
 const admin = require("firebase-admin");
+const { createMeeting } = require("./zoomController");
 
 // Create a new colab-space with email and code
-exports.createColabSpace = (req, res) => {
+exports.createColabSpace = async (req, res) => {
     const generateRandomCode = () => {
         return Math.floor(100000 + Math.random() * 900000).toString();
     };
+
+    const meetingId = await createMeeting();
 
     const newColabSpace = {
         name: req.body.name,
         email: req.body.email, // Add email
         code: generateRandomCode(), // Generate a 6-digit random code
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        meetingId: meetingId,
     };
 
     // Add the new colab-space to the "colab-spaces" collection
@@ -29,7 +33,6 @@ exports.createColabSpace = (req, res) => {
 // Get a specific colab-space by code
 exports.getColabSpaceByCode = (req, res) => {
     const colabSpaceCode = req.params.code;
-
     // Get the document with the specified code from the "colab-spaces" collection
     db.collection("colab-spaces")
         .where("code", "==", colabSpaceCode)

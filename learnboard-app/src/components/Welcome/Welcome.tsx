@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../Landing/Header';
 import Footer from '../Landing/Footer';
 import Snackbar from '../SnackBar/Snackbar';
-import { auth } from '~/utils/firebaseconfig'; 
+import { auth } from '~/utils/firebaseconfig';
 
 const Welcome: React.FC = () => {
   const router = useRouter();
@@ -51,7 +51,7 @@ const Welcome: React.FC = () => {
 
     try {
       // Hacer la petición POST al servidor para crear un espacio colaborativo
-      const response = await axios.post('https://api.learn-board.tech/colabs', {
+      const response = await axios.post('http://localhost:8000/colabs', {
         name: user.name,
         email: user.email,
       });
@@ -63,7 +63,7 @@ const Welcome: React.FC = () => {
         setTimeout(() => {
           setShowSnackbar(false);
           // Redirigir a la pizarra creada
-          router.push(`/canvas/${response.data.code}`); 
+          router.push(`/canvas/${response.data.code}`);
         }, 3000);
       }
     } catch (error) {

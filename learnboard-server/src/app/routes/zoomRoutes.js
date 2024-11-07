@@ -14,8 +14,8 @@ router.post('/signature', async (req, res) => {
 
 router.post('/meeting', async (req, res) => {
     try {
-        const meeting = await createMeeting();
-        res.send({ meeting });
+        const meetingId = await createMeeting();
+        res.send({ meetingId });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
