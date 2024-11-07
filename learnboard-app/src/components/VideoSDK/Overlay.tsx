@@ -11,8 +11,12 @@ import styles from './Overlay.module.css';
 import {FaMicrophone, FaCamera, FaPhoneSlash} from 'react-icons/fa'
 import { ActionIcon, Button, TextInput, Tooltip, Center, Box, Title, Space} from '@mantine/core';
 
-function ParticipantView(props) {
-  const micRef = useRef(null);
+interface ParticipantViewProps {
+  participantId: string;
+}
+
+function ParticipantView(props: ParticipantViewProps) {
+  const micRef = useRef<HTMLAudioElement>(null);
   const { webcamStream, micStream, webcamOn, micOn, isLocal, displayName } =
     useParticipant(props.participantId);
 
@@ -139,7 +143,11 @@ function Controls() {
     </div>
   );
 }
-function MeetingView(props) {
+interface MeetingViewProps {
+  onMeetingLeave: () => void;
+}
+
+function MeetingView(props: MeetingViewProps) {
   const [joined, setJoined] = useState<null | "JOINING" | "JOINED">(null);
   //Get the method which will be used to join the meeting.
   //We will also get the participants list to display all participants
@@ -184,13 +192,15 @@ function MeetingView(props) {
   );
 }
 
-// Componente principal
-const App = ({meetingId}) => {
-  // const [meetingId, setMeetingId] = useState(null);
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0MGVjNzBmYS0zOThkLTRkNTAtYmM5ZC00MmI3NzM3YTMyOTMiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTczMDE1OTQzNSwiZXhwIjoxNzM3OTM1NDM1fQ.QNF_OU-u0VLf_-K3xno5uS1yRwc7M4UiWP5kE_A1B68";;
+const App = ({ meetingId }:{meetingId:string}) => {
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI0MGVjNzBmYS0zOThkLTRkNTAtYmM5ZC00MmI3NzM3YTMyOTMiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTczMDE1OTQzNSwiZXhwIjoxNzM3OTM1NDM1fQ.QNF_OU-u0VLf_-K3xno5uS1yRwc7M4UiWP5kE_A1B68";
   const [userName, setUserName] = useState("");
   const [isLeaving, setIsLeaving] = useState(false);
   const [hasUsername, setHasUsername] = useState(false);
+
+  useEffect(() => {
+    console.log("meetingId recibido:", meetingId);
+  }, [meetingId]);
 
   const onMeetingLeave = () => {
     setIsLeaving(true);
@@ -203,24 +213,24 @@ const App = ({meetingId}) => {
 
   return !isLeaving && hasUsername ? (
     <MeetingProvider
-        config={{
-          meetingId,
-          micEnabled: true,
-          webcamEnabled: true,
-          name: userName,
-          debugMode: true,
-        }}
-        token={token}
-      >
-        <div className={styles.videocallContainer}>
-          <MeetingView
-            meetingId={meetingId}
-            onMeetingLeave={onMeetingLeave}
-            useMeeting={useMeeting}
-            useParticipant={useParticipant}
-          />
-        </div>
-      </MeetingProvider>
+      config={{
+        meetingId,
+        micEnabled: true,
+        webcamEnabled: true,
+        name: userName,
+        debugMode: true,
+      }}
+      token={token}
+    >
+      <div className={styles.videocallContainer}>
+        <MeetingView
+          meetingId={meetingId}
+          onMeetingLeave={onMeetingLeave}
+          useMeeting={useMeeting}
+          useParticipant={useParticipant}
+        />
+      </div>
+    </MeetingProvider>
   ) : token && meetingId && isLeaving ? (
     <div className={styles.centeredContainer}>
       <h1 className={styles.centeredText}>Gracias por asistir a la reunión. ¡Hasta luego!</h1>
