@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import { useRouter } from 'next/router';
 import styles from './Welcome.module.css';
@@ -8,7 +8,6 @@ import Header from '../Landing/Header';
 import Footer from '../Landing/Footer';
 import Snackbar from '../SnackBar/Snackbar';
 import { auth } from '~/utils/firebaseconfig';
-
 
 const Welcome: React.FC = () => {
   const router = useRouter();
@@ -27,12 +26,13 @@ const Welcome: React.FC = () => {
           email: loggedInUser.email,
         });
       } else {
-        setUser(null);
+        // Redirigir a la página de inicio de sesión si no está autenticado
+        router.push('/login');
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   // Validar que el código solo tenga números
   const isValidCode = (code: string) => {
@@ -89,7 +89,7 @@ const Welcome: React.FC = () => {
 
     try {
       // Hacer la petición GET al servidor para verificar si existe la pizarra
-      const response = await axios.get(`http://64.23.247.40:8000/colabs/${boardCode}`);
+      const response = await axios.get(`https://api.learn-board.tech/colabs/${boardCode}`);
 
       if (response.status === 200) {
         setSnackbarMessage('Te has unido con éxito a la pizarra');

@@ -4,12 +4,6 @@ FROM nikolaik/python-nodejs:latest
 USER root
 WORKDIR /home/pn/app
 
-# Instalar dependencias necesarias para OpenCV y Tesseract
-# RUN apt-get update && apt-get install -y \
-#     libgl1-mesa-glx \
-#     libglib2.0-0 \
-#     tesseract-ocr
-
 # Copiar los archivos de la aplicación al contenedor
 COPY package.json package-lock.json /home/pn/app/
 
@@ -25,11 +19,16 @@ RUN npm install
 # Copiar el resto de los archivos de la aplicación al contenedor
 COPY . /home/pn/app
 
-# Cambiar los permisos del directorio donde se guardará la imagen temporal
+# Cambiar los permisos del directorio donde se guardarán los archivos de la aplicación
 USER root
 RUN mkdir -p /home/pn/app/src/app/controllers && \
     chown -R pn:pn /home/pn/app/src/app/controllers && \
     chmod -R 755 /home/pn/app/src/app/controllers
+
+# Asegurarse de que el directorio `rooms` existe y tiene permisos de escritura
+RUN mkdir -p /home/pn/app/src/app/rooms && \
+    chown -R pn:pn /home/pn/app/src/app/rooms && \
+    chmod -R 755 /home/pn/app/src/app/rooms
 
 # Cambiar al usuario pn nuevamente
 USER pn
