@@ -76,7 +76,6 @@ async function generateTokenMeeting() {
 
 async function createMeeting(){
     try {
-
         const authToken = process.env.VIDEOSDK_AUTH_TOKEN;
         const res = await fetch(`https://api.videosdk.live/v2/rooms`, {
             method: "POST",

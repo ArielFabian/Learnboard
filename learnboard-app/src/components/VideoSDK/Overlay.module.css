@@ -32,15 +32,18 @@
   overflow: auto;
   border: 1px solid #000000;
   display: grid;
-  grid-template-rows: 300px 200px;
+  grid-template-rows: 1fr 200px;
 }
 
 .textRow {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  font-size: 1.5rem;
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding: 10px;
   color: white;
+  text-align: center;
 }
 
 .buttonRow {
@@ -95,4 +98,11 @@
 .divUl li {
   width: 100%;
   height: 100%;
+}
+
+.initials {
+  font-size: 2em;
+  font-weight: bold;
+  color: white;
+  text-align: center;
 }

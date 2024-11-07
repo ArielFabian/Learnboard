@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Compiler from '../Compiler/Complier';
 import AppLayout from '~/layouts/AppLayout';
 import Draggable from 'react-draggable';
 import styles from './ParentComponent.module.css'; // Importa el módulo CSS
 // import ZoomOverlay from '../Zoom/ZoomOverlay';
 import dynamic from "next/dynamic";
+import axios from 'axios';
+import { useRouter } from "next/router";
 
 const Overlay = dynamic(
   () => import("../VideoSDK/Overlay"),
@@ -14,9 +16,12 @@ const Overlay = dynamic(
 );
 
 const ParentComponent: React.FC = () => {
+  const router = useRouter();
   const [showCompiler, setShowCompiler] = useState(false);
   const [iframeSrc, setIframeSrc] = useState('https://example.com/');
   const [showIframe, setShowIframe] = useState(true);
+  const [meetingId, setMeetingId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const handleShowCompilerChange = (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => {
     setShowCompiler(newShowCompiler);
@@ -26,7 +31,23 @@ const ParentComponent: React.FC = () => {
     setIframeSrc(newSrc);
   };
 
+  const fetchMeetingId = async () => {
+    const boardCode = router.query.id;
+    try {
+      const response = await axios.get(`http://localhost:8000/colabs/${boardCode}`);
+      if (response.status === 200) {
+        setMeetingId(response.data.data.meetingId);
+      }
+    } catch (error) {
+      console.error("Error obteniendo el ID de la reunión:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
+    fetchMeetingId();
+    console.log("meetingId: ", meetingId);
     handleIframeStateChange((prevSrc) => prevSrc);
   }, []);
 
@@ -56,10 +77,12 @@ const ParentComponent: React.FC = () => {
               {showIframe ? 'Ocultar' : 'Mostrar'}
             </button>
 
-            {showIframe ? (
-              <Overlay/>
-            ) : (
-              <div className={styles.hiddenIframe}>Iframe oculto</div>
+            {loading ? (
+              <div className={styles.hiddenIframe}>Estamos creando tu videollamada, espera...</div>
+            ) : meetingId ? (
+              <Overlay meetingId={meetingId}/>
+            ) :(
+              <div className={styles.hiddenIframe}>Ocurrio un error al crear la videollamada</div>
             )}
           </div>
         </div>
