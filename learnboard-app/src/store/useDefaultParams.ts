@@ -20,7 +20,7 @@ const useDefaultParams = create<{
   defaultParams: {
     canvasBackgroundColor: '#FFFFFF',
     backgroundColorHex: '#2A4FB4',
-    strokeColorHex: '#1CD71C',
+    strokeColorHex: '#000000',
     fontColorHex: '#000000',
     activeColorPicker: 'SketchPicker',
     searchQueryIcons: '',

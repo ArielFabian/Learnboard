@@ -94,7 +94,7 @@ async function getSignature(meetingNumber: string, role: number) {
 //   return meeting;
 // }
 
-function startMeeting(client, clientConf) {
+function startMeeting(client: any, clientConf: any) {
   const meetingNumber: string  = clientConf.meetingNumber.toString();
   console.log("meetingNumber: ", meetingNumber, typeof meetingNumber);
   try{

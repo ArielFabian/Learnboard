@@ -19,7 +19,7 @@ function processLatex(expression) {
             return reject(new Error("Expression is undefined"));
         }
 
-        execFile('python', ['/home/kali/Documents/GitHub/Learnboard/learnboard-server/src/app/util/latexRecognition.py', expression], (error, stdout, stderr) => {
+        execFile('python', ['/home/pn/app/src/app/util/latexRecognition.py', expression], (error, stdout, stderr) => {
             if (error) return reject(error);
             if (stderr) return reject(new Error(stderr.trim()));
 

@@ -53,13 +53,13 @@ const ParentComponent: React.FC = () => {
 
   return (
     <div>
+
       <div style={{ display: showCompiler ? 'none' : 'block' }}>
         <AppLayout
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
         />
       </div>
-
       <div style={{ display: showCompiler ? 'block' : 'none' }}>
         <Compiler
           showCompiler={showCompiler}
@@ -87,7 +87,6 @@ const ParentComponent: React.FC = () => {
           </div>
         </div>
       </Draggable>
-      {/* <ZoomOverlay /> */}
     </div>
   );
 };
