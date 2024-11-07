@@ -51,7 +51,7 @@ const Welcome: React.FC = () => {
 
     try {
       // Hacer la petición POST al servidor para crear un espacio colaborativo
-      const response = await axios.post('http://localhost:8000/colabs', {
+      const response = await axios.post('http://api.learn-board.tech/colabs', {
         name: user.name,
         email: user.email,
       });
