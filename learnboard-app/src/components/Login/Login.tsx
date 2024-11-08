@@ -43,7 +43,6 @@ const Login: React.FC = () => {
         <Form onSubmit={handleLogin} className={styles.loginForm}>
           <h3 className={styles.title}>Login</h3>
           <img src="./images/assets/Logo-LB-3.png" alt="LearnBoard" className="img-fluid mb-4" />
-          <p className="text-center">Ingresa tu cuenta<br />Te queremos mucho usuario :3</p>
           {error && <p className="text-danger text-center">{error}</p>}
           <Form.Group className="mb-3">
             <Form.Label>Correo Gmail</Form.Label>

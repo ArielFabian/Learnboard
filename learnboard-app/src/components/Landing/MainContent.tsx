@@ -35,7 +35,7 @@ const JoinCallPage: React.FC = () => {
 
     try {
       // Hacer la petición GET al servidor para unirse a la llamada
-      const response = await axios.get(`http://64.23.247.40:8000/colabs/${callCode}`);
+      const response = await axios.get(`https://api.learn-board.tech/colabs/${callCode}`);
 
       if (response.status === 200) {
         setSnackbarMessage('Te has unido con éxito a la llamada');
@@ -89,7 +89,11 @@ const JoinCallPage: React.FC = () => {
                     deleteSpeed: 25,
                   }}
                 />
-                <Button variant="primary" className="mt-4">
+                <Button
+                  variant="primary"
+                  className="mt-4"
+                  onClick={() => window.location.href = 'https://chromewebstore.google.com/detail/learnboard/bacnninbabfmiacmonimildafkapdeap?authuser=0&hl=es-419'}
+                >
                   Consigue la extensión LearnBoard
                 </Button>
                 <div className="d-flex justify-content-center mt-4">
