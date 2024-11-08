@@ -11,7 +11,7 @@ import Snackbar from '../SnackBar/Snackbar'; // Componente de Snackbar para noti
 const JoinCallPage: React.FC = () => {
   const router = useRouter();
   const [callCode, setCallCode] = useState(''); // Código de la llamada
-  const [userName, setUserName] = useState(''); // Nombre del usuario
+  // const [userName, setUserName] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false); // Mostrar Snackbar
   const [snackbarMessage, setSnackbarMessage] = useState(''); // Mensaje del Snackbar
   const [snackbarType, setSnackbarType] = useState<'success' | 'error' | 'warning' | 'info'>('info'); // Tipo de Snackbar
@@ -27,14 +27,6 @@ const JoinCallPage: React.FC = () => {
 
     if (!isValidCode(callCode)) {
       setSnackbarMessage('El código de la llamada debe contener solo números');
-      setSnackbarType('error');
-      setShowSnackbar(true);
-      setTimeout(() => setShowSnackbar(false), 3000);
-      return;
-    }
-
-    if (!userName) {
-      setSnackbarMessage('Por favor, ingrese su nombre');
       setSnackbarType('error');
       setShowSnackbar(true);
       setTimeout(() => setShowSnackbar(false), 3000);
@@ -118,20 +110,9 @@ const JoinCallPage: React.FC = () => {
               <Card.Body>
                 <h2 className="text-center text-dark">Únete a una llamada</h2>
                 <p className="text-center text-muted">
-                  Ingresa tu nombre y el código de la llamada
+                  Ingresa el código de la llamada
                 </p>
                 <Form onSubmit={handleJoinCallClick}>
-                  <Form.Group controlId="formUserName">
-                    <Form.Label>Nombre</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Ingresa tu nombre"
-                      value={userName}
-                      onChange={(e) => setUserName(e.target.value)}
-                      className={styles.formControl}
-                      required
-                    />
-                  </Form.Group>
                   <Form.Group controlId="formCallCode" className="mt-3">
                     <Form.Label>Código de la llamada</Form.Label>
                     <Form.Control
