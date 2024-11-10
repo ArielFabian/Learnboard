@@ -129,6 +129,7 @@ export default function Canvas(
           break;
         case 'rectangle':
           appendRectangleObject(data);
+          console.log('rectangle', data);
           break;
         case 'ellipse':
           appendEllipseObject(data);
@@ -140,9 +141,7 @@ export default function Canvas(
           break;
       }
       setActiveObjectId(data.id);
-      setUserMode('select');
-      setActionMode(null);
-      drawEverything(); // Redibujar después de actualizar el objeto
+      setActionMode({ type: 'isDrawing' });
     });
 
     // Recepción de datos en tiempo real (puntos para free-draw)
@@ -151,6 +150,7 @@ export default function Canvas(
         appendFreeDrawPointToCanvasObject(data.id, { x: data.x, y: data.y });
       } else if (data.type === 'rectangle' || data.type === 'ellipse') {
         // Actualizar posición y tamaño en tiempo real para los rectángulos y elipses
+        console.log(data);
         updateCanvasObject(data.id, {
           x: data.x,
           y: data.y,
@@ -523,7 +523,9 @@ export default function Canvas(
               deltaY: movementY / (zoom / 100),
             },
             canvasWorkingSize,
+            
           });
+          console.log('mobiendo');
         } else if (activeObjectId && actionMode.type === 'isResizing' && actionMode.option) {
           resizeCanvasObject({
             id: activeObjectId,
@@ -548,17 +550,24 @@ export default function Canvas(
             x: finalX,
             y: finalY,
           });
+          socket.emit('drawing-data', {
+            id: activeObjectId,
+            x: relativeMousePosition.relativeMouseX,
+            y: relativeMousePosition.relativeMouseY,
+            type: 'free-draw',
+          });
         }
         break;
       }
       case 'rectangle':
       case 'ellipse': {
+        let width, height;
         if (activeObjectId) {
           const topLeftX = Math.min(initialDrawingPositionRef.current.x, finalX);
           const topLeftY = Math.min(initialDrawingPositionRef.current.y, finalY);
 
-          const width = Math.abs(initialDrawingPositionRef.current.x - finalX);
-          const height = Math.abs(initialDrawingPositionRef.current.y - finalY);
+          width = Math.abs(initialDrawingPositionRef.current.x - finalX);
+          height = Math.abs(initialDrawingPositionRef.current.y - finalY);
 
           updateCanvasObject(activeObjectId, {
             x: topLeftX,
@@ -567,18 +576,20 @@ export default function Canvas(
             height,
           });
         }
+        socket.emit('drawing-data', {
+          id: activeObjectId,
+          x: relativeMousePosition.relativeMouseX,
+          y: relativeMousePosition.relativeMouseY,
+          width:width,
+          height:height,
+          type: userMode,
+        });
         break;
       }
       default: {
         break;
       }
     }
-    socket.emit('drawing-data', {
-      id: activeObjectId,
-      x: relativeMousePosition.relativeMouseX,
-      y: relativeMousePosition.relativeMouseY,
-      type: userMode,
-    });
   };
 
   // On pointer up
