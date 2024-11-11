@@ -218,6 +218,7 @@ export default function Canvas(
       const response = await axios.post('https://api.learn-board.tech/model/process-image', {
         image: base64Image,
       });
+      console.log(base64Image);
 
       if (response.status !== 200) {
         throw new Error(`Error: ${response.statusText}`);
