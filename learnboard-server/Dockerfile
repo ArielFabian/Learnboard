@@ -10,6 +10,8 @@ COPY package.json package-lock.json /home/pn/app/
 # Cambiar los permisos del archivo package-lock.json
 RUN chown -R pn:pn /home/pn/app
 
+RUN apt-get update && apt-get install -y python3-pip fonts-freefont-ttf
+
 # Cambiar al usuario pn
 USER pn
 
@@ -35,10 +37,7 @@ RUN mkdir -p /home/pn/app/src/app/rooms && \
 EXPOSE 8000
 
 # Instalar las dependencias de Python
-RUN pip install openai matplotlib pillow
-# Copiar la fuente FreeMono.ttf al contenedor
-RUN mkdir /home/pn/app/fonts/
-COPY fonts/FreeMono.ttf /home/pn/app/fonts/
+RUN pip install openai matplotlib pillow 
 
 # Comando para iniciar la aplicación
 CMD ["npm", "start"]
