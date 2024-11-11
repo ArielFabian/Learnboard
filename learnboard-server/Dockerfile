@@ -37,6 +37,7 @@ EXPOSE 8000
 # Instalar las dependencias de Python
 RUN pip install openai matplotlib pillow
 # Copiar la fuente FreeMono.ttf al contenedor
+RUN mkdir /home/pn/app/fonts/
 COPY fonts/FreeMono.ttf /home/pn/app/fonts/
 
 # Comando para iniciar la aplicación
