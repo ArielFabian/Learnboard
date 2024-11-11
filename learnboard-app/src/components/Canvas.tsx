@@ -78,7 +78,7 @@ export default function Canvas(
   const moveCanvasObject = useCanvasObjects((state) => state.moveCanvasObject);
   const resizeCanvasObject = useCanvasObjects((state) => state.resizeCanvasObject);
 
-  const canvasWorkingSize = useCanvasWorkingSize((state) => state.canvasWorkingSize);
+  const canvasWorkingSize = useCanvasWorkingSize((state) => state.canvasWorkingSize) ;
 
   const defaultParams = useDefaultParams((state) => state.defaultParams);
 
@@ -129,6 +129,7 @@ export default function Canvas(
           break;
         case 'rectangle':
           appendRectangleObject(data);
+          console.log('rectangle', data);
           break;
         case 'ellipse':
           appendEllipseObject(data);
@@ -140,9 +141,7 @@ export default function Canvas(
           break;
       }
       setActiveObjectId(data.id);
-      setUserMode('select');
-      setActionMode(null);
-      drawEverything(); // Redibujar después de actualizar el objeto
+      setActionMode({ type: 'isDrawing' });
     });
 
     // Recepción de datos en tiempo real (puntos para free-draw)
@@ -151,6 +150,7 @@ export default function Canvas(
         appendFreeDrawPointToCanvasObject(data.id, { x: data.x, y: data.y });
       } else if (data.type === 'rectangle' || data.type === 'ellipse') {
         // Actualizar posición y tamaño en tiempo real para los rectángulos y elipses
+        console.log(data);
         updateCanvasObject(data.id, {
           x: data.x,
           y: data.y,
@@ -160,7 +160,19 @@ export default function Canvas(
       }
       drawEverything();
     });
-
+    socket.on('move-object', (data) => {
+      
+      moveCanvasObject({
+        id: data.id,
+        deltaPosition: {
+          deltaX: data.x/ (zoom / 100), 
+          deltaY: data.y / (zoom / 100),
+        },
+        canvasWorkingSize,
+      });
+      drawEverything();
+      console.log('moviendo objeto');
+    });
     // Finalización del dibujo
     socket.on('stop-drawing', (data) => {
       setActionMode(null);
@@ -194,6 +206,7 @@ export default function Canvas(
       socket.off('start-drawing');
       socket.off('drawing-data');
       socket.off('stop-drawing');
+      socket.off('move-object');
     };
   }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything]);
 
@@ -280,6 +293,7 @@ export default function Canvas(
             canvasObject: activeObject,
             zoom,
           });
+          console.log(boxes);
           Object.entries(boxes).forEach(([boxName, box]) => {
             const isWithinBounds = isCursorWithinRectangle({
               x: box.x,
@@ -297,6 +311,7 @@ export default function Canvas(
               });
             }
           });
+          console.log('oobjetos');
         }
         if (!isResizing) {
           const clickedObjects = canvasObjects.filter((canvasObject) => {
@@ -323,8 +338,10 @@ export default function Canvas(
           if (clickedObject) {
             setUserMode('select');
             setActionMode({ type: 'isMoving' });
+            console.log('se movio');
           } else {
             setActionMode({ type: 'isPanning' });
+            console.log('se pinto');
           }
         }
         drawEverything();
@@ -523,7 +540,18 @@ export default function Canvas(
               deltaY: movementY / (zoom / 100),
             },
             canvasWorkingSize,
+            
           });
+
+          console.log('mobiendo');
+          socket.emit('move-object', {
+            id: activeObjectId,
+            x: finalX ,
+            y: finalY ,
+            canvasWorkingSize: canvasWorkingSize
+          }
+        );
+
         } else if (activeObjectId && actionMode.type === 'isResizing' && actionMode.option) {
           resizeCanvasObject({
             id: activeObjectId,
@@ -534,6 +562,7 @@ export default function Canvas(
             },
             canvasWorkingSize,
           });
+          console.log('resize');
         } else if (actionMode.type === 'isPanning') {
           updateScrollPosition({
             deltaX: movementX,
@@ -548,37 +577,47 @@ export default function Canvas(
             x: finalX,
             y: finalY,
           });
+          socket.emit('drawing-data', {
+            id: activeObjectId,
+            x: relativeMousePosition.relativeMouseX,
+            y: relativeMousePosition.relativeMouseY,
+            type: 'free-draw',
+          });
         }
         break;
       }
       case 'rectangle':
       case 'ellipse': {
+        let width, height;
         if (activeObjectId) {
           const topLeftX = Math.min(initialDrawingPositionRef.current.x, finalX);
           const topLeftY = Math.min(initialDrawingPositionRef.current.y, finalY);
 
-          const width = Math.abs(initialDrawingPositionRef.current.x - finalX);
-          const height = Math.abs(initialDrawingPositionRef.current.y - finalY);
+          width = Math.abs(initialDrawingPositionRef.current.x - finalX);
+          height = Math.abs(initialDrawingPositionRef.current.y - finalY);
 
           updateCanvasObject(activeObjectId, {
             x: topLeftX,
             y: topLeftY,
             width,
             height,
-          });
+          });       
+          socket.emit('drawing-data', {
+          id: activeObjectId,
+          x: topLeftX,
+          y: topLeftY,
+          width:width,
+          height:height,
+          type: userMode,
+        });
         }
+
         break;
       }
       default: {
         break;
       }
     }
-    socket.emit('drawing-data', {
-      id: activeObjectId,
-      x: relativeMousePosition.relativeMouseX,
-      y: relativeMousePosition.relativeMouseY,
-      type: userMode,
-    });
   };
 
   // On pointer up
@@ -675,8 +714,8 @@ export default function Canvas(
           position: 'absolute',
           top: 0,
           left: 0,
-          width: `${windowSize.width}px`,
-          height: `${windowSize.height}px`,
+          width: `500 px`,
+          height: `500 px`,
           zIndex: theme.layers.canvasElement + 1,
         }}
         width={windowSize.width}

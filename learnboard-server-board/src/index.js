@@ -32,6 +32,10 @@ io.on('connection', (socket) => {
     // Retransmitir el evento a otros clientes
     socket.broadcast.emit('drawing-data', data);
   });
+  socket.on('move-object', (data) => {
+    // Retransmitir el evento a otros clientes
+    socket.broadcast.emit('move-object', data);
+  });
 
   // Escuchar evento de finalización de dibujo
   socket.on('stop-drawing', (data) => {
