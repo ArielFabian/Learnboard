@@ -113,6 +113,7 @@ export default function Canvas(
         const canvas = canvasRef.current;
         if (canvas) {
           const base64Image = canvas.toDataURL('image/png').split(',')[1];
+          console.log(base64Image);
           sendImageToAPI(base64Image);
         }
       }, 5000);
