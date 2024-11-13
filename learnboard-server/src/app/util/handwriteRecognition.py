@@ -38,8 +38,9 @@ def process_image(base64_image):
     
     img = Image.new('RGB', (800, 200), color=(255, 255, 255))
     d = ImageDraw.Draw(img)
-    font = ImageFont.truetype("Pillow/Tests/fonts/FreeMono.ttf", 40)
+    font = ImageFont.load_default()
     d.text((20, 20), latex_string, font=font, fill=(0, 0, 0))
+
     
     # Codificar la imagen a base64
     buffered = BytesIO()

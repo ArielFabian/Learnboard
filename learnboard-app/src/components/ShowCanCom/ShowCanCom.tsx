@@ -34,7 +34,7 @@ const ParentComponent: React.FC = () => {
   const fetchMeetingId = async () => {
     const boardCode = router.query.id;
     try {
-      const response = await axios.get(`http://localhost:8000/colabs/${boardCode}`);
+      const response = await axios.get(`https://api.learn-board.tech/colabs/${boardCode}`);
       if (response.status === 200) {
         setMeetingId(response.data.data.meetingId);
       }
@@ -53,13 +53,13 @@ const ParentComponent: React.FC = () => {
 
   return (
     <div>
+
       <div style={{ display: showCompiler ? 'none' : 'block' }}>
         <AppLayout
           showCompiler={showCompiler}
           onShowCompilerChange={handleShowCompilerChange}
         />
       </div>
-
       <div style={{ display: showCompiler ? 'block' : 'none' }}>
         <Compiler
           showCompiler={showCompiler}
@@ -87,7 +87,6 @@ const ParentComponent: React.FC = () => {
           </div>
         </div>
       </Draggable>
-      {/* <ZoomOverlay /> */}
     </div>
   );
 };

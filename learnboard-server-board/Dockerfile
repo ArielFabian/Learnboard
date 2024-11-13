@@ -1,3 +1,4 @@
+
 # Establecer la imagen base
 FROM nikolaik/python-nodejs:latest
 
@@ -9,8 +10,6 @@ COPY package.json package-lock.json /home/pn/app/
 
 # Cambiar los permisos del archivo package-lock.json
 RUN chown -R pn:pn /home/pn/app
-
-RUN apt-get update && apt-get install -y python3-pip fonts-freefont-ttf
 
 # Cambiar al usuario pn
 USER pn
@@ -27,17 +26,9 @@ RUN mkdir -p /home/pn/app/src/app/controllers && \
     chown -R pn:pn /home/pn/app/src/app/controllers && \
     chmod -R 755 /home/pn/app/src/app/controllers
 
-# Asegurarse de que el directorio `rooms` existe y tiene permisos de escritura
-RUN mkdir -p /home/pn/app/src/app/rooms && \
-    chown -R pn:pn /home/pn/app/src/app/rooms && \
-    chmod -R 755 /home/pn/app/src/app/rooms
-
-
 # Exponer el puerto en el que se ejecuta la aplicación
-EXPOSE 8000
+EXPOSE 4000
 
-# Instalar las dependencias de Python
-RUN pip install openai matplotlib pillow 
 
 # Comando para iniciar la aplicación
 CMD ["npm", "start"]
