@@ -49,7 +49,8 @@ function ParticipantView(props: ParticipantViewProps) {
   return (
     <div>
       <audio ref={micRef} autoPlay playsInline muted={isLocal} />
-      {webcamOn && (
+
+      {webcamOn ? (
         <>
           <ReactPlayer
             playsinline
@@ -65,17 +66,13 @@ function ParticipantView(props: ParticipantViewProps) {
               console.log(err, "participant video error");
             }}
           />
-          <hr></hr>
-        </>
-      ) ? (
-        <>
-          <h1 className={styles.initials}>{displayName}</h1>
-          <hr></hr>
+          <hr />
         </>
       ) : (
         <>
+          <hr />
           <h1 className={styles.initials}>{displayName}</h1>
-          <hr></hr>
+          <hr />
         </>
       )}
     </div>

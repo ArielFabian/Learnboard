@@ -3,7 +3,7 @@ import Compiler from '../Compiler/Complier';
 import AppLayout from '~/layouts/AppLayout';
 import Draggable from 'react-draggable';
 import styles from './ParentComponent.module.css'; // Importa el módulo CSS
-// import ZoomOverlay from '../Zoom/ZoomOverlay';
+import { FaArrowsAlt } from 'react-icons/fa';
 import dynamic from "next/dynamic";
 import axios from 'axios';
 import { useRouter } from "next/router";
@@ -72,10 +72,12 @@ const ParentComponent: React.FC = () => {
       <Draggable handle={`.${styles.moveButton}`}>
         <div className={styles.draggableContainer}>
           <div className={styles.iframeContainer}>
-            <button className={styles.moveButton}>Mover</button>
-            <button onClick={() => setShowIframe(!showIframe)} className={styles.toggleButton}>
-              {showIframe ? 'Ocultar' : 'Mostrar'}
+            <button className={styles.moveButton}>
+              <FaArrowsAlt />
             </button>
+            {/* <button onClick={() => setShowIframe(!showIframe)} className={styles.toggleButton}>
+              {showIframe ? 'Ocultar' : 'Mostrar'}
+            </button> */}
 
             {loading ? (
               <div className={styles.hiddenIframe}>Estamos creando tu videollamada, espera...</div>
