@@ -40,6 +40,7 @@ def process_image(base64_image):
     d = ImageDraw.Draw(img)
     font = ImageFont.load_default()
     d.text((20, 20), latex_string, font=font, fill=(0, 0, 0))
+
     
     # Codificar la imagen a base64
     buffered = BytesIO()

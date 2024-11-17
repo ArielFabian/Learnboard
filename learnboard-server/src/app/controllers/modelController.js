@@ -18,8 +18,7 @@ function processLatex(expression) {
         if (!expression) {
             return reject(new Error("Expression is undefined"));
         }
-        console.log("si entro");
-        console.log('object', expression);
+
         execFile('python', ['/home/pn/app/src/app/util/latexRecognition.py', expression], (error, stdout, stderr) => {
             if (error) return reject(error);
             if (stderr) return reject(new Error(stderr.trim()));

@@ -27,11 +27,11 @@ async function initClient() {
   // const meetingNumber:number = meeting.id;
   // console.log("meetingNumber: ", meetingNumber);
   const clientConf = {
-    authEndpoint: "http://localhost:8000/api/zoom/signature",
+    authEndpoint: "https://api.learn-board.tech/api/zoom/signature",
     sdkKey: "JTr5VJncSpOAumB0wos1Xw",
     signature: "",
-    meetingNumber: "76029781713",
-    role: 0, // 0 implies client, 1 implies host
+    meetingNumber: "73843291164",
+    role: 1, // 0 implies client, 1 implies host
     userName: 'React', // username: user need to input,
   }
 
@@ -66,7 +66,7 @@ async function initClient() {
 // fetch signature to your auth endpoint. Check the sample repo.
 // https://github.com/zoom/meetingsdk-auth-endpoint-sample
 async function getSignature(meetingNumber: string, role: number) {
-  const data = await fetch("http://localhost:8000/zoom/signature", {
+  const data = await fetch("https://api.learn-board.tech/zoom/signature", {
     method: "POST",
     headers: {
       'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ async function getSignature(meetingNumber: string, role: number) {
 }
 
 // async function createMeeting(){
-//   const data = await fetch("http://localhost:8000/zoom/meeting", {
+//   const data = await fetch("https://api.learn-board.tech/zoom/meeting", {
 //     method: "POST",
 //     headers: {
 //       'Content-Type': 'application/json'

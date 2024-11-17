@@ -29,7 +29,7 @@ import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
 import { createBootstrapComponent } from 'react-bootstrap/esm/ThemeProvider';
 import { width } from '@mui/system';
 import { set } from 'lodash';
-const socket = io('http://localhost:4000'); // Conecta al servidor de sockets
+const socket = io('https://board.learn-board.tech'); // Conecta al servidor de sockets
 
 const FixedMain = styled.main`
   position: fixed;
@@ -113,6 +113,7 @@ export default function Canvas(
         const canvas = canvasRef.current;
         if (canvas) {
           const base64Image = canvas.toDataURL('image/png').split(',')[1];
+          console.log(base64Image);
           sendImageToAPI(base64Image);
         }
       }, 5000);
@@ -218,6 +219,7 @@ export default function Canvas(
       const response = await axios.post('https://api.learn-board.tech/model/process-image', {
         image: base64Image,
       });
+      console.log(base64Image);
 
       if (response.status !== 200) {
         throw new Error(`Error: ${response.statusText}`);
