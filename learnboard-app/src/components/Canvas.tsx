@@ -141,7 +141,6 @@ export default function Canvas(
         default:
           break;
       }
-      setActiveObjectId(data.id);
       setActionMode({ type: 'isDrawing' });
     });
 
