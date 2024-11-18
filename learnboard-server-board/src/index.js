@@ -11,7 +11,7 @@ const io = new Server(server, {
 });
 
 // Puerto del servidor
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // Middleware para servir archivos estáticos, si tienes una carpeta `public` para el frontend
 app.use(express.static('public'));
@@ -20,28 +20,51 @@ app.use(express.static('public'));
 io.on('connection', (socket) => {
   console.log(`Usuario conectado: ${socket.id}`);
 
+  // Escuchar evento para unirse a una sala específica (canvasId)
+  socket.on('join-canvas', (canvasId) => {
+    if (canvasId) {
+      socket.join(canvasId); // Unir el socket a la sala del canvas
+      console.log(`Usuario ${socket.id} se unió a la sala del canvas: ${canvasId}`);
+    }
+  });
+
   // Escuchar evento de inicio de dibujo
   socket.on('start-drawing', (data) => {
-    // Retransmitir el evento a otros clientes
-    console.log('start-drawing', data);
-    socket.broadcast.emit('start-drawing', data);
+  const { canvasId } = data; // El ID del canvas debe estar incluido en los datos
+  console.log(data);
+  if (canvasId) {
+      console.log(`start-drawing en canvas ${canvasId}`, data);
+      // Enviar el evento solo a la sala específica
+      //quitar el canvasId del objeto data para que no se envie a todos los usuarios
+      delete data.canvasId;
+      socket.to(canvasId).emit('start-drawing', data);
+      
+    }
   });
 
   // Escuchar evento de datos de dibujo en tiempo real
   socket.on('drawing-data', (data) => {
-    // Retransmitir el evento a otros clientes
-    socket.broadcast.emit('drawing-data', data);
+    const { canvasId } = data;
+    if (canvasId) {
+      socket.to(canvasId).emit('drawing-data', data);
+    }
   });
+
+  // Escuchar evento de movimiento de objetos
   socket.on('move-object', (data) => {
-    // Retransmitir el evento a otros clientes
-    socket.broadcast.emit('move-object', data);
+    const { canvasId } = data;
+    if (canvasId) {
+      socket.to(canvasId).emit('move-object', data);
+    }
   });
 
   // Escuchar evento de finalización de dibujo
   socket.on('stop-drawing', (data) => {
-    console.log('stop-drawing', data);
-    // Retransmitir el evento a otros clientes
-    socket.broadcast.emit('stop-drawing', data);
+    const { canvasId } = data;
+    if (canvasId) {
+      console.log(`stop-drawing en canvas ${canvasId}`, data);
+      socket.to(canvasId).emit('stop-drawing', data);
+    }
   });
 
   // Evento de desconexión
@@ -51,6 +74,6 @@ io.on('connection', (socket) => {
 });
 
 // Iniciar el servidor
-server.listen(4000, () => {
-  console.log(`Servidor WebSocket escuchando en el puerto ${4000}`);
+server.listen(PORT, () => {
+  console.log(`Servidor WebSocket escuchando en el puerto ${PORT}`);
 });

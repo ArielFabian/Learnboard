@@ -26,10 +26,7 @@ import isCursorWithinRectangle from '~/utils/isCursorWithinRectangle';
 import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
 import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
 import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
-import { createBootstrapComponent } from 'react-bootstrap/esm/ThemeProvider';
-import { width } from '@mui/system';
-import { set } from 'lodash';
-const socket = io('https://board.learn-board.tech'); // Conecta al servidor de sockets
+const socket = io('http://localhost:4000'); // Conecta al servidor de sockets
 
 const FixedMain = styled.main`
   position: fixed;
@@ -81,7 +78,7 @@ export default function Canvas(
   const canvasWorkingSize = useCanvasWorkingSize((state) => state.canvasWorkingSize) ;
 
   const defaultParams = useDefaultParams((state) => state.defaultParams);
-
+  const canvasId = getCanvasIdFromUrl();
   const incrementZoom = useZoom((state) => state.incrementZoom);
   const decrementZoom = useZoom((state) => state.decrementZoom);
 
@@ -104,8 +101,13 @@ export default function Canvas(
 
   const appendImageObject = useCanvasObjects((state) => state.appendImageObject);
 
-
-
+  const emitEvent = (event: string, data: any) => {
+    socket.emit(event, { ...data, canvasId });
+  };
+  function getCanvasIdFromUrl(): string {
+    const parts = window.location.pathname.split('/');
+    return parts[parts.length - 1] || 'default'; // Usa "default" si no hay un ID válido
+  }
   // Screenshot
   useEffect(() => {
     if (takeScreenshot) {
@@ -118,14 +120,19 @@ export default function Canvas(
         }
       }, 5000);
     }
+
+    socket.emit('join-canvas', canvasId);
     socket.on('connect', () => {
       console.log('Conectado al servidor de WebSocket');
     });
 
     // Recepción de datos de inicio de dibujo
     socket.on('start-drawing', (data) => {
+      console.log(data.type);
       switch (data.type) {
         case 'free-draw':
+          console.log('free-draw', data)
+          delete data.type;
           appendFreeDrawObject(data);
           break;
         case 'rectangle':
@@ -146,6 +153,7 @@ export default function Canvas(
 
     // Recepción de datos en tiempo real (puntos para free-draw)
     socket.on('drawing-data', (data) => {
+      if (data.canvasId === canvasId) {
       if (data.type === 'free-draw') {
         appendFreeDrawPointToCanvasObject(data.id, { x: data.x, y: data.y });
       } else if (data.type === 'rectangle' || data.type === 'ellipse') {
@@ -159,7 +167,9 @@ export default function Canvas(
         });
       }
       drawEverything();
+    }
     });
+
     socket.on('move-object', (data) => {
       
       moveCanvasObject({
@@ -371,7 +381,7 @@ export default function Canvas(
         setActionMode({ type: 'isDrawing' });
 
         // Emitir el objeto de dibujo libre al servidor
-        socket.emit('start-drawing', { ...freeDrawObject, type: 'free-draw' });
+        socket.emit('start-drawing', { ...freeDrawObject, type: 'free-draw',canvasId });
         break;
       }
 
@@ -393,7 +403,7 @@ export default function Canvas(
         setActionMode({ type: 'isDrawing' });
 
         // Emitir el objeto de rectángulo al servidor
-        socket.emit('start-drawing', { ...rectangleObject, type: 'rectangle' });
+        socket.emit('start-drawing', { ...rectangleObject, type: 'rectangle',canvasId });
         break;
       }
 
@@ -415,7 +425,7 @@ export default function Canvas(
         setActionMode({ type: 'isDrawing' });
 
         // Emitir el objeto de elipse al servidor
-        socket.emit('start-drawing', { ...ellipseObject, type: 'ellipse' });
+        socket.emit('start-drawing', { ...ellipseObject, type: 'ellipse',canvasId });
         break;
       }
 
@@ -459,11 +469,11 @@ export default function Canvas(
           opacity: 100,
         });
         setActiveObjectId(createdObjectId);
-        setUserMode('select');
         setActionMode(null);
+        setUserMode('select');
 
         // Emitir el objeto de texto al servidor
-        socket.emit('start-drawing', { ...textObject, type: 'text' });
+        socket.emit('start-drawing', { ...textObject, type: 'text', canvasId });
         break;
       }
 
@@ -549,7 +559,8 @@ export default function Canvas(
             id: activeObjectId,
             x: finalX ,
             y: finalY ,
-            canvasWorkingSize: canvasWorkingSize
+            canvasWorkingSize: canvasWorkingSize,
+            canvasId
           }
         );
 
@@ -583,6 +594,7 @@ export default function Canvas(
             x: relativeMousePosition.relativeMouseX,
             y: relativeMousePosition.relativeMouseY,
             type: 'free-draw',
+            canvasId
           });
         }
         break;
@@ -610,6 +622,7 @@ export default function Canvas(
           width:width,
           height:height,
           type: userMode,
+          canvasId
         });
         }
 
@@ -650,15 +663,14 @@ export default function Canvas(
               width: dimensions.width,
               height: dimensions.height,
             });
-            socket.emit('stop-drawing', { id: activeObject, width: dimensions.width, height: dimensions.height, type: 'free-draw' });
+            socket.emit('stop-drawing', { id: activeObject, width: dimensions.width, height: dimensions.height, type: 'free-draw' ,canvasId});
           }
-          setUserMode('select');
+          
           drawEverything();
           break;
         }
         case 'rectangle':
         case 'ellipse': {
-          setUserMode('select');
           drawEverything();
           break;
         }
