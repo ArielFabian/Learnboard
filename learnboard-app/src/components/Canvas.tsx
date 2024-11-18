@@ -104,19 +104,34 @@ export default function Canvas(
 
   const appendImageObject = useCanvasObjects((state) => state.appendImageObject);
 
+  const sendImageToAPI = async (base64Image: string) => {
+    try {
 
+      const response = await axios.post('https://api.learn-board.tech/model/process-image', {
+        image: base64Image,
+      });
+      console.log(base64Image);
+
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      const resultBase64 = response.data.result;
+      commonPushImageObject(`data:image/png;base64,${resultBase64}`)
+      handleTakeScreenshot(false);
+    } catch (error) {
+      console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
+    }
+  };
 
   // Screenshot
   useEffect(() => {
     if (takeScreenshot) {
-      setTimeout(() => {
-        const canvas = canvasRef.current;
-        if (canvas) {
-          const base64Image = canvas.toDataURL('image/png').split(',')[1];
-          console.log(base64Image);
-          sendImageToAPI(base64Image);
-        }
-      }, 5000);
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const base64Image = canvas.toDataURL('image/png').split(',')[1];
+        console.log(base64Image);
+        sendImageToAPI(base64Image);
+      }
     }
     socket.on('connect', () => {
       console.log('Conectado al servidor de WebSocket');
@@ -162,11 +177,11 @@ export default function Canvas(
       drawEverything();
     });
     socket.on('move-object', (data) => {
-      
+
       moveCanvasObject({
         id: data.id,
         deltaPosition: {
-          deltaX: data.x/ (zoom / 100), 
+          deltaX: data.x/ (zoom / 100),
           deltaY: data.y / (zoom / 100),
         },
         canvasWorkingSize,
@@ -180,10 +195,10 @@ export default function Canvas(
       const canvas = canvasRef.current;
       const context = contextRef.current;
       if (!canvas || !context) return;
-  
+
       previousTouchRef.current = null;
       distanceBetweenTouchesRef.current = 0;
-  
+
       console.log('stop-drawing', data);
       if (data.type === 'free-draw') {
         context.closePath()
@@ -192,7 +207,7 @@ export default function Canvas(
         const dimensions = getDimensionsFromFreeDraw({
           freeDrawObject: activeObject,
         });
-        console.log('dimensions', dimensions);  
+        console.log('dimensions', dimensions);
         updateCanvasObject(activeObject.id, {
           width: data.width,
           height: data.height,
@@ -209,28 +224,8 @@ export default function Canvas(
       socket.off('stop-drawing');
       socket.off('move-object');
     };
-  }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything]);
+  }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything, takeScreenshot]);
 
-
-  // Función para enviar la imagen a la API
-  const sendImageToAPI = async (base64Image: string) => {
-    try {
-
-      const response = await axios.post('https://api.learn-board.tech/model/process-image', {
-        image: base64Image,
-      });
-      console.log(base64Image);
-
-      if (response.status !== 200) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-      const resultBase64 = response.data.result;
-      commonPushImageObject(`data:image/png;base64,${resultBase64}`)
-      handleTakeScreenshot(false);
-    } catch (error) {
-      console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
-    }
-  };
 
   //Latex
   useEffect(() => {
@@ -542,7 +537,7 @@ export default function Canvas(
               deltaY: movementY / (zoom / 100),
             },
             canvasWorkingSize,
-            
+
           });
 
           console.log('mobiendo');
@@ -603,7 +598,7 @@ export default function Canvas(
             y: topLeftY,
             width,
             height,
-          });       
+          });
           socket.emit('drawing-data', {
           id: activeObjectId,
           x: topLeftX,
