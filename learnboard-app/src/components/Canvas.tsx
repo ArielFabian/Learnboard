@@ -75,7 +75,7 @@ export default function Canvas(
   const moveCanvasObject = useCanvasObjects((state) => state.moveCanvasObject);
   const resizeCanvasObject = useCanvasObjects((state) => state.resizeCanvasObject);
 
-  const canvasWorkingSize = useCanvasWorkingSize((state) => state.canvasWorkingSize) ;
+  const canvasWorkingSize = useCanvasWorkingSize((state) => state.canvasWorkingSize);
 
   const defaultParams = useDefaultParams((state) => state.defaultParams);
   const canvasId = getCanvasIdFromUrl();
@@ -154,54 +154,63 @@ export default function Canvas(
     // Recepción de datos en tiempo real (puntos para free-draw)
     socket.on('drawing-data', (data) => {
       if (data.canvasId === canvasId) {
-      if (data.type === 'free-draw') {
-        appendFreeDrawPointToCanvasObject(data.id, { x: data.x, y: data.y });
-      } else if (data.type === 'rectangle' || data.type === 'ellipse') {
-        // Actualizar posición y tamaño en tiempo real para los rectángulos y elipses
-        console.log(data);
-        updateCanvasObject(data.id, {
-          x: data.x,
-          y: data.y,
-          width: data.width,
-          height: data.height,
-        });
+        if (data.type === 'free-draw') {
+          appendFreeDrawPointToCanvasObject(data.id, { x: data.x, y: data.y });
+        } else if (data.type === 'rectangle' || data.type === 'ellipse') {
+          // Actualizar posición y tamaño en tiempo real para los rectángulos y elipses
+          console.log(data);
+          updateCanvasObject(data.id, {
+            x: data.x,
+            y: data.y,
+            width: data.width,
+            height: data.height,
+          });
+        }
+        drawEverything();
       }
-      drawEverything();
-    }
     });
 
     socket.on('move-object', (data) => {
-      
-      moveCanvasObject({
-        id: data.id,
-        deltaPosition: {
-          deltaX: data.x/ (zoom / 100), 
-          deltaY: data.y / (zoom / 100),
-        },
-        canvasWorkingSize,
-      });
-      drawEverything();
-      console.log('moviendo objeto');
+      if (data.canvasId === canvasId) { // Asegurar que el evento pertenece al canvas actual
+        moveCanvasObject({
+          id: data.id,
+          deltaPosition: {
+            deltaX: data.deltaX, // Usar el deltaX calculado en el servidor
+            deltaY: data.deltaY, // Usar el deltaY calculado en el servidor
+          },
+          canvasWorkingSize,
+        });
+
+        // Actualizar posición inicial si es necesario
+        initialDrawingPositionRef.current = {
+          x: data.initialX, // Actualizar referencia inicial con valores del servidor
+          y: data.initialY,
+        };
+
+        drawEverything();
+        console.log(`Moviendo objeto ${data.id} en canvas ${data.canvasId}: DeltaX: ${data.deltaX}, DeltaY: ${data.deltaY}`);
+      }
     });
+
     // Finalización del dibujo
     socket.on('stop-drawing', (data) => {
       setActionMode(null);
       const canvas = canvasRef.current;
       const context = contextRef.current;
       if (!canvas || !context) return;
-  
+
       previousTouchRef.current = null;
       distanceBetweenTouchesRef.current = 0;
-  
+
       console.log('stop-drawing', data);
       if (data.type === 'free-draw') {
         context.closePath()
-        const activeObject =data.id;
+        const activeObject = data.id;
         console.log(activeObject);
         const dimensions = getDimensionsFromFreeDraw({
           freeDrawObject: activeObject,
         });
-        console.log('dimensions', dimensions);  
+        console.log('dimensions', dimensions);
         updateCanvasObject(activeObject.id, {
           width: data.width,
           height: data.height,
@@ -381,7 +390,7 @@ export default function Canvas(
         setActionMode({ type: 'isDrawing' });
 
         // Emitir el objeto de dibujo libre al servidor
-        socket.emit('start-drawing', { ...freeDrawObject, type: 'free-draw',canvasId });
+        socket.emit('start-drawing', { ...freeDrawObject, type: 'free-draw', canvasId });
         break;
       }
 
@@ -403,7 +412,7 @@ export default function Canvas(
         setActionMode({ type: 'isDrawing' });
 
         // Emitir el objeto de rectángulo al servidor
-        socket.emit('start-drawing', { ...rectangleObject, type: 'rectangle',canvasId });
+        socket.emit('start-drawing', { ...rectangleObject, type: 'rectangle', canvasId });
         break;
       }
 
@@ -425,7 +434,7 @@ export default function Canvas(
         setActionMode({ type: 'isDrawing' });
 
         // Emitir el objeto de elipse al servidor
-        socket.emit('start-drawing', { ...ellipseObject, type: 'ellipse',canvasId });
+        socket.emit('start-drawing', { ...ellipseObject, type: 'ellipse', canvasId });
         break;
       }
 
@@ -483,34 +492,19 @@ export default function Canvas(
   };
 
   // On pointer move
-
   const onPointerMove = (event: PointerOrTouchEvent) => {
     const canvas = canvasRef.current;
     const context = contextRef.current;
     if (!canvas || !context || !actionMode) return;
 
+    const rect = canvas.getBoundingClientRect(); // Obtener offset del canvas
+
     const clientX = 'clientX' in event ? event.clientX : event.touches[0]?.clientX;
     const clientY = 'clientY' in event ? event.clientY : event.touches[0]?.clientY;
 
-    const finger0PageX = 'touches' in event ? event.touches[0]?.pageX : null;
-    const finger0PageY = 'touches' in event ? event.touches[0]?.pageY : null;
-
-    const finger1PageX = 'touches' in event ? event.touches[1]?.pageX : null;
-    const finger1PageY = 'touches' in event ? event.touches[1]?.pageY : null;
-
-    if (finger0PageX !== null && finger0PageY !== null && finger1PageX !== null && finger1PageY !== null) {
-      const distanceBetweenTouches = Math.hypot(finger0PageX - finger1PageX, finger0PageY - finger1PageY);
-
-      if (distanceBetweenTouchesRef.current) {
-        if (distanceBetweenTouches > distanceBetweenTouchesRef.current) {
-          incrementZoom(1);
-        } else if (distanceBetweenTouches < distanceBetweenTouchesRef.current) {
-          decrementZoom(1);
-        }
-      }
-
-      distanceBetweenTouchesRef.current = distanceBetweenTouches;
-    }
+    // Coordenadas relativas al canvas, ajustadas por offset y zoom
+    const relativeMouseX = (clientX - rect.left) / (zoom / 100);
+    const relativeMouseY = (clientY - rect.top) / (zoom / 100);
 
     const movementX =
       'movementX' in event
@@ -530,40 +524,36 @@ export default function Canvas(
       previousTouchRef.current = event.touches[0];
     }
 
-    const relativeMousePosition = getRelativeMousePositionOnCanvas({
-      windowMouseX: clientX,
-      windowMouseY: clientY,
-      canvasWorkingSize,
-      scrollPosition,
-      zoom,
-    });
-
-    const finalX = relativeMousePosition.relativeMouseX;
-    const finalY = relativeMousePosition.relativeMouseY;
-
     switch (userMode) {
       case 'select': {
         if (activeObjectId && actionMode.type === 'isMoving') {
+          // Calcular el delta basado en initialDrawingPositionRef
+          const deltaX = relativeMouseX - initialDrawingPositionRef.current.x;
+          const deltaY = relativeMouseY - initialDrawingPositionRef.current.y;
+
+          // Actualizar posición local del objeto
           moveCanvasObject({
             id: activeObjectId,
-            deltaPosition: {
-              deltaX: movementX / (zoom / 100),
-              deltaY: movementY / (zoom / 100),
-            },
+            deltaPosition: { deltaX, deltaY },
             canvasWorkingSize,
-            
           });
 
-          console.log('mobiendo');
+          // Emitir el evento de movimiento al servidor
           socket.emit('move-object', {
             id: activeObjectId,
-            x: finalX ,
-            y: finalY ,
-            canvasWorkingSize: canvasWorkingSize,
-            canvasId
-          }
-        );
+            x: relativeMouseX,
+            y: relativeMouseY,
+            initialX: initialDrawingPositionRef.current.x,
+            initialY: initialDrawingPositionRef.current.y,
+            deltaX,
+            deltaY,
+            canvasId,
+          });
 
+          // Actualizar initialDrawingPositionRef
+          initialDrawingPositionRef.current = { x: relativeMouseX, y: relativeMouseY };
+
+          drawEverything();
         } else if (activeObjectId && actionMode.type === 'isResizing' && actionMode.option) {
           resizeCanvasObject({
             id: activeObjectId,
@@ -583,56 +573,59 @@ export default function Canvas(
         }
         break;
       }
+
       case 'free-draw': {
         if (activeObjectId) {
           appendFreeDrawPointToCanvasObject(activeObjectId, {
-            x: finalX,
-            y: finalY,
+            x: relativeMouseX,
+            y: relativeMouseY,
           });
+
           socket.emit('drawing-data', {
             id: activeObjectId,
-            x: relativeMousePosition.relativeMouseX,
-            y: relativeMousePosition.relativeMouseY,
+            x: relativeMouseX,
+            y: relativeMouseY,
             type: 'free-draw',
-            canvasId
+            canvasId,
           });
         }
         break;
       }
+
       case 'rectangle':
       case 'ellipse': {
-        let width, height;
         if (activeObjectId) {
-          const topLeftX = Math.min(initialDrawingPositionRef.current.x, finalX);
-          const topLeftY = Math.min(initialDrawingPositionRef.current.y, finalY);
+          const topLeftX = Math.min(initialDrawingPositionRef.current.x, relativeMouseX);
+          const topLeftY = Math.min(initialDrawingPositionRef.current.y, relativeMouseY);
 
-          width = Math.abs(initialDrawingPositionRef.current.x - finalX);
-          height = Math.abs(initialDrawingPositionRef.current.y - finalY);
+          const width = Math.abs(initialDrawingPositionRef.current.x - relativeMouseX);
+          const height = Math.abs(initialDrawingPositionRef.current.y - relativeMouseY);
 
           updateCanvasObject(activeObjectId, {
             x: topLeftX,
             y: topLeftY,
             width,
             height,
-          });       
-          socket.emit('drawing-data', {
-          id: activeObjectId,
-          x: topLeftX,
-          y: topLeftY,
-          width:width,
-          height:height,
-          type: userMode,
-          canvasId
-        });
-        }
+          });
 
+          socket.emit('drawing-data', {
+            id: activeObjectId,
+            x: topLeftX,
+            y: topLeftY,
+            width,
+            height,
+            type: userMode,
+            canvasId,
+          });
+        }
         break;
       }
-      default: {
+
+      default:
         break;
-      }
     }
   };
+
 
   // On pointer up
 
@@ -663,9 +656,9 @@ export default function Canvas(
               width: dimensions.width,
               height: dimensions.height,
             });
-            socket.emit('stop-drawing', { id: activeObject, width: dimensions.width, height: dimensions.height, type: 'free-draw' ,canvasId});
+            socket.emit('stop-drawing', { id: activeObject, width: dimensions.width, height: dimensions.height, type: 'free-draw', canvasId });
           }
-          
+
           drawEverything();
           break;
         }
