@@ -10,6 +10,7 @@ import ReactPlayer from "react-player";
 import styles from './Overlay.module.css';
 import {FaMicrophone, FaCamera, FaPhoneSlash} from 'react-icons/fa'
 import { ActionIcon, Button, TextInput, Tooltip, Center, Box, Title, Space} from '@mantine/core';
+import noCamera from '../../../public/images/assets/video-not-working.png';
 
 interface ParticipantViewProps {
   participantId: string;
@@ -49,7 +50,9 @@ function ParticipantView(props: ParticipantViewProps) {
   return (
     <div>
       <audio ref={micRef} autoPlay playsInline muted={isLocal} />
-
+      <h3 className={styles.initials}>
+        {displayName.length > 15 ? `${displayName.slice(0, 15)}...` : displayName}
+      </h3>
       {webcamOn ? (
         <>
           <ReactPlayer
@@ -60,8 +63,8 @@ function ParticipantView(props: ParticipantViewProps) {
             muted={true}
             playing={true}
             url={videoStream}
-            height={"300px"}
-            width={"300px"}
+            height={"150px"}
+            width={"200px"}
             onError={(err) => {
               console.log(err, "participant video error");
             }}
@@ -70,8 +73,7 @@ function ParticipantView(props: ParticipantViewProps) {
         </>
       ) : (
         <>
-          <hr />
-          <h1 className={styles.initials}>{displayName}</h1>
+          <img src="https://assets.zoom.us/images/en-us/desktop/generic/video-not-working.PNG" alt="placeholder" height={150} width={200}/>
           <hr />
         </>
       )}
