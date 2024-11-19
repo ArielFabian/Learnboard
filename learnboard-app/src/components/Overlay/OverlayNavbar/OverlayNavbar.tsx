@@ -82,6 +82,7 @@ const userModeButtonsSecondary: UserModeButton[] = [
     label: 'Text',
     icon: <RxText />,
   },
+  /*
   {
     mode: 'icon',
     label: 'Icon',
@@ -92,7 +93,7 @@ const userModeButtonsSecondary: UserModeButton[] = [
     mode: 'image',
     label: 'Image',
     icon: <BsImageFill />,
-  },
+  },*/
 ];
 
 export default function OverlayNavbar({
