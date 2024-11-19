@@ -71,6 +71,18 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log(`Usuario desconectado: ${socket.id}`);
   });
+
+   // Manejar actualización de imagen procesada
+   socket.on('update-image', (data) => {
+    console.log(`Actualización de imagen en canvas ${data.canvasId}`);
+    socket.to(data.canvasId).emit('update-image', data);
+  });
+
+  // Manejar actualización de LaTeX procesado
+  socket.on('update-latex', (data) => {
+    console.log(`Actualización de LaTeX en canvas ${data.canvasId}`);
+    socket.to(data.canvasId).emit('update-latex', data);
+  });
 });
 
 // Iniciar el servidor

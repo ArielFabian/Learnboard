@@ -188,6 +188,7 @@ export default function Canvas(
       }
     });
 
+
     socket.on('move-object', (data) => {
 
       if (data.canvasId === canvasId) { // Asegurar que el evento pertenece al canvas actual
@@ -211,7 +212,24 @@ export default function Canvas(
       }
 
     });
+    // Actualizar canvas con imagen procesada
+    socket.on('update-image', async (data) => {
+      if (data.canvasId === canvasId) {
+        console.log(data);
+        setImageUrl(data.imageUrl);
+        data.imageElement = await getImageElementFromUrl(data.imageUrl);
+        appendImageObject(data);  
+      }
+    });
 
+    // Actualizar canvas con LaTeX procesado
+    socket.on('update-latex', (data) => {
+      if (data.canvasId === canvasId) {
+        commonPushImageObject(`data:image/png;base64,${data.latexBase64}`);
+        drawEverything();
+        console.log(`LaTeX actualizado en canvas ${data.canvasId}`);
+      }
+    });
     // Finalización del dibujo
     socket.on('stop-drawing', (data) => {
       setActionMode(null);
@@ -246,8 +264,10 @@ export default function Canvas(
       socket.off('drawing-data');
       socket.off('stop-drawing');
       socket.off('move-object');
+      socket.off('update-image');
+      socket.off('update-latex');
     };
-  }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything, takeScreenshot]);
+  }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything, canvasId,takeScreenshot]);
 
 
   //Latex
@@ -695,8 +715,23 @@ export default function Canvas(
       imageUrl,
       imageElement,
     });
+    const image={
+      id: createdObjectId,
+      x: 0,
+      y: 0,
+      width: dimensions.width,
+      height: dimensions.height,
+      opacity: 100,
+      imageUrl,
+      imageElement,
+    };
     setActiveObjectId(createdObjectId);
     setUserMode('select');
+    console.log(image);
+    socket.emit('update-image', {
+      ...image,
+      canvasId
+    });
   };
 
 
