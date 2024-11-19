@@ -101,6 +101,7 @@ export default function Canvas(
 
   const appendImageObject = useCanvasObjects((state) => state.appendImageObject);
 
+
   const emitEvent = (event: string, data: any) => {
     socket.emit(event, { ...data, canvasId });
   };
@@ -108,17 +109,34 @@ export default function Canvas(
     const parts = window.location.pathname.split('/');
     return parts[parts.length - 1] || 'default'; // Usa "default" si no hay un ID válido
   }
+  const sendImageToAPI = async (base64Image: string) => {
+    try {
+
+      const response = await axios.post('https://api.learn-board.tech/model/process-image', {
+        image: base64Image,
+      });
+      console.log(base64Image);
+
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      const resultBase64 = response.data.result;
+      commonPushImageObject(`data:image/png;base64,${resultBase64}`)
+      handleTakeScreenshot(false);
+    } catch (error) {
+      console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
+    }
+  };
+
   // Screenshot
   useEffect(() => {
     if (takeScreenshot) {
-      setTimeout(() => {
-        const canvas = canvasRef.current;
-        if (canvas) {
-          const base64Image = canvas.toDataURL('image/png').split(',')[1];
-          console.log(base64Image);
-          sendImageToAPI(base64Image);
-        }
-      }, 5000);
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const base64Image = canvas.toDataURL('image/png').split(',')[1];
+        console.log(base64Image);
+        sendImageToAPI(base64Image);
+      }
     }
 
     socket.emit('join-canvas', canvasId);
@@ -171,6 +189,7 @@ export default function Canvas(
     });
 
     socket.on('move-object', (data) => {
+
       if (data.canvasId === canvasId) { // Asegurar que el evento pertenece al canvas actual
         moveCanvasObject({
           id: data.id,
@@ -190,6 +209,7 @@ export default function Canvas(
         drawEverything();
         console.log(`Moviendo objeto ${data.id} en canvas ${data.canvasId}: DeltaX: ${data.deltaX}, DeltaY: ${data.deltaY}`);
       }
+
     });
 
     // Finalización del dibujo
@@ -227,28 +247,8 @@ export default function Canvas(
       socket.off('stop-drawing');
       socket.off('move-object');
     };
-  }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything]);
+  }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything, takeScreenshot]);
 
-
-  // Función para enviar la imagen a la API
-  const sendImageToAPI = async (base64Image: string) => {
-    try {
-
-      const response = await axios.post('https://api.learn-board.tech/model/process-image', {
-        image: base64Image,
-      });
-      console.log(base64Image);
-
-      if (response.status !== 200) {
-        throw new Error(`Error: ${response.statusText}`);
-      }
-      const resultBase64 = response.data.result;
-      commonPushImageObject(`data:image/png;base64,${resultBase64}`)
-      handleTakeScreenshot(false);
-    } catch (error) {
-      console.error('Error al enviar la imagen a la API o al cargar la respuesta:', error);
-    }
-  };
 
   //Latex
   useEffect(() => {
@@ -607,7 +607,6 @@ export default function Canvas(
             width,
             height,
           });
-
           socket.emit('drawing-data', {
             id: activeObjectId,
             x: topLeftX,
