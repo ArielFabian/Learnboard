@@ -26,7 +26,7 @@ import isCursorWithinRectangle from '~/utils/isCursorWithinRectangle';
 import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
 import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
 import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
-const socket = io('http://localhost:4000'); // Conecta al servidor de sockets
+const socket = io('https://board.learn-board.tech');  // Conecta al servidor de sockets
 
 const FixedMain = styled.main`
   position: fixed;
