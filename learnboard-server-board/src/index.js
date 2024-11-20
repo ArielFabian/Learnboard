@@ -83,6 +83,12 @@ io.on('connection', (socket) => {
     console.log(`Actualización de LaTeX en canvas ${data.canvasId}`);
     socket.to(data.canvasId).emit('update-latex', data);
   });
+
+    // Escuchar evento de eliminación y retransmitir
+    socket.on('delete-object', (data) => {
+      console.log(`Eliminando objeto ${data.id} en canvas ${data.canvasId}`);
+      socket.broadcast.emit('delete-object', data); // Retransmite el evento
+    });
 });
 
 // Iniciar el servidor

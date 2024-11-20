@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState, type PointerEvent, type Touch, type TouchEvent } from 'react';
+import React, { useEffect, useRef, useState, type PointerEvent, type Touch, type TouchEvent,createContext, useContext } from 'react';
 import styled from 'styled-components';
 import io from 'socket.io-client'; // Instalar con: npm install socket.io-client
 import { TRANSPARENT_BACKGROUND_IMAGE } from '~/config/constants';
@@ -26,7 +26,7 @@ import isCursorWithinRectangle from '~/utils/isCursorWithinRectangle';
 import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
 import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
 import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
-const socket = io('https://board.learn-board.tech');  // Conecta al servidor de sockets
+const socket = io('http://localhost:4000');  // Conecta al servidor de sockets
 
 const FixedMain = styled.main`
   position: fixed;
@@ -41,7 +41,48 @@ const FixedMain = styled.main`
 `;
 
 type PointerOrTouchEvent = PointerEvent<HTMLElement> | TouchEvent<HTMLElement>;
+// Context for Canvas Actions
+const CanvasActionsContext = createContext<{
+  handleDeleteObject: (id: string) => void;
+} | null>(null);
 
+export function useCanvasActions() {
+  const context = useContext(CanvasActionsContext);
+  if (!context) {
+    throw new Error('useCanvasActions debe usarse dentro de CanvasProvider');
+  }
+  return context;
+}
+export function CanvasProvider({ children }: { children: React.ReactNode }) {
+  const deleteCanvasObject = useCanvasObjects((state) => state.deleteCanvasObject);
+  const { drawEverything } = useCanvasContext();
+  const canvasId = "645";
+
+  const handleDeleteObject = (id: string) => {
+    socket.emit('delete-object', { id, canvasId });
+    deleteCanvasObject(id);
+    drawEverything();
+  };
+
+  useEffect(() => {
+    socket.on('delete-object', (data) => {
+      if (data.canvasId === canvasId) {
+        deleteCanvasObject(data.id);
+        drawEverything();
+      }
+    });
+
+    return () => {
+      socket.off('delete-object');
+    };
+  }, [canvasId, deleteCanvasObject, drawEverything]);
+
+  return (
+    <CanvasActionsContext.Provider value={{ handleDeleteObject }}>
+      {children}
+    </CanvasActionsContext.Provider>
+  );
+}
 export default function Canvas(
   {
     text,
@@ -74,6 +115,7 @@ export default function Canvas(
   const appendFreeDrawPointToCanvasObject = useCanvasObjects((state) => state.appendFreeDrawPointToCanvasObject);
   const moveCanvasObject = useCanvasObjects((state) => state.moveCanvasObject);
   const resizeCanvasObject = useCanvasObjects((state) => state.resizeCanvasObject);
+  const deleteCanvasObject = useCanvasObjects((state) => state.deleteCanvasObject);
 
   const canvasWorkingSize = useCanvasWorkingSize((state) => state.canvasWorkingSize);
 
@@ -189,6 +231,15 @@ export default function Canvas(
     });
 
 
+    //eliminar
+
+    socket.on('delete-object', (data) => {
+      if (data.canvasId === canvasId) {
+        deleteCanvasObject(data.id);
+        drawEverything();
+      }
+    });
+
     socket.on('move-object', (data) => {
 
       if (data.canvasId === canvasId) { // Asegurar que el evento pertenece al canvas actual
@@ -266,9 +317,18 @@ export default function Canvas(
       socket.off('move-object');
       socket.off('update-image');
       socket.off('update-latex');
+      socket.off('delete-object');
     };
   }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything, canvasId,takeScreenshot]);
 
+
+  //eliminar 
+  const handleDeleteObject = (id: string) => {
+    socket.emit('delete-object', { id, canvasId }); // Emitir evento por socket
+    console.log("Si me lla");
+    deleteCanvasObject(id); // Eliminar localmente
+    drawEverything(); // Redibujar el lienzo
+  };
 
   //Latex
   useEffect(() => {
@@ -779,3 +839,4 @@ export default function Canvas(
     </FixedMain>
   );
 }
+

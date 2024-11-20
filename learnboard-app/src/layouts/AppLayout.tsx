@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Canvas from '~/components/Canvas';
+import Canvas, { CanvasProvider } from '~/components/Canvas';
 import CanvasEventListeners from '~/components/CanvasEventListeners';
 import Overlay from '~/components/Overlay';
 
@@ -34,7 +34,7 @@ export default function AppLayout({
 
   return (
     <>
-      <Overlay
+     <CanvasProvider> <Overlay
         showCompiler={showCompiler}
         onShowCompilerChange={onShowCompilerChange}
         onTextChange={handleTextChange}
@@ -43,8 +43,10 @@ export default function AppLayout({
           throw new Error('Function not implemented.');
         }}
       />
+      
       <Canvas text={inputText} handleTextChange={handleTextChange} takeScreenshot = {takeScreenshot} handleTakeScreenshot = {handleTakeScreenshot}/>
-      <CanvasEventListeners />
+      
+      <CanvasEventListeners /></CanvasProvider>
     </>
   );
 }

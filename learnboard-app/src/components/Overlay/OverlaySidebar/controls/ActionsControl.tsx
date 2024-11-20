@@ -2,6 +2,8 @@ import { Button } from '@mantine/core';
 import React from 'react';
 import { MdControlPointDuplicate, MdOutlineDelete } from 'react-icons/md';
 import styled from 'styled-components';
+import { useCanvasActions } from '~/components/Canvas';
+
 
 import useActiveObjectId from '~/store/useActiveObjectId';
 import useCanvasObjects from '~/store/useCanvasObjects';
@@ -20,6 +22,7 @@ const ActionsUl = styled.ul`
 export default function ActionsControl() {
   const activeObjectId = useActiveObjectId((state) => state.activeObjectId);
   const setActiveObjectId = useActiveObjectId((state) => state.setActiveObjectId);
+  const { handleDeleteObject } = useCanvasActions(); // Usar el método desde el contexto
 
   const canvasObjects = useCanvasObjects((state) => state.canvasObjects);
   const appendRectangleObject = useCanvasObjects((state) => state.appendRectangleObject);
@@ -29,6 +32,7 @@ export default function ActionsControl() {
   const deleteCanvasObject = useCanvasObjects((state) => state.deleteCanvasObject);
 
   const activeObject = canvasObjects.find((object) => object.id === activeObjectId);
+
 
   if (!activeObject) {
     return null;
@@ -75,7 +79,8 @@ export default function ActionsControl() {
             variant="default"
             size="xs"
             onClick={() => {
-              deleteCanvasObject(activeObject.id);
+              
+              handleDeleteObject(activeObject.id); // Llama al método para emitir y eliminar
               setActiveObjectId(null);
             }}
           >
