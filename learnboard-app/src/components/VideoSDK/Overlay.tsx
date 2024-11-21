@@ -115,7 +115,7 @@ function Controls() {
           size="md"
           onClick={handleToggleMic}
           style={{
-            backgroundColor: micOn ? "red" : "green",
+            backgroundColor: micOn ? "green" : "red",
             color: "white",
             borderRadius: "15px",
             padding: "10px"
