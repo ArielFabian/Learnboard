@@ -43,6 +43,7 @@ export default function ActionsControl() {
       <ControlHeader title="Actions" />
       <ActionsUl>
         <li>
+          {/* Botón para duplicar el objeto 
           <Button
             leftIcon={<MdControlPointDuplicate />}
             variant="default"
@@ -71,7 +72,7 @@ export default function ActionsControl() {
             }}
           >
             Duplicate
-          </Button>
+          </Button>*/}
         </li>
         <li>
           <Button

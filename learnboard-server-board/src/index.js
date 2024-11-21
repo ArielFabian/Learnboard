@@ -77,7 +77,14 @@ io.on('connection', (socket) => {
     console.log(`Actualización de imagen en canvas ${data.canvasId}`);
     socket.to(data.canvasId).emit('update-image', data);
   });
+  // Manejar actualizaciones de objetos
+  socket.on('update-object', (data) => {
+    const { canvasId, id, updates } = data;
+    console.log(`Actualizar objeto ${id} en canvas ${canvasId}:`, updates);
 
+    // Emitir la actualización a todos los sockets en el mismo canvas excepto al emisor
+    socket.to(canvasId).emit('update-object', { id, updates, canvasId });
+  });
   // Manejar actualización de LaTeX procesado
   socket.on('update-latex', (data) => {
     console.log(`Actualización de LaTeX en canvas ${data.canvasId}`);
@@ -89,6 +96,7 @@ io.on('connection', (socket) => {
       console.log(`Eliminando objeto ${data.id} en canvas ${data.canvasId}`);
       socket.broadcast.emit('delete-object', data); // Retransmite el evento
     });
+
 });
 
 // Iniciar el servidor

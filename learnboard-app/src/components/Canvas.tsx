@@ -44,6 +44,7 @@ type PointerOrTouchEvent = PointerEvent<HTMLElement> | TouchEvent<HTMLElement>;
 // Context for Canvas Actions
 const CanvasActionsContext = createContext<{
   handleDeleteObject: (id: string) => void;
+  handleUpdateObject: (id: string, updates: Partial<any>) => void;
 } | null>(null);
 
 export function useCanvasActions() {
@@ -55,13 +56,21 @@ export function useCanvasActions() {
 }
 export function CanvasProvider({ children }: { children: React.ReactNode }) {
   const deleteCanvasObject = useCanvasObjects((state) => state.deleteCanvasObject);
-  const { drawEverything } = useCanvasContext();
+  const updateCanvasObject = useCanvasObjects((state) => state.updateCanvasObject);
+
+  const {canvasRef, contextRef,  drawEverything } = useCanvasContext();
   const canvasId = "645";
 
   const handleDeleteObject = (id: string) => {
     socket.emit('delete-object', { id, canvasId });
     deleteCanvasObject(id);
     drawEverything();
+  };
+  const handleUpdateObject = (id: string, updates: Partial<any>) => {
+    socket.emit('update-object', { id, updates, canvasId }); // Emitir cambios por socket
+    console.log(`Emitido: actualizar objeto ${id} en canvas ${canvasId}`, updates);
+    updateCanvasObject(id, updates); // Actualizar localmente
+    drawEverything(); // Redibujar
   };
 
   useEffect(() => {
@@ -72,13 +81,21 @@ export function CanvasProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
+    socket.on('update-object', (data) => {
+      if (data.canvasId === canvasId) {
+        console.log(`Recibido: actualizar objeto ${data.id}`, data.updates);
+        updateCanvasObject(data.id, data.updates);
+        drawEverything();
+      }
+    });
+
     return () => {
       socket.off('delete-object');
     };
   }, [canvasId, deleteCanvasObject, drawEverything]);
 
   return (
-    <CanvasActionsContext.Provider value={{ handleDeleteObject }}>
+    <CanvasActionsContext.Provider value={{ handleDeleteObject, handleUpdateObject}}>
       {children}
     </CanvasActionsContext.Provider>
   );

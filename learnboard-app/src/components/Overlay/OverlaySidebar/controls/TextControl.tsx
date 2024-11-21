@@ -12,6 +12,7 @@ import useDefaultParams from '~/store/useDefaultParams';
 import theme from '~/theme';
 
 import ControlHeader from '../components/ControlHeader';
+import { useCanvasActions } from '~/components/Canvas';
 
 const TextParamsGrid = styled.div`
   display: grid;
@@ -29,131 +30,104 @@ export default function TextControl() {
   const canvasObjects = useCanvasObjects((state) => state.canvasObjects);
   const updateCanvasObject = useCanvasObjects((state) => state.updateCanvasObject);
 
+  const { handleUpdateObject } = useCanvasActions(); // Obtener el método para manejar cambios mediante sockets
+
   const activeObject = canvasObjects.find((object) => object.id === activeObjectId);
 
   if (!activeObject) {
     return null;
   }
 
+  const updateObjectWithSocket = (updates: Partial<typeof activeObject>) => {
+    if (!activeObject) return;
+    handleUpdateObject(activeObject.id, updates); // Emitir cambios por sockets
+    updateCanvasObject(activeObject.id, updates); // Actualizar localmente
+  };
+
   const textAlignOptions: {
     label: string;
     icon: ReactNode;
     onClick: () => void;
     isActive: boolean;
-  }[] = activeObject
-    ? [
-        {
-          label: 'Left',
-          icon: <FaAlignLeft />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              textAlignHorizontal: 'left',
-            });
-          },
-          isActive: activeObject.textAlignHorizontal === 'left',
-        },
-        {
-          label: 'Center',
-          icon: <FaAlignCenter />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              textAlignHorizontal: 'center',
-            });
-          },
-          isActive: activeObject.textAlignHorizontal === 'center',
-        },
-        {
-          label: 'Right',
-          icon: <FaAlignRight />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              textAlignHorizontal: 'right',
-            });
-          },
-          isActive: activeObject.textAlignHorizontal === 'right',
-        },
-        {
-          label: 'Justify',
-          icon: <FaAlignJustify />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              textJustify: !activeObject.textJustify,
-            });
-          },
-          isActive: activeObject.textJustify,
-        },
-        {
-          label: 'Top',
-          icon: <MdAlignVerticalTop />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              textAlignVertical: 'top',
-            });
-          },
-          isActive: activeObject.textAlignVertical === 'top',
-        },
-        {
-          label: 'Middle',
-          icon: <MdAlignVerticalCenter />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              textAlignVertical: 'middle',
-            });
-          },
-          isActive: activeObject.textAlignVertical === 'middle',
-        },
-        {
-          label: 'Bottom',
-          icon: <MdAlignVerticalBottom />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              textAlignVertical: 'bottom',
-            });
-          },
-          isActive: activeObject.textAlignVertical === 'bottom',
-        },
-      ]
-    : [];
+  }[] = [
+    {
+      label: 'Left',
+      icon: <FaAlignLeft />,
+      onClick: () => updateObjectWithSocket({ textAlignHorizontal: 'left' }),
+      isActive: activeObject.textAlignHorizontal === 'left',
+    },
+    {
+      label: 'Center',
+      icon: <FaAlignCenter />,
+      onClick: () => updateObjectWithSocket({ textAlignHorizontal: 'center' }),
+      isActive: activeObject.textAlignHorizontal === 'center',
+    },
+    {
+      label: 'Right',
+      icon: <FaAlignRight />,
+      onClick: () => updateObjectWithSocket({ textAlignHorizontal: 'right' }),
+      isActive: activeObject.textAlignHorizontal === 'right',
+    },
+    {
+      label: 'Justify',
+      icon: <FaAlignJustify />,
+      onClick: () => updateObjectWithSocket({ textJustify: !activeObject.textJustify }),
+      isActive: activeObject.textJustify,
+    },
+    {
+      label: 'Top',
+      icon: <MdAlignVerticalTop />,
+      onClick: () => updateObjectWithSocket({ textAlignVertical: 'top' }),
+      isActive: activeObject.textAlignVertical === 'top',
+    },
+    {
+      label: 'Middle',
+      icon: <MdAlignVerticalCenter />,
+      onClick: () => updateObjectWithSocket({ textAlignVertical: 'middle' }),
+      isActive: activeObject.textAlignVertical === 'middle',
+    },
+    {
+      label: 'Bottom',
+      icon: <MdAlignVerticalBottom />,
+      onClick: () => updateObjectWithSocket({ textAlignVertical: 'bottom' }),
+      isActive: activeObject.textAlignVertical === 'bottom',
+    },
+  ];
 
   const fontStyleOptions: {
     label: string;
     icon: ReactNode;
     onClick: () => void;
     isActive: boolean;
-  }[] = activeObject
-    ? [
-        {
-          label: 'Bold',
-          icon: <FaBold />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              fontWeight: activeObject.fontWeight === 'normal' ? 'bold' : 'normal',
-            });
-          },
-          isActive: activeObject.fontWeight === 'bold',
-        },
-        {
-          label: 'Italic',
-          icon: <FaItalic />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              fontStyle: activeObject.fontStyle === 'normal' ? 'italic' : 'normal',
-            });
-          },
-          isActive: activeObject.fontStyle === 'italic',
-        },
-        {
-          label: 'Small Caps',
-          icon: <FaSortAmountUp />,
-          onClick: () => {
-            updateCanvasObject(activeObject.id, {
-              fontVariant: activeObject.fontVariant === 'normal' ? 'small-caps' : 'normal',
-            });
-          },
-          isActive: activeObject.fontVariant === 'small-caps',
-        },
-      ]
-    : [];
+  }[] = [
+    {
+      label: 'Bold',
+      icon: <FaBold />,
+      onClick: () =>
+        updateObjectWithSocket({
+          fontWeight: activeObject.fontWeight === 'normal' ? 'bold' : 'normal',
+        }),
+      isActive: activeObject.fontWeight === 'bold',
+    },
+    {
+      label: 'Italic',
+      icon: <FaItalic />,
+      onClick: () =>
+        updateObjectWithSocket({
+          fontStyle: activeObject.fontStyle === 'normal' ? 'italic' : 'normal',
+        }),
+      isActive: activeObject.fontStyle === 'italic',
+    },
+    {
+      label: 'Small Caps',
+      icon: <FaSortAmountUp />,
+      onClick: () =>
+        updateObjectWithSocket({
+          fontVariant: activeObject.fontVariant === 'normal' ? 'small-caps' : 'normal',
+        }),
+      isActive: activeObject.fontVariant === 'small-caps',
+    },
+  ];
 
   return (
     <>
@@ -162,11 +136,11 @@ export default function TextControl() {
         key={`text-input-${activeObject.id}`}
         size="xs"
         value={activeObject.text}
-        onChange={(event) => {
-          updateCanvasObject(activeObject.id, {
+        onChange={(event) =>
+          updateObjectWithSocket({
             text: event.target.value,
-          });
-        }}
+          })
+        }
       />
       <ControlHeader title="Text Align" />
       <TextParamsGrid>
@@ -183,36 +157,30 @@ export default function TextControl() {
         key={`font-family-select-${activeObject.id}`}
         size="xs"
         data={[
-          { value: 'font-family-select-generic', label: 'Generic', disabled: true },
           { value: 'cursive', label: 'Cursive' },
           { value: 'fantasy', label: 'Fantasy' },
           { value: 'monospace', label: 'Monospace' },
           { value: 'sans-serif', label: 'Sans-serif' },
           { value: 'serif', label: 'Serif' },
-          { value: 'font-family-select-specific', label: 'Specific', disabled: true },
           ...availableFonts.map((fontFamily) => ({
             value: fontFamily,
             label: fontFamily,
           })),
         ]}
         value={activeObject.fontFamily}
-        onChange={(event) => {
-          updateCanvasObject(activeObject.id, {
+        onChange={(event) =>
+          updateObjectWithSocket({
             fontFamily: event.target.value,
-          });
-        }}
+          })
+        }
       />
       <ControlHeader title="Font Color" />
       <ColorPicker
         key={`font-color-picker-${activeObject.id}`}
         color={activeObject.fontColorHex}
         onChange={(color) => {
-          updateCanvasObject(activeObject.id, {
-            fontColorHex: color,
-          });
-          setDefaultParams({
-            fontColorHex: color,
-          });
+          updateObjectWithSocket({ fontColorHex: color });
+          setDefaultParams({ fontColorHex: color });
         }}
       />
       <ControlHeader title="Font Style" />
@@ -232,27 +200,12 @@ export default function TextControl() {
         min={1}
         max={400}
         value={activeObject.fontSize}
-        onChange={(value) => {
-          updateCanvasObject(activeObject.id, {
+        onChange={(value) =>
+          updateObjectWithSocket({
             fontSize: value,
-          });
-        }}
+          })
+        }
         label={(value) => `${value} px`}
-      />
-      <ControlHeader title="Line Height" />
-      <Slider
-        key={`font-line-height-slider-${activeObject.id}`}
-        size="sm"
-        min={0.5}
-        max={2.5}
-        step={0.1}
-        value={activeObject.fontLineHeightRatio}
-        onChange={(value) => {
-          updateCanvasObject(activeObject.id, {
-            fontLineHeightRatio: value,
-          });
-        }}
-        label={(value) => value.toFixed(1)}
       />
     </>
   );

@@ -33,6 +33,7 @@ export default function LayerControl() {
 
   return (
     <>
+    {/* ControlHeader es un componente que recibe un título y un subtítulo 
       <ControlHeader title="Layer" subtitle={`(${activeObjectLayerIndex + 1}/${totalLayers})`} />
       <ActionsUl>
         <li>
@@ -63,7 +64,7 @@ export default function LayerControl() {
             Forward
           </Button>
         </li>
-      </ActionsUl>
+      </ActionsUl>*/}
     </>
   );
 }

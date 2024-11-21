@@ -155,6 +155,7 @@ export default function AlignControl() {
 
   return (
     <>
+    {/* ControlHeader es un componente que recibe un título 
       <ControlHeader title="Align" />
       <AlignGridDiv>
         {objectAlignOptions.map(({ label, icon, onClick, isActive }) => (
@@ -170,7 +171,7 @@ export default function AlignControl() {
             </ActionIcon>
           </Tooltip>
         ))}
-      </AlignGridDiv>
+      </AlignGridDiv>*/}
     </>
   );
 }
