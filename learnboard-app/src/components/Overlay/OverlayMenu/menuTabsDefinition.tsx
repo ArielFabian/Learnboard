@@ -19,11 +19,12 @@ export const menuTabsDefinition: {
     label: 'Download',
     icon: <FaCloudDownloadAlt />,
   },
+  /*
   {
     id: 'layers',
     label: 'Layers',
     icon: <BsLayersFill />,
-  },
+  },*/
   {
     id: 'settings',
     label: 'Settings',

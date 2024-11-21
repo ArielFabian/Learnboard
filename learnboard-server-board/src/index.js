@@ -15,7 +15,8 @@ const PORT = process.env.PORT || 4000;
 
 // Middleware para servir archivos estáticos, si tienes una carpeta `public` para el frontend
 app.use(express.static('public'));
-
+// Almacén de datos de los canvas
+const canvases = {};
 // Evento de conexión
 io.on('connection', (socket) => {
   console.log(`Usuario conectado: ${socket.id}`);
@@ -25,6 +26,7 @@ io.on('connection', (socket) => {
     if (canvasId) {
       socket.join(canvasId); // Unir el socket a la sala del canvas
       console.log(`Usuario ${socket.id} se unió a la sala del canvas: ${canvasId}`);
+          // Enviar el estado inicial del canvas al cliente que se un
     }
   });
 
@@ -40,6 +42,35 @@ io.on('connection', (socket) => {
       socket.to(canvasId).emit('start-drawing', data);
       
     }
+  });
+
+  socket.on('canvas-update', (data) => {
+    const { canvasId, type } = data;
+
+    if (!canvases[canvasId]) {
+      return;
+    }
+
+    switch (type) {
+      case 'resize-canvas':
+        canvases[canvasId].width = data.width;
+        canvases[canvasId].height = data.height;
+        break;
+
+      case 'update-background':
+        canvases[canvasId].backgroundColor = data.backgroundColor;
+        break;
+
+      case 'reset-canvas':
+        canvases[canvasId].objects = [];
+        break;
+
+      default:
+        console.warn(`Tipo de actualización desconocido: ${type}`);
+    }
+
+    // Emitir la actualización a todos los clientes conectados al canvas
+    io.to(canvasId).emit('canvas-update', data);
   });
 
   // Escuchar evento de datos de dibujo en tiempo real

@@ -26,7 +26,8 @@ import isCursorWithinRectangle from '~/utils/isCursorWithinRectangle';
 import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
 import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
 import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
-const socket = io('http://localhost:4000');  // Conecta al servidor de sockets
+const socket = io('https://board.learn-board.tech');  // Conecta al servidor de sockets
+import useCanvasBackgroundColor from '~/store/useCanvasBackgroundColor';
 
 const FixedMain = styled.main`
   position: fixed;
@@ -41,10 +42,10 @@ const FixedMain = styled.main`
 `;
 
 type PointerOrTouchEvent = PointerEvent<HTMLElement> | TouchEvent<HTMLElement>;
-// Context for Canvas Actions
 const CanvasActionsContext = createContext<{
   handleDeleteObject: (id: string) => void;
   handleUpdateObject: (id: string, updates: Partial<any>) => void;
+  handleCanvasUpdate: (data: any) => void; // Método para actualizaciones globales
 } | null>(null);
 
 export function useCanvasActions() {
@@ -54,23 +55,49 @@ export function useCanvasActions() {
   }
   return context;
 }
+
 export function CanvasProvider({ children }: { children: React.ReactNode }) {
   const deleteCanvasObject = useCanvasObjects((state) => state.deleteCanvasObject);
   const updateCanvasObject = useCanvasObjects((state) => state.updateCanvasObject);
-
-  const {canvasRef, contextRef,  drawEverything } = useCanvasContext();
-  const canvasId = "645";
+  const setCanvasWorkingWidth = useCanvasWorkingSize((state) => state.setCanvasWorkingWidth);
+  const setCanvasWorkingHeight = useCanvasWorkingSize((state) => state.setCanvasWorkingHeight);
+  const setCanvasBackgroundColor = useCanvasBackgroundColor((state) => state.setCanvasBackgroundColor);
+  const resetCanvasObjects = useCanvasObjects((state) => state.resetCanvasObjects);
+  const { drawEverything } = useCanvasContext();
+  const canvasId = getCanvasIdFromUrl();
 
   const handleDeleteObject = (id: string) => {
     socket.emit('delete-object', { id, canvasId });
     deleteCanvasObject(id);
     drawEverything();
   };
+
   const handleUpdateObject = (id: string, updates: Partial<any>) => {
-    socket.emit('update-object', { id, updates, canvasId }); // Emitir cambios por socket
+    socket.emit('update-object', { id, updates, canvasId });
     console.log(`Emitido: actualizar objeto ${id} en canvas ${canvasId}`, updates);
-    updateCanvasObject(id, updates); // Actualizar localmente
-    drawEverything(); // Redibujar
+    updateCanvasObject(id, updates);
+    drawEverything();
+  };
+  function getCanvasIdFromUrl(): string {
+    const parts = window.location.pathname.split('/');
+    return parts[parts.length - 1] || 'default'; // Usa "default" si no hay un ID válido
+  }
+  const handleCanvasUpdate = (data: any) => {
+    switch (data.type) {
+      case 'resize-canvas':
+        setCanvasWorkingWidth(data.width);
+        setCanvasWorkingHeight(data.height);
+        break;
+      case 'update-background':
+        setCanvasBackgroundColor(data.backgroundColor);
+        break;
+      case 'reset-canvas':
+        resetCanvasObjects();
+        break;
+      default:
+        console.warn(`Tipo de actualización desconocido: ${data.type}`);
+    }
+    drawEverything();
   };
 
   useEffect(() => {
@@ -89,17 +116,36 @@ export function CanvasProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
+    socket.on('canvas-state', (state) => {
+      if (state) {
+        console.log('Estado inicial del canvas recibido:', state);
+        setCanvasWorkingWidth(state.width);
+        setCanvasWorkingHeight(state.height);
+        setCanvasBackgroundColor(state.backgroundColor);
+      }
+    });
+
+    socket.on('canvas-update', (data) => {
+      if (data.canvasId === canvasId) {
+        handleCanvasUpdate(data);
+      }
+    });
+
     return () => {
       socket.off('delete-object');
+      socket.off('canvas-update');
+      socket.off('update-object');
+      socket.off('canvas-state');
     };
   }, [canvasId, deleteCanvasObject, drawEverything]);
 
   return (
-    <CanvasActionsContext.Provider value={{ handleDeleteObject, handleUpdateObject}}>
+    <CanvasActionsContext.Provider value={{ handleDeleteObject, handleUpdateObject, handleCanvasUpdate }}>
       {children}
     </CanvasActionsContext.Provider>
   );
 }
+
 export default function Canvas(
   {
     text,
