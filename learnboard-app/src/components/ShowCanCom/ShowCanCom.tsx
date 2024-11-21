@@ -46,8 +46,8 @@ const ParentComponent: React.FC = () => {
   };
 
   useEffect(() => {
+    window.dispatchEvent(new Event('resize'));
     fetchMeetingId();
-    console.log("meetingId: ", meetingId);
     handleIframeStateChange((prevSrc) => prevSrc);
   }, []);
 
