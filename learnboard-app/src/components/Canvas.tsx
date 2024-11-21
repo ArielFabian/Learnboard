@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useRef, useState, type PointerEvent, type Touch, type TouchEvent } from 'react';
+import React, { useEffect, useRef, useState, type PointerEvent, type Touch, type TouchEvent,createContext, useContext } from 'react';
 import styled from 'styled-components';
 import io from 'socket.io-client'; // Instalar con: npm install socket.io-client
 import { TRANSPARENT_BACKGROUND_IMAGE } from '~/config/constants';
@@ -27,6 +27,7 @@ import getDimensionsFromImage from '~/utils/getDimensionsFromImage';
 import { type OptionItem } from '~/components/Overlay/OverlaySidebar/controls/ImageControl/UnsplashImageButton';
 import getImageElementFromUrl from '~/utils/getImageElementFromUrl';
 const socket = io('https://board.learn-board.tech');  // Conecta al servidor de sockets
+import useCanvasBackgroundColor from '~/store/useCanvasBackgroundColor';
 
 const FixedMain = styled.main`
   position: fixed;
@@ -41,6 +42,109 @@ const FixedMain = styled.main`
 `;
 
 type PointerOrTouchEvent = PointerEvent<HTMLElement> | TouchEvent<HTMLElement>;
+const CanvasActionsContext = createContext<{
+  handleDeleteObject: (id: string) => void;
+  handleUpdateObject: (id: string, updates: Partial<any>) => void;
+  handleCanvasUpdate: (data: any) => void; // Método para actualizaciones globales
+} | null>(null);
+
+export function useCanvasActions() {
+  const context = useContext(CanvasActionsContext);
+  if (!context) {
+    throw new Error('useCanvasActions debe usarse dentro de CanvasProvider');
+  }
+  return context;
+}
+
+export function CanvasProvider({ children }: { children: React.ReactNode }) {
+  const deleteCanvasObject = useCanvasObjects((state) => state.deleteCanvasObject);
+  const updateCanvasObject = useCanvasObjects((state) => state.updateCanvasObject);
+  const setCanvasWorkingWidth = useCanvasWorkingSize((state) => state.setCanvasWorkingWidth);
+  const setCanvasWorkingHeight = useCanvasWorkingSize((state) => state.setCanvasWorkingHeight);
+  const setCanvasBackgroundColor = useCanvasBackgroundColor((state) => state.setCanvasBackgroundColor);
+  const resetCanvasObjects = useCanvasObjects((state) => state.resetCanvasObjects);
+  const { drawEverything } = useCanvasContext();
+  const canvasId = getCanvasIdFromUrl();
+
+  const handleDeleteObject = (id: string) => {
+    socket.emit('delete-object', { id, canvasId });
+    deleteCanvasObject(id);
+    drawEverything();
+  };
+
+  const handleUpdateObject = (id: string, updates: Partial<any>) => {
+    socket.emit('update-object', { id, updates, canvasId });
+    console.log(`Emitido: actualizar objeto ${id} en canvas ${canvasId}`, updates);
+    updateCanvasObject(id, updates);
+    drawEverything();
+  };
+  function getCanvasIdFromUrl(): string {
+    const parts = window.location.pathname.split('/');
+    return parts[parts.length - 1] || 'default'; // Usa "default" si no hay un ID válido
+  }
+  const handleCanvasUpdate = (data: any) => {
+    switch (data.type) {
+      case 'resize-canvas':
+        setCanvasWorkingWidth(data.width);
+        setCanvasWorkingHeight(data.height);
+        break;
+      case 'update-background':
+        setCanvasBackgroundColor(data.backgroundColor);
+        break;
+      case 'reset-canvas':
+        resetCanvasObjects();
+        break;
+      default:
+        console.warn(`Tipo de actualización desconocido: ${data.type}`);
+    }
+    drawEverything();
+  };
+
+  useEffect(() => {
+    socket.on('delete-object', (data) => {
+      if (data.canvasId === canvasId) {
+        deleteCanvasObject(data.id);
+        drawEverything();
+      }
+    });
+
+    socket.on('update-object', (data) => {
+      if (data.canvasId === canvasId) {
+        console.log(`Recibido: actualizar objeto ${data.id}`, data.updates);
+        updateCanvasObject(data.id, data.updates);
+        drawEverything();
+      }
+    });
+
+    socket.on('canvas-state', (state) => {
+      if (state) {
+        console.log('Estado inicial del canvas recibido:', state);
+        setCanvasWorkingWidth(state.width);
+        setCanvasWorkingHeight(state.height);
+        setCanvasBackgroundColor(state.backgroundColor);
+      }
+    });
+
+    socket.on('canvas-update', (data) => {
+      if (data.canvasId === canvasId) {
+        handleCanvasUpdate(data);
+      }
+    });
+
+    return () => {
+      socket.off('delete-object');
+      socket.off('canvas-update');
+      socket.off('update-object');
+      socket.off('canvas-state');
+    };
+  }, [canvasId, deleteCanvasObject, drawEverything]);
+
+  return (
+    <CanvasActionsContext.Provider value={{ handleDeleteObject, handleUpdateObject, handleCanvasUpdate }}>
+      {children}
+    </CanvasActionsContext.Provider>
+  );
+}
 
 export default function Canvas(
   {
@@ -74,6 +178,7 @@ export default function Canvas(
   const appendFreeDrawPointToCanvasObject = useCanvasObjects((state) => state.appendFreeDrawPointToCanvasObject);
   const moveCanvasObject = useCanvasObjects((state) => state.moveCanvasObject);
   const resizeCanvasObject = useCanvasObjects((state) => state.resizeCanvasObject);
+  const deleteCanvasObject = useCanvasObjects((state) => state.deleteCanvasObject);
 
   const canvasWorkingSize = useCanvasWorkingSize((state) => state.canvasWorkingSize);
 
@@ -189,6 +294,15 @@ export default function Canvas(
     });
 
 
+    //eliminar
+
+    socket.on('delete-object', (data) => {
+      if (data.canvasId === canvasId) {
+        deleteCanvasObject(data.id);
+        drawEverything();
+      }
+    });
+
     socket.on('move-object', (data) => {
 
       if (data.canvasId === canvasId) { // Asegurar que el evento pertenece al canvas actual
@@ -266,9 +380,18 @@ export default function Canvas(
       socket.off('move-object');
       socket.off('update-image');
       socket.off('update-latex');
+      socket.off('delete-object');
     };
   }, [appendFreeDrawObject, appendRectangleObject, appendEllipseObject, appendTextObject, appendFreeDrawPointToCanvasObject, updateCanvasObject, drawEverything, canvasId,takeScreenshot]);
 
+
+  //eliminar 
+  const handleDeleteObject = (id: string) => {
+    socket.emit('delete-object', { id, canvasId }); // Emitir evento por socket
+    console.log("Si me lla");
+    deleteCanvasObject(id); // Eliminar localmente
+    drawEverything(); // Redibujar el lienzo
+  };
 
   //Latex
   useEffect(() => {
@@ -779,3 +902,4 @@ export default function Canvas(
     </FixedMain>
   );
 }
+

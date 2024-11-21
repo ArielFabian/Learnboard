@@ -7,7 +7,7 @@ import { FaArrowsAlt } from 'react-icons/fa';
 import dynamic from "next/dynamic";
 import axios from 'axios';
 import { useRouter } from "next/router";
-
+import useCanvasContext from '~/context/useCanvasContext';
 const Overlay = dynamic(
   () => import("../VideoSDK/Overlay"),
   {
@@ -22,6 +22,8 @@ const ParentComponent: React.FC = () => {
   const [showIframe, setShowIframe] = useState(true);
   const [meetingId, setMeetingId] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { setCenter } = useCanvasContext();
+
 
   const handleShowCompilerChange = (newShowCompiler: boolean | ((prevState: boolean) => boolean)) => {
     setShowCompiler(newShowCompiler);
@@ -49,6 +51,7 @@ const ParentComponent: React.FC = () => {
     window.dispatchEvent(new Event('resize'));
     fetchMeetingId();
     handleIframeStateChange((prevSrc) => prevSrc);
+    setCenter();
   }, []);
 
   return (

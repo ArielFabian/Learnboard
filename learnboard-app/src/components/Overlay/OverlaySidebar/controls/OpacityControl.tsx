@@ -20,6 +20,7 @@ export default function OpacityControl() {
 
   return (
     <>
+    {/* ControlHeader es un componente que recibe un título y un subtítulo 
       <ControlHeader title="Opacity" />
       <Slider
         key={`opacity-slider-${activeObject.id}`}
@@ -33,7 +34,7 @@ export default function OpacityControl() {
           });
         }}
         label={(value) => `${value}%`}
-      />
+      />*/}
     </>
   );
 }

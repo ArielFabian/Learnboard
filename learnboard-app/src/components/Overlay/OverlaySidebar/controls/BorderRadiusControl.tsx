@@ -20,6 +20,7 @@ export default function BorderRadiusControl() {
 
   return (
     <>
+    {/* ControlHeader es un componente que recibe un título y un subtítulo 
       <ControlHeader title="Border Radius" />
       <Slider
         key={`border-radius-slider-${activeObject.id}`}
@@ -33,7 +34,7 @@ export default function BorderRadiusControl() {
           });
         }}
         label={(value) => `${value} px`}
-      />
+      />*/}
     </>
   );
 }
